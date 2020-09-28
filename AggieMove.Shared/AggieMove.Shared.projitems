@@ -18,8 +18,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\NavigationManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SpatialHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\ExploreView.xaml.cs">
+      <DependentUpon>ExploreView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -27,11 +32,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\ExploreView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
-	<ItemGroup>
-		<None Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
-	</ItemGroup>
-	<ItemGroup>
-		<PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
-	</ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
+  </ItemGroup>
 </Project>
