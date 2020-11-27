@@ -3,6 +3,7 @@ using Esri.ArcGISRuntime.Data;
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
 using Esri.ArcGISRuntime.Symbology;
+using Esri.ArcGISRuntime.Tasks.NetworkAnalysis;
 using Esri.ArcGISRuntime.UI;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using TamuBusFeed;
 using TamuBusFeed.Models;
 using Windows.Foundation;
@@ -31,7 +33,7 @@ namespace AggieMove.Views
 	/// </summary>
 	public sealed partial class ExploreView : Page
 	{
-        public ObservableCollection<Route> Routes = new ObservableCollection<Route>();
+        public ObservableCollection<TamuBusFeed.Models.Route> Routes = new ObservableCollection<TamuBusFeed.Models.Route>();
 
         public ExploreView()
         {
@@ -41,13 +43,17 @@ namespace AggieMove.Views
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Routes.Clear();
-            foreach (Route r in await TamuBusFeedApi.GetRoutes())
+            foreach (TamuBusFeed.Models.Route r in await TamuBusFeedApi.GetRoutes())
             {
                 Routes.Add(r);
             }
 
             Point currentLoc = await SpatialHelper.GetCurrentLocation();
             LoadMap(currentLoc.Y, currentLoc.X);
+
+            var route = await LoadRouter();
+            if (route != null)
+                MapGraphics.Graphics.Add(new Graphic(route.Routes[0].RouteGeometry));
 
             SpatialHelper.Geolocator.PositionChanged += Geolocator_PositionChanged;
         }
@@ -65,6 +71,41 @@ namespace AggieMove.Views
                 );
                 MapGraphics.Graphics.Add(stopPoint);
             });
+        }
+
+        private async Task<RouteResult> LoadRouter()
+		{
+            var routeSourceUri = new Uri("https://gis.tamu.edu/arcgis/rest/services/Routing/20201126/NAServer/Route");
+            var routeTask = await RouteTask.CreateAsync(routeSourceUri);
+
+            // get the default route parameters
+            var routeParams = await routeTask.CreateDefaultParametersAsync();
+            // explicitly set values for some params
+            routeParams.ReturnDirections = true;
+            routeParams.ReturnRoutes = true;
+            routeParams.OutputSpatialReference = MainMapView.SpatialReference;
+
+            // create a Stop for my location
+            var curLoc = await SpatialHelper.GetCurrentLocation();
+            var myLocation = new MapPoint(curLoc.X, curLoc.Y, SpatialReferences.Wgs84);
+            var stop1 = new Esri.ArcGISRuntime.Tasks.NetworkAnalysis.Stop(myLocation);
+
+            // create a Stop for your location
+            var yourLocation = new MapPoint(-96.34131, 30.61247, SpatialReferences.Wgs84);
+            var stop2 = new Esri.ArcGISRuntime.Tasks.NetworkAnalysis.Stop(yourLocation);
+
+            // assign the stops to the route parameters
+            var stopPoints = new List<Esri.ArcGISRuntime.Tasks.NetworkAnalysis.Stop> { stop1, stop2 };
+            routeParams.SetStops(stopPoints);
+
+            try
+            {
+                return await routeTask.SolveRouteAsync(routeParams);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public void LoadMap(double lat, double lon)
