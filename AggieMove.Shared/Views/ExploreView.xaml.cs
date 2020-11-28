@@ -33,8 +33,6 @@ namespace AggieMove.Views
 	/// </summary>
 	public sealed partial class ExploreView : Page
 	{
-        public ObservableCollection<TamuBusFeed.Models.Route> Routes = new ObservableCollection<TamuBusFeed.Models.Route>();
-
         public ExploreView()
         {
             this.InitializeComponent();
@@ -42,12 +40,6 @@ namespace AggieMove.Views
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            Routes.Clear();
-            foreach (TamuBusFeed.Models.Route r in await TamuBusFeedApi.GetRoutes())
-            {
-                Routes.Add(r);
-            }
-
             Point currentLoc = await SpatialHelper.GetCurrentLocation();
             LoadMap(currentLoc.Y, currentLoc.X);
 

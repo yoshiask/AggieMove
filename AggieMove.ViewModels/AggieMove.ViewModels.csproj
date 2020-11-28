@@ -5,8 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Flurl.Http" Version="3.0.0" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.0-preview4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TamuBusFeed\TamuBusFeed.csproj" />
   </ItemGroup>
 
 </Project>

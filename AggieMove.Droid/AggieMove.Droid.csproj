@@ -95,6 +95,10 @@
     <AndroidResource Include="Resources\values\Styles.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AggieMove.ViewModels\AggieMove.ViewModels.csproj">
+      <Project>{b50efb9a-a6cc-4108-ab49-1fba00272f3e}</Project>
+      <Name>AggieMove.ViewModels</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TamuBusFeed\TamuBusFeed.csproj">
       <Project>{8a118c53-3bfe-4919-a396-dc673cdffd9d}</Project>
       <Name>TamuBusFeed</Name>

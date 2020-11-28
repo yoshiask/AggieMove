@@ -8,9 +8,22 @@
     xmlns:ArcGIS="using:Esri.ArcGISRuntime.UI.Controls"
     xmlns:ArcGISUI="using:Esri.ArcGISRuntime.UI"
     xmlns:models="using:TamuBusFeed.Models"
+    xmlns:viewmodels="using:AggieMove.ViewModels"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Loaded="Page_Loaded">
+
+    <interactivity:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{x:Bind ViewModel.LoadRoutesCommand}"/>
+        </core:EventTriggerBehavior>
+    </interactivity:Interaction.Behaviors>
+
+    <Page.DataContext>
+        <viewmodels:ExploreViewModel x:Name="ViewModel" />
+    </Page.DataContext>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -37,7 +50,8 @@
             </ArcGIS:MapView>
         </Grid>
 
-        <ListView Grid.Row="2" ItemsSource="{x:Bind Routes, Mode=OneWay}">
+        <ProgressRing Grid.Row="2" Visibility="{x:Bind ViewModel.LoadRoutesCommand.IsRunning, Mode=OneWay}"/>
+        <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.Routes}" SelectedItem="{x:Bind ViewModel.SelectedRoute, Mode=TwoWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Route">
                     <Grid>
@@ -52,4 +66,10 @@
             </ListView.ItemTemplate>
         </ListView>
     </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Icon="Refresh" Label="Refresh" Command="{x:Bind ViewModel.LoadRoutesCommand}"/>
+        </CommandBar>
+    </Page.BottomAppBar>
 </Page>

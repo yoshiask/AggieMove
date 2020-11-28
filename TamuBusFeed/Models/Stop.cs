@@ -1,11 +1,42 @@
-﻿namespace TamuBusFeed.Models
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+
+namespace TamuBusFeed.Models
 {
-	public class Stop
+	public class Stop : ObservableObject
 	{
-		public string Key { get; set; }
-		public int Rank { get; set; }
-		public string Name { get; set; }
-		public string StopCode { get; set; }
-		public bool IsTimeCode{ get; set; }
+		private string key;
+		public string Key
+		{
+			get => key;
+			set => SetProperty(ref key, value);
+		}
+
+		private int rank;
+		public int Rank
+		{
+			get => rank;
+			set => SetProperty(ref rank, value);
+		}
+
+		private string name;
+		public string Name
+		{
+			get => name;
+			set => SetProperty(ref name, value);
+		}
+
+		private string stopCode;
+		public string StopCode
+		{
+			get => stopCode;
+			set => SetProperty(ref stopCode, value);
+		}
+
+		private bool isTimeCode;
+		public bool IsTimeCode
+		{
+			get => isTimeCode;
+			set => SetProperty(ref isTimeCode, value);
+		}
 	}
 }

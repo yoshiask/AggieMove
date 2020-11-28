@@ -1,15 +1,71 @@
-﻿namespace TamuBusFeed.Models
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+
+namespace TamuBusFeed.Models
 {
-	public class PatternElement
+	public class PatternElement : ObservableObject
 	{
-		public string Key { get; set; }
-		public string Name { get; set; }
-		public string Description { get; set; }
-		public int Rank { get; set; }
-		public double Longitude { get; set; }
-		public double Latitude { get; set; }
-		public int PointTypeCode { get; set; }
-		public int RouteHeaderRank { get; set; }
-		public Stop Stop { get; set; }
+		private string key;
+		public string Key
+		{
+			get => key;
+			set => SetProperty(ref key, value);
+		}
+
+		private string name;
+		public string Name
+		{
+			get => name;
+			set => SetProperty(ref name, value);
+		}
+
+		private string description;
+		public string Description
+		{
+			get => description;
+			set => SetProperty(ref description, value);
+		}
+
+		private int rank;
+		public int Rank
+		{
+			get => rank;
+			set => SetProperty(ref rank, value);
+		}
+
+		private double longitude;
+		public double Longitude
+		{
+			get => longitude;
+			set => SetProperty(ref longitude, value);
+		}
+
+		private double latitude;
+		public double Latitude
+		{
+			get => latitude;
+			set => SetProperty(ref latitude, value);
+		}
+
+		private int pointTypeCode;
+		public int PointTypeCode
+		{
+			get => pointTypeCode;
+			set => SetProperty(ref pointTypeCode, value);
+		}
+
+		private int routeHeaderRank;
+		public int RouteHeaderRank
+		{
+			get => routeHeaderRank;
+			set => SetProperty(ref routeHeaderRank, value);
+		}
+
+		private Stop stop;
+		public Stop Stop
+		{
+			get => stop;
+			set => SetProperty(ref stop, value);
+		}
+
 	}
 }

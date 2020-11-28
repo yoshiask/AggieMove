@@ -1,10 +1,35 @@
-﻿namespace TamuBusFeed.Models
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+
+namespace TamuBusFeed.Models
 {
-	public class TimeTableOverride
+	public class TimeTableOverride : ObservableObject
 	{
-		public bool Enabled { get; set; }
-		public double Before { get; set; }
-		public bool During { get; set; }
-		public double After { get; set; }
+		private bool enabled;
+		public bool Enabled
+		{
+			get => enabled;
+			set => SetProperty(ref enabled, value);
+		}
+
+		private double before;
+		public double Before
+		{
+			get => before;
+			set => SetProperty(ref before, value);
+		}
+
+		private bool during;
+		public bool During
+		{
+			get => during;
+			set => SetProperty(ref during, value);
+		}
+
+		private double after;
+		public double After
+		{
+			get => after;
+			set => SetProperty(ref after, value);
+		}
 	}
 }
