@@ -157,6 +157,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\AggieMove.Services\AggieMove.Services.csproj">
+      <Project>{efd8b159-36a3-4bf8-9e37-af7ea3d810af}</Project>
+      <Name>AggieMove.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AggieMove.ViewModels\AggieMove.ViewModels.csproj">
       <Project>{b50efb9a-a6cc-4108-ab49-1fba00272f3e}</Project>
       <Name>AggieMove.ViewModels</Name>

@@ -46,6 +46,7 @@
     <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="1.3.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AggieMove.Services\AggieMove.Services.csproj" />
     <ProjectReference Include="..\AggieMove.ViewModels\AggieMove.ViewModels.csproj" />
     <ProjectReference Include="..\TamuBusFeed\TamuBusFeed.csproj" />
   </ItemGroup>

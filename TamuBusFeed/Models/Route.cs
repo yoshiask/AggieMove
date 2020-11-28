@@ -1,4 +1,5 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+using System.Collections.Generic;
 
 namespace TamuBusFeed.Models
 {
@@ -39,8 +40,8 @@ namespace TamuBusFeed.Models
             set => SetProperty(ref color, value);
         }
 
-        private Pattern pattern;
-        public Pattern Pattern
+        private List<Pattern> pattern;
+        public List<Pattern> Pattern
         {
             get => pattern;
             set => SetProperty(ref pattern, value);

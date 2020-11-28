@@ -22,7 +22,7 @@
     </interactivity:Interaction.Behaviors>
 
     <Page.DataContext>
-        <viewmodels:ExploreViewModel x:Name="ViewModel" />
+        <viewmodels:ExploreViewModel x:Name="ViewModel"/>
     </Page.DataContext>
 
     <Grid>
@@ -64,6 +64,11 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="SelectionChanged">
+                    <core:InvokeCommandAction Command="{x:Bind ViewModel.ViewRouteCommand}"/>
+                </core:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
         </ListView>
     </Grid>
 

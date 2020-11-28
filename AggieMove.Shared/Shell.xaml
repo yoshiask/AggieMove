@@ -1,0 +1,150 @@
+<Page
+    x:Class="AggieMove.Shell"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AggieMove"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:AggieMove.ViewModels"
+    mc:Ignorable="d">
+    
+    <Page.DataContext>
+        <viewmodels:ShellViewModel x:Name="ViewModel"/>
+    </Page.DataContext>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <NavigationView x:Name="MainNav" PaneDisplayMode="Auto" IsBackButtonVisible="Collapsed"
+                        SelectionChanged="NavigationView_SelectionChanged"
+                        MenuItemsSource="{x:Bind ViewModel.PageInfos, Mode=TwoWay}"
+                        SelectedItem="{x:Bind ViewModel.SelectedPage, Mode=TwoWay}">
+
+            <NavigationView.PaneHeader>
+                <Viewbox x:Name="HeaderLogo" HorizontalAlignment="Left">
+                    <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Width="200" Height="50">
+                        <Canvas Name="g127">
+                            <Canvas.RenderTransform>
+                                <MatrixTransform Matrix="5.86249, 0, 0, 1.16415, -38.6541, -2.92959"/>
+                            </Canvas.RenderTransform>
+                            <Canvas Name="g85">
+                                <Canvas.RenderTransform>
+                                    <MatrixTransform Matrix="5.68587, 0, -0.198555, 28.6332, 8.20318, 31.4478"/>
+                                </Canvas.RenderTransform>
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M0.618 -0.663L0.583 -0.034L0.677 -0.034L0.67 -0L0.342 -0L0.349 -0.034L0.431 -0.034L0.44 -0.189L0.234 -0.189L0.103 -0.034L0.204 -0.034L0.196 -0L-0.015 -0L-0.008 -0.034L0.059 -0.034L0.585 -0.663L0.618 -0.663ZM0.442 -0.223L0.455 -0.452L0.453 -0.454L0.262 -0.223L0.442 -0.223Z"/>
+                            </Canvas>
+                            <Canvas Name="g89">
+                                <Canvas.RenderTransform>
+                                    <MatrixTransform Matrix="5.68587, 0, -0.198555, 28.6332, 11.8649, 31.4478"/>
+                                </Canvas.RenderTransform>
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M0.11 -0.162C0.088 -0.186 0.077 -0.212 0.077 -0.24C0.077 -0.284 0.099 -0.321 0.141 -0.351C0.184 -0.38 0.231 -0.395 0.281 -0.395C0.343 -0.395 0.395 -0.373 0.437 -0.328C0.452 -0.382 0.473 -0.409 0.501 -0.409C0.513 -0.409 0.523 -0.405 0.531 -0.397C0.539 -0.389 0.543 -0.379 0.543 -0.366C0.543 -0.352 0.539 -0.342 0.531 -0.335C0.523 -0.328 0.514 -0.324 0.505 -0.324L0.474 -0.334C0.468 -0.334 0.463 -0.33 0.459 -0.322C0.456 -0.314 0.454 -0.308 0.454 -0.303C0.454 -0.302 0.456 -0.296 0.458 -0.285C0.461 -0.274 0.463 -0.266 0.463 -0.259C0.463 -0.216 0.443 -0.18 0.403 -0.151C0.362 -0.122 0.314 -0.107 0.259 -0.107C0.209 -0.107 0.167 -0.119 0.131 -0.144C0.1 -0.116 0.085 -0.092 0.085 -0.073C0.085 -0.058 0.094 -0.048 0.112 -0.043C0.13 -0.039 0.157 -0.037 0.192 -0.037C0.273 -0.037 0.328 -0.035 0.356 -0.031C0.384 -0.028 0.408 -0.017 0.427 0C0.447 0.018 0.457 0.04 0.457 0.067C0.457 0.12 0.431 0.165 0.378 0.201C0.326 0.238 0.254 0.256 0.161 0.256C0.101 0.256 0.053 0.247 0.018 0.229C-0.017 0.211 -0.034 0.186 -0.034 0.154C-0.034 0.115 0.002 0.082 0.073 0.053C0.04 0.031 0.023 0.003 0.023 -0.033C0.023 -0.081 0.052 -0.124 0.11 -0.162ZM0.291 -0.368C0.274 -0.368 0.259 -0.362 0.246 -0.35C0.232 -0.338 0.221 -0.311 0.212 -0.27C0.203 -0.228 0.198 -0.199 0.198 -0.183C0.198 -0.15 0.214 -0.134 0.244 -0.134C0.281 -0.134 0.306 -0.159 0.32 -0.21C0.334 -0.262 0.341 -0.298 0.341 -0.321C0.341 -0.333 0.337 -0.344 0.328 -0.354C0.32 -0.363 0.308 -0.368 0.291 -0.368ZM0.097 0.066C0.072 0.084 0.06 0.106 0.06 0.131C0.06 0.156 0.072 0.178 0.094 0.198C0.117 0.217 0.152 0.226 0.199 0.226C0.246 0.226 0.287 0.217 0.323 0.198C0.359 0.18 0.377 0.156 0.377 0.127C0.377 0.112 0.37 0.101 0.355 0.093C0.341 0.086 0.297 0.082 0.225 0.082C0.171 0.082 0.129 0.077 0.097 0.066Z"/>
+                            </Canvas>
+                            <Canvas Name="g93">
+                                <Canvas.RenderTransform>
+                                    <MatrixTransform Matrix="5.68587, 0, -0.198555, 28.6332, 14.4633, 31.4478"/>
+                                </Canvas.RenderTransform>
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M0.11 -0.162C0.088 -0.186 0.077 -0.212 0.077 -0.24C0.077 -0.284 0.099 -0.321 0.141 -0.351C0.184 -0.38 0.231 -0.395 0.281 -0.395C0.343 -0.395 0.395 -0.373 0.437 -0.328C0.452 -0.382 0.473 -0.409 0.501 -0.409C0.513 -0.409 0.523 -0.405 0.531 -0.397C0.539 -0.389 0.543 -0.379 0.543 -0.366C0.543 -0.352 0.539 -0.342 0.531 -0.335C0.523 -0.328 0.514 -0.324 0.505 -0.324L0.474 -0.334C0.468 -0.334 0.463 -0.33 0.459 -0.322C0.456 -0.314 0.454 -0.308 0.454 -0.303C0.454 -0.302 0.456 -0.296 0.458 -0.285C0.461 -0.274 0.463 -0.266 0.463 -0.259C0.463 -0.216 0.443 -0.18 0.403 -0.151C0.362 -0.122 0.314 -0.107 0.259 -0.107C0.209 -0.107 0.167 -0.119 0.131 -0.144C0.1 -0.116 0.085 -0.092 0.085 -0.073C0.085 -0.058 0.094 -0.048 0.112 -0.043C0.13 -0.039 0.157 -0.037 0.192 -0.037C0.273 -0.037 0.328 -0.035 0.356 -0.031C0.384 -0.028 0.408 -0.017 0.427 0C0.447 0.018 0.457 0.04 0.457 0.067C0.457 0.12 0.431 0.165 0.378 0.201C0.326 0.238 0.254 0.256 0.161 0.256C0.101 0.256 0.053 0.247 0.018 0.229C-0.017 0.211 -0.034 0.186 -0.034 0.154C-0.034 0.115 0.002 0.082 0.073 0.053C0.04 0.031 0.023 0.003 0.023 -0.033C0.023 -0.081 0.052 -0.124 0.11 -0.162ZM0.291 -0.368C0.274 -0.368 0.259 -0.362 0.246 -0.35C0.232 -0.338 0.221 -0.311 0.212 -0.27C0.203 -0.228 0.198 -0.199 0.198 -0.183C0.198 -0.15 0.214 -0.134 0.244 -0.134C0.281 -0.134 0.306 -0.159 0.32 -0.21C0.334 -0.262 0.341 -0.298 0.341 -0.321C0.341 -0.333 0.337 -0.344 0.328 -0.354C0.32 -0.363 0.308 -0.368 0.291 -0.368ZM0.097 0.066C0.072 0.084 0.06 0.106 0.06 0.131C0.06 0.156 0.072 0.178 0.094 0.198C0.117 0.217 0.152 0.226 0.199 0.226C0.246 0.226 0.287 0.217 0.323 0.198C0.359 0.18 0.377 0.156 0.377 0.127C0.377 0.112 0.37 0.101 0.355 0.093C0.341 0.086 0.297 0.082 0.225 0.082C0.171 0.082 0.129 0.077 0.097 0.066Z"/>
+                            </Canvas>
+                            <Canvas Name="g97">
+                                <Canvas.RenderTransform>
+                                    <MatrixTransform Matrix="5.68587, 0, -0.198555, 28.6332, 17.0617, 31.4478"/>
+                                </Canvas.RenderTransform>
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M0.27 -0.393L0.191 -0.081C0.191 -0.08 0.19 -0.076 0.188 -0.069C0.187 -0.062 0.186 -0.057 0.186 -0.054C0.186 -0.045 0.19 -0.04 0.199 -0.04C0.227 -0.04 0.253 -0.072 0.278 -0.137L0.304 -0.118C0.271 -0.032 0.22 0.011 0.149 0.011C0.087 0.011 0.056 -0.011 0.056 -0.054C0.056 -0.067 0.059 -0.083 0.064 -0.104L0.13 -0.356L0.069 -0.356L0.076 -0.386L0.144 -0.386C0.166 -0.386 0.189 -0.387 0.213 -0.39L0.246 -0.393L0.27 -0.393Z"/>
+                            </Canvas>
+                            <Canvas Name="g101">
+                                <Canvas.RenderTransform>
+                                    <MatrixTransform Matrix="5.68587, 0, -0.198555, 28.6332, 18.4163, 31.4478"/>
+                                </Canvas.RenderTransform>
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M0.426 -0.131L0.451 -0.114C0.393 -0.03 0.311 0.011 0.206 0.011C0.148 0.011 0.105 -0.003 0.077 -0.033C0.048 -0.062 0.034 -0.097 0.034 -0.137C0.034 -0.2 0.061 -0.258 0.114 -0.313C0.167 -0.368 0.237 -0.395 0.324 -0.395C0.367 -0.395 0.4 -0.386 0.422 -0.369C0.444 -0.351 0.455 -0.327 0.455 -0.297C0.455 -0.204 0.366 -0.161 0.187 -0.168C0.176 -0.125 0.171 -0.095 0.171 -0.077C0.171 -0.042 0.192 -0.024 0.233 -0.024C0.305 -0.024 0.369 -0.06 0.426 -0.131ZM0.195 -0.195C0.259 -0.192 0.303 -0.204 0.326 -0.231C0.349 -0.258 0.361 -0.285 0.361 -0.312C0.361 -0.328 0.356 -0.341 0.347 -0.352C0.338 -0.363 0.324 -0.368 0.305 -0.368C0.278 -0.368 0.256 -0.354 0.24 -0.327C0.223 -0.299 0.208 -0.255 0.195 -0.195Z"/>
+                            </Canvas>
+                            <Canvas Name="g105">
+                                <Canvas.RenderTransform>
+                                    <MatrixTransform Matrix="5.68587, 0, -0.198555, 28.6332, 20.7204, 31.4478"/>
+                                </Canvas.RenderTransform>
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M0.642 -0.66L0.602 -0.468L0.568 -0.468C0.56 -0.58 0.506 -0.636 0.406 -0.636C0.371 -0.636 0.342 -0.628 0.32 -0.611C0.298 -0.594 0.287 -0.574 0.287 -0.549C0.287 -0.527 0.296 -0.507 0.315 -0.49C0.333 -0.473 0.363 -0.456 0.405 -0.439C0.446 -0.422 0.479 -0.406 0.503 -0.392C0.527 -0.377 0.548 -0.357 0.565 -0.33C0.582 -0.303 0.591 -0.268 0.591 -0.226C0.591 -0.159 0.565 -0.103 0.515 -0.057C0.464 -0.012 0.404 0.011 0.335 0.011C0.302 0.011 0.274 0.007 0.252 -0.002C0.205 -0.023 0.173 -0.033 0.156 -0.033C0.136 -0.033 0.12 -0.023 0.108 -0.002L0.071 -0.002L0.114 -0.206L0.147 -0.206C0.156 -0.145 0.178 -0.099 0.214 -0.069C0.249 -0.038 0.29 -0.023 0.338 -0.023C0.384 -0.023 0.421 -0.037 0.448 -0.064C0.475 -0.092 0.489 -0.123 0.489 -0.158C0.489 -0.18 0.481 -0.2 0.465 -0.217C0.45 -0.235 0.411 -0.256 0.35 -0.28C0.288 -0.303 0.246 -0.332 0.221 -0.364C0.197 -0.396 0.185 -0.432 0.185 -0.472C0.185 -0.526 0.206 -0.572 0.249 -0.611C0.292 -0.65 0.344 -0.67 0.406 -0.67C0.429 -0.67 0.447 -0.668 0.462 -0.665C0.477 -0.661 0.497 -0.655 0.521 -0.646C0.546 -0.637 0.561 -0.633 0.567 -0.633C0.582 -0.633 0.596 -0.642 0.608 -0.66L0.642 -0.66Z"/>
+                            </Canvas>
+                            <Canvas Name="g109">
+                                <Canvas.RenderTransform>
+                                    <MatrixTransform Matrix="5.68587, 0, -0.198555, 28.6332, 23.9102, 31.4478"/>
+                                </Canvas.RenderTransform>
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M0.002 0.217L0.146 -0.356L0.061 -0.356L0.069 -0.386L0.169 -0.386C0.193 -0.386 0.216 -0.388 0.239 -0.391L0.27 -0.395L0.287 -0.395L0.272 -0.335L0.274 -0.333C0.309 -0.374 0.349 -0.395 0.396 -0.395C0.436 -0.395 0.471 -0.382 0.501 -0.354C0.532 -0.327 0.547 -0.289 0.547 -0.238C0.547 -0.17 0.524 -0.112 0.477 -0.063C0.431 -0.015 0.375 0.009 0.31 0.009C0.264 0.009 0.228 -0.009 0.2 -0.046L0.133 0.217L2.089 0.217L2.082 0.247L-0.08 0.247L-0.073 0.217L0.002 0.217ZM0.255 -0.266L0.212 -0.095C0.218 -0.069 0.229 -0.05 0.244 -0.037C0.259 -0.024 0.276 -0.018 0.295 -0.018C0.312 -0.018 0.327 -0.026 0.341 -0.041C0.354 -0.056 0.371 -0.103 0.39 -0.181C0.409 -0.259 0.419 -0.309 0.419 -0.329C0.419 -0.339 0.416 -0.348 0.409 -0.356C0.402 -0.364 0.392 -0.368 0.378 -0.368C0.351 -0.368 0.324 -0.354 0.298 -0.324C0.272 -0.295 0.257 -0.276 0.255 -0.266Z"/>
+                            </Canvas>
+                            <Canvas Name="g113">
+                                <Canvas.RenderTransform>
+                                    <MatrixTransform Matrix="5.68587, 0, -0.198555, 28.6332, 26.8056, 31.4478"/>
+                                </Canvas.RenderTransform>
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M0.152 -0.556C0.152 -0.575 0.159 -0.592 0.173 -0.605C0.187 -0.619 0.204 -0.626 0.223 -0.626C0.242 -0.626 0.258 -0.619 0.272 -0.605C0.286 -0.592 0.293 -0.575 0.293 -0.556C0.293 -0.537 0.286 -0.52 0.272 -0.506C0.259 -0.492 0.242 -0.485 0.223 -0.485C0.204 -0.485 0.187 -0.492 0.173 -0.506C0.159 -0.52 0.152 -0.537 0.152 -0.556ZM0.27 -0.393L0.191 -0.081C0.191 -0.08 0.19 -0.076 0.188 -0.069C0.187 -0.062 0.186 -0.057 0.186 -0.054C0.186 -0.045 0.19 -0.04 0.199 -0.04C0.227 -0.04 0.253 -0.072 0.278 -0.137L0.304 -0.118C0.271 -0.032 0.22 0.011 0.149 0.011C0.087 0.011 0.056 -0.011 0.056 -0.054C0.056 -0.067 0.059 -0.083 0.064 -0.104L0.13 -0.356L0.069 -0.356L0.076 -0.386L0.144 -0.386C0.166 -0.386 0.189 -0.387 0.213 -0.39L0.246 -0.393L0.27 -0.393Z"/>
+                            </Canvas>
+                            <Canvas Name="g117">
+                                <Canvas.RenderTransform>
+                                    <MatrixTransform Matrix="5.68587, 0, -0.198555, 28.6332, 28.1602, 31.4478"/>
+                                </Canvas.RenderTransform>
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M0.051 -0L0.142 -0.358L0.07 -0.358L0.077 -0.388L0.157 -0.388C0.178 -0.388 0.201 -0.389 0.226 -0.392L0.262 -0.395L0.283 -0.395L0.257 -0.298L0.259 -0.296C0.303 -0.362 0.349 -0.395 0.396 -0.395C0.416 -0.395 0.433 -0.389 0.448 -0.378C0.462 -0.367 0.469 -0.351 0.469 -0.33C0.469 -0.313 0.463 -0.299 0.451 -0.288C0.439 -0.277 0.426 -0.272 0.413 -0.272C0.393 -0.272 0.376 -0.281 0.362 -0.3C0.349 -0.319 0.338 -0.328 0.331 -0.328C0.316 -0.328 0.297 -0.311 0.275 -0.276C0.252 -0.242 0.233 -0.195 0.218 -0.136L0.182 -0L0.051 -0Z"/>
+                            </Canvas>
+                            <Canvas Name="g121">
+                                <Canvas.RenderTransform>
+                                    <MatrixTransform Matrix="5.68587, 0, -0.198555, 28.6332, 30.4005, 31.4478"/>
+                                </Canvas.RenderTransform>
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M0.152 -0.556C0.152 -0.575 0.159 -0.592 0.173 -0.605C0.187 -0.619 0.204 -0.626 0.223 -0.626C0.242 -0.626 0.258 -0.619 0.272 -0.605C0.286 -0.592 0.293 -0.575 0.293 -0.556C0.293 -0.537 0.286 -0.52 0.272 -0.506C0.259 -0.492 0.242 -0.485 0.223 -0.485C0.204 -0.485 0.187 -0.492 0.173 -0.506C0.159 -0.52 0.152 -0.537 0.152 -0.556ZM0.27 -0.393L0.191 -0.081C0.191 -0.08 0.19 -0.076 0.188 -0.069C0.187 -0.062 0.186 -0.057 0.186 -0.054C0.186 -0.045 0.19 -0.04 0.199 -0.04C0.227 -0.04 0.253 -0.072 0.278 -0.137L0.304 -0.118C0.271 -0.032 0.22 0.011 0.149 0.011C0.087 0.011 0.056 -0.011 0.056 -0.054C0.056 -0.067 0.059 -0.083 0.064 -0.104L0.13 -0.356L0.069 -0.356L0.076 -0.386L0.144 -0.386C0.166 -0.386 0.189 -0.387 0.213 -0.39L0.246 -0.393L0.27 -0.393Z"/>
+                            </Canvas>
+                            <Canvas Name="g125">
+                                <Canvas.RenderTransform>
+                                    <MatrixTransform Matrix="5.68587, 0, -0.198555, 28.6332, 31.7551, 31.4478"/>
+                                </Canvas.RenderTransform>
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M1.271 -0.386L1.265 -0.356L0.266 -0.356L0.198 -0.089C0.195 -0.077 0.194 -0.068 0.194 -0.06C0.194 -0.047 0.201 -0.041 0.214 -0.041C0.258 -0.041 0.299 -0.079 0.334 -0.154L0.364 -0.144C0.323 -0.045 0.259 0.005 0.172 0.005C0.14 0.005 0.115 -0.003 0.096 -0.019C0.078 -0.035 0.069 -0.053 0.069 -0.073C0.069 -0.082 0.069 -0.091 0.07 -0.098C0.071 -0.105 0.076 -0.125 0.084 -0.158L0.133 -0.356L0.063 -0.356L0.071 -0.386L0.141 -0.386L0.168 -0.488L0.302 -0.501L0.273 -0.386L1.271 -0.386Z"/>
+                            </Canvas>
+                        </Canvas>
+                        <Canvas Name="Star">
+                            <Canvas.RenderTransform>
+                                <MatrixTransform Matrix="1, 0, -0.267949, 1, 3.85558, 1.77636e-15"/>
+                            </Canvas.RenderTransform>
+                            <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M71.832 11.939L77.126 11.939L72.843 15.098L74.484 20.225L70.188 17.057L65.892 20.225L67.533 15.098L63.25 11.939L68.544 11.939L70.188 6.802L71.832 11.939ZM70.188 8.464L68.914 12.446L70.188 14.226L64.79 12.446C64.79 12.446 68.126 14.906 68.126 14.906L70.188 14.226L66.852 18.888L70.188 16.427L70.188 14.226L73.524 18.888L72.25 14.906L70.188 14.226L75.586 12.446L71.462 12.446L70.188 14.226L70.188 8.464Z"/>
+                        </Canvas>
+                        <Canvas Name="g134">
+                            <Canvas.RenderTransform>
+                                <MatrixTransform Matrix="1, 0, 0, 1, 0, 0.520833"/>
+                            </Canvas.RenderTransform>
+                            <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M30.293 12.098L59.076 12.098L59.076 11.057L30.293 11.057L30.293 12.098Z"/>
+                        </Canvas>
+                        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M33.545 36.399L100.521 36.399L100.521 35.357L33.545 35.357L33.545 36.399Z"/>
+                        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M112.281 27.811L58.555 27.811L58.555 26.561L112.281 26.561L112.281 27.811Z"/>
+                        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M71.968 12.46L88.554 12.46L88.554 11.418L71.968 11.418L71.968 12.46Z"/>
+                        <Canvas Name="g144">
+                            <Canvas.RenderTransform>
+                                <MatrixTransform Matrix="1, 0, 0, 1, -0.0105835, 0.543123"/>
+                            </Canvas.RenderTransform>
+                            <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M104.47 12.196L181.882 12.196L181.882 11.154L104.47 11.154L104.47 12.196Z"/>
+                        </Canvas>
+                        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M132.876 27.392L181.882 27.392L181.882 26.35L132.876 26.35L132.876 27.392Z"/>
+                    </Canvas>
+                </Viewbox>
+            </NavigationView.PaneHeader>
+
+            <!--<NavigationView.MenuItems>
+                <NavigationViewItem Icon="Street" Content="Explore"/>
+            </NavigationView.MenuItems>-->
+
+            <NavigationView.MenuItemTemplate>
+                <DataTemplate x:DataType="viewmodels:PageInfoBase">
+                    <NavigationViewItem Content="{x:Bind Title}" ToolTipService.ToolTip="{x:Bind Tooltip}">
+                        <NavigationViewItem.Icon>
+                            <FontIcon Glyph="{x:Bind Glyph}"/>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                </DataTemplate>
+            </NavigationView.MenuItemTemplate>
+
+            <Frame x:Name="MainFrame"/>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState x:Name="Normal"/>
+                    <VisualState x:Name="Compact">
+                        <VisualState.Setters>
+                            <Setter Target="MainNav.PaneDisplayMode" Value="LeftCompact"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+        </NavigationView>
+    </Grid>
+</Page>

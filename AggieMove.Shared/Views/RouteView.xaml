@@ -1,0 +1,37 @@
+﻿<Page
+    x:Class="AggieMove.Views.RouteView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AggieMove.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:AggieMove.ViewModels"
+    xmlns:models="using:TamuBusFeed.Models"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.DataContext>
+        <viewmodels:RouteViewModel x:Name="ViewModel"/>
+    </Page.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="{x:Bind ViewModel.SelectedRoute.Name}" Padding="10"
+                   FontSize="28" FontWeight="Bold"/>
+
+        <ListView ItemsSource="{x:Bind ViewModel.SelectedRoute.Pattern}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:Pattern">
+                    <ListViewItem Content="{x:Bind Name}">
+                        
+                    </ListViewItem>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

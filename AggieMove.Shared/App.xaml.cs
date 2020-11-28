@@ -1,4 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -66,16 +68,24 @@ namespace AggieMove
 
 				// Place the frame in the current Window
 				Windows.UI.Xaml.Window.Current.Content = rootFrame;
+
+				// Register services
+				Ioc.Default.ConfigureServices(
+					new ServiceCollection()
+					.AddSingleton<Services.INavigationService, Services.NavigationService>()
+					//.AddSingleton<ISettingsService, SettingsService>()
+					.BuildServiceProvider());
 			}
 
 			if (e.PrelaunchActivated == false)
 			{
+                Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
 				if (rootFrame.Content == null)
 				{
 					// When the navigation stack isn't restored navigate to the first page,
 					// configuring the new page by passing required information as a navigation
 					// parameter
-					rootFrame.Navigate(typeof(MainPage), e.Arguments);
+					rootFrame.Navigate(typeof(Shell), e.Arguments);
 				}
 				// Ensure the current window is active
 				Windows.UI.Xaml.Window.Current.Activate();

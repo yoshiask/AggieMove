@@ -16,9 +16,9 @@ namespace TamuBusFeed
 
 		public static async Task<List<Route>> GetRoutes()
 		{
-			FlurlHttp.Configure(settings => {
-				settings.HttpClientFactory = new MyCustomHttpClientFactory();
-			});
+			//FlurlHttp.Configure(settings => {
+			//	settings.HttpClientFactory = new MyCustomHttpClientFactory();
+			//});
 
 			return await HOST_URL
 				.AppendPathSegments("routes")

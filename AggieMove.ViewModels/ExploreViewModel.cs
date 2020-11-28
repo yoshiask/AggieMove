@@ -1,4 +1,6 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using AggieMove.Services;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -12,7 +14,13 @@ namespace AggieMove.ViewModels
         public ExploreViewModel()
         {
             LoadRoutesCommand = new AsyncRelayCommand(LoadRoutesAsync);
+            ViewRouteCommand = new RelayCommand(ViewRoute);
         }
+
+        /// <summary>
+        /// The <see cref="INavigationService"/> instance currently in use.
+        /// </summary>
+        private readonly INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
 
         public ObservableCollection<Route> Routes { get; } = new ObservableCollection<Route>();
 
@@ -28,6 +36,11 @@ namespace AggieMove.ViewModels
         /// </summary>
         public IAsyncRelayCommand LoadRoutesCommand { get; }
 
+        /// <summary>
+        /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for showing route details.
+        /// </summary>
+        public IRelayCommand ViewRouteCommand { get; }
+
         public async Task LoadRoutesAsync()
         {
             Routes.Clear();
@@ -37,6 +50,11 @@ namespace AggieMove.ViewModels
                 r.Name = r.Name.Trim();
                 Routes.Add(r);
             }
+        }
+
+        public void ViewRoute()
+        {
+            NavigationService.Navigate("RouteView", SelectedRoute);
         }
     }
 }
