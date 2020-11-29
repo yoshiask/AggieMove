@@ -24,19 +24,15 @@ namespace AggieMove.Views
 			this.InitializeComponent();
 		}
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
 			ViewModel.SelectedRoute = e.Parameter as Route;
 
-            base.OnNavigatedTo(e);
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
             MapHelper.LoadMap(MainMapView, MapGraphics);
 
-            var legPoints = ViewModel.PatternElements.Select(p => new MapPoint(p.Longitude / 1000000, p.Latitude / 1000000));
-            var legPath = new PolylineBuilder(legPoints, SpatialReferences.Wgs84).ToGeometry();
+            await ViewModel.LoadPatternsAsync();
+            var legPoints = ViewModel.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, new SpatialReference(3857)));
+            var legPath = new PolylineBuilder(legPoints, new SpatialReference(3857)).ToGeometry();
             // create a simple line symbol to display the polyline
             var legLineSymbol = new SimpleLineSymbol(
                 SimpleLineSymbolStyle.Solid,
@@ -46,19 +42,30 @@ namespace AggieMove.Views
             MapGraphics.Graphics.Add(new Graphic(legPath, legLineSymbol));
 
             MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged);
+
+            base.OnNavigatedTo(e);
         }
+
         private async void Geolocator_PositionChanged(Windows.Devices.Geolocation.Geolocator sender, Windows.Devices.Geolocation.PositionChangedEventArgs args)
         {
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                MapGraphics.Graphics.Clear();
+                MapGraphics.Graphics.Where(g =>
+                {
+                    if (g.Attributes.ContainsKey("id"))
+                    {
+                        return (string)g.Attributes["id"] != "currentLocation";
+                    }
+                    return true;
+                });
 
-                var stopPoint = MapHelper.CreateRouteStop(
+                var currentLocation = MapHelper.CreateRouteStop(
                     args.Position.Coordinate.Point.Position.Latitude,
                     args.Position.Coordinate.Point.Position.Longitude,
                     System.Drawing.Color.Red
                 );
-                MapGraphics.Graphics.Add(stopPoint);
+                currentLocation.Attributes.Add("id", "currentLocation");
+                MapGraphics.Graphics.Add(currentLocation);
             });
         }
     }

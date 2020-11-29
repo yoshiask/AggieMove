@@ -33,6 +33,8 @@ namespace TamuBusFeed.Models
 		}
 
 		private double longitude;
+		// TODO: Let Transportation Services know that this property is misspelled in the API
+		[Newtonsoft.Json.JsonProperty("Longtitude")]
 		public double Longitude
 		{
 			get => longitude;

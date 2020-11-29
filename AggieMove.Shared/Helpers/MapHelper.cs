@@ -78,6 +78,7 @@ namespace AggieMove.Helpers
             if (currentLoc.HasValue)
             {
                 var currentLocPoint = CreateRouteStop(currentLoc.Value.Latitude, currentLoc.Value.Longitude, System.Drawing.Color.Red);
+                currentLocPoint.Attributes.Add("id", "currentLocation");
                 mapGraphics.Graphics.Add(currentLocPoint);
                 await mapView.SetViewpointCenterAsync(currentLoc.Value.Latitude, currentLoc.Value.Longitude);
                 await mapView.SetViewpointScaleAsync(2000);
