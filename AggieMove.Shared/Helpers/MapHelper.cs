@@ -13,7 +13,7 @@ namespace AggieMove.Helpers
 {
     public static class MapHelper
     {
-        public static readonly MapPoint TAMU_CENTER_POINT = new MapPoint(30.610190 , - 96.344800);
+        public static readonly MapPoint TAMU_CENTER_POINT = new MapPoint(30.610190 , -96.344800);
         public static readonly SpatialReference BUS_ROUTES_SR = new SpatialReference(3857);
 
         public static async Task<RouteResult> LoadRouter(MapView mapView)
@@ -52,7 +52,7 @@ namespace AggieMove.Helpers
             }
         }
 
-        public static void LoadMap(double lat, double lon, MapView mapView, GraphicsOverlay mapGraphics)
+        public static void LoadMap(double lat, double lon, MapView mapView)
         {
             mapView.Map = new Map(
                 BasemapType.ImageryWithLabels,
@@ -68,9 +68,9 @@ namespace AggieMove.Helpers
             var buildingsBLayer = new FeatureLayer(new ServiceFeatureTable(buildingsBUri));
             mapView.Map.OperationalLayers.Add(buildingsBLayer);
         }
-        public static void LoadMap(MapView mapView, GraphicsOverlay mapGraphics)
+        public static void LoadMap(MapView mapView)
         {
-            LoadMap(TAMU_CENTER_POINT.X, TAMU_CENTER_POINT.Y, mapView, mapGraphics);
+            LoadMap(TAMU_CENTER_POINT.X, TAMU_CENTER_POINT.Y, mapView);
         }
 
         public static async Task SetViewpointToCurrentLocation(MapView mapView, GraphicsOverlay mapGraphics, Windows.Foundation.TypedEventHandler<Windows.Devices.Geolocation.Geolocator, Windows.Devices.Geolocation.PositionChangedEventArgs> PositionChangedHandler, bool zoomToLocation = true)

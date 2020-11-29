@@ -9,11 +9,16 @@
     xmlns:ArcGISUI="using:Esri.ArcGISRuntime.UI"
     xmlns:models="using:TamuBusFeed.Models"
     xmlns:viewmodels="using:AggieMove.ViewModels"
+    xmlns:converters="using:AggieMove.Converters"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Loaded="Page_Loaded">
+
+    <Page.Resources>
+        <converters:CSSColorToWinUIColorConverter x:Name="CSSColorToWinUIColorConverter"/>
+    </Page.Resources>
 
     <interactivity:Interaction.Behaviors>
         <core:EventTriggerBehavior EventName="Loaded">
@@ -54,13 +59,23 @@
         <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.Routes}" SelectedItem="{x:Bind ViewModel.SelectedRoute, Mode=TwoWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Route">
-                    <Grid Padding="10">
+                    <Grid Padding="10" ColumnSpacing="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="{x:Bind Name}" FontSize="14" FontWeight="SemiBold"/>
-                        <TextBlock Text="{x:Bind Group.Name}" Grid.Row="2"/>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Padding="10" Grid.RowSpan="2">
+                            <Border.Background>
+                                <SolidColorBrush Color="{x:Bind Color, Converter={StaticResource CSSColorToWinUIColorConverter}, Mode=OneWay}"/>
+                            </Border.Background>
+                            <TextBlock Text="{x:Bind ShortName}" Foreground="White" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="{x:Bind Name}" FontSize="16" FontWeight="SemiBold" Grid.Column="1" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Group.Name}" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

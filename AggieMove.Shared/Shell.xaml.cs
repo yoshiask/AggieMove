@@ -2,6 +2,7 @@ using AggieMove.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System;
 using System.Linq;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -21,6 +22,19 @@ namespace AggieMove
             this.InitializeComponent();
 
             NavService.CurrentFrame = MainFrame;
+            SizeChanged += Shell_SizeChanged;
+        }
+
+        private void Shell_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width > 900)
+            {
+                VisualStateManager.GoToState(this, nameof(Normal), true);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, nameof(Compact), true);
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

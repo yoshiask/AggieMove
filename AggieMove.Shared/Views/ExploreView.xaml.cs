@@ -19,7 +19,7 @@ namespace AggieMove.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            MapHelper.LoadMap(MainMapView, MapGraphics);
+            MapHelper.LoadMap(MainMapView);
             MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged);
         }
 

@@ -6,14 +6,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:AggieMove.ViewModels"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    RequestedTheme="Light">
     
     <Page.DataContext>
         <viewmodels:ShellViewModel x:Name="ViewModel"/>
     </Page.DataContext>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <NavigationView x:Name="MainNav" PaneDisplayMode="Auto" IsBackButtonVisible="Collapsed"
+        <NavigationView x:Name="MainNav" PaneDisplayMode="Left" IsBackButtonVisible="Collapsed"
                         SelectionChanged="NavigationView_SelectionChanged"
                         MenuItemsSource="{x:Bind ViewModel.PageInfos, Mode=TwoWay}"
                         SelectedItem="{x:Bind ViewModel.SelectedPage, Mode=TwoWay}">
@@ -134,17 +135,17 @@
 
             <Frame x:Name="MainFrame"/>
 
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup>
-                    <VisualState x:Name="Normal"/>
-                    <VisualState x:Name="Compact">
-                        <VisualState.Setters>
-                            <Setter Target="MainNav.PaneDisplayMode" Value="LeftCompact"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
-
         </NavigationView>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Normal"/>
+                <VisualState x:Name="Compact">
+                    <VisualState.Setters>
+                        <Setter Target="MainNav.PaneDisplayMode" Value="LeftCompact"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

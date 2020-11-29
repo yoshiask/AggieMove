@@ -29,28 +29,32 @@ namespace AggieMove.Views
 			ViewModel.SelectedRoute = e.Parameter as Route;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            MapHelper.LoadMap(MainMapView, MapGraphics);
+            MapHelper.LoadMap(MainMapView);
 
             await ViewModel.LoadPatternsAsync();
             DrawingColor = ColorHelper.ParseCSSColorAsDrawingColor(ViewModel.SelectedRoute.Color);
 
-            var routePoints = ViewModel.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, MapHelper.BUS_ROUTES_SR));
-            var routePath = new PolylineBuilder(routePoints, MapHelper.BUS_ROUTES_SR).ToGeometry();
-            // Create a simple line symbol to display the polyline
-            var routeLineSymbol = new SimpleLineSymbol(
-                SimpleLineSymbolStyle.Solid, DrawingColor, 4.0
-            );
-            MapGraphics.Graphics.Add(new Graphic(routePath, routeLineSymbol));
-            await MainMapView.SetViewpointGeometryAsync(routePath);
-
-            foreach (PatternElement elem in ViewModel.Stops)
+            bool hasRoutePoints = ViewModel.PatternElements.Count != 0;
+            if (hasRoutePoints)
             {
-                var point = new MapPoint(elem.Longitude, elem.Latitude, MapHelper.BUS_ROUTES_SR);
-                var stop = MapHelper.CreateRouteStop(point, DrawingColor);
-                MapGraphics.Graphics.Add(stop);
+                var routePoints = ViewModel.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, MapHelper.BUS_ROUTES_SR));
+                var routePath = new PolylineBuilder(routePoints, MapHelper.BUS_ROUTES_SR).ToGeometry();
+                // Create a simple line symbol to display the polyline
+                var routeLineSymbol = new SimpleLineSymbol(
+                    SimpleLineSymbolStyle.Solid, DrawingColor, 4.0
+                );
+                MapGraphics.Graphics.Add(new Graphic(routePath, routeLineSymbol));
+                await MainMapView.SetViewpointGeometryAsync(routePath);
+
+                foreach (PatternElement elem in ViewModel.Stops)
+                {
+                    var point = new MapPoint(elem.Longitude, elem.Latitude, MapHelper.BUS_ROUTES_SR);
+                    var stop = MapHelper.CreateRouteStop(point, DrawingColor);
+                    MapGraphics.Graphics.Add(stop);
+                }
             }
 
-            MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, false);
+            MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, !hasRoutePoints);
 
             base.OnNavigatedTo(e);
         }

@@ -8,11 +8,16 @@
     xmlns:ArcGIS="using:Esri.ArcGISRuntime.UI.Controls"
     xmlns:ArcGISUI="using:Esri.ArcGISRuntime.UI"
     xmlns:viewmodels="using:AggieMove.ViewModels"
+    xmlns:converters="using:AggieMove.Converters"
     xmlns:models="using:TamuBusFeed.Models"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <converters:CSSColorToWinUIColorConverter x:Name="CSSColorToWinUIColorConverter"/>
+    </Page.Resources>
     
     <!--<interactivity:Interaction.Behaviors>
         <core:EventTriggerBehavior EventName="Loading">
@@ -31,8 +36,19 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{x:Bind ViewModel.SelectedRoute.Name}" Padding="10"
-                   FontSize="28" FontWeight="Bold"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border Padding="10">
+                <Border.Background>
+                    <SolidColorBrush Color="{x:Bind ViewModel.SelectedRoute.Color, Converter={StaticResource CSSColorToWinUIColorConverter}, Mode=OneWay}"/>
+                </Border.Background>
+                <TextBlock Text="{x:Bind ViewModel.SelectedRoute.ShortName}" Foreground="White" FontSize="28" FontWeight="Bold"/>
+            </Border>
+            <TextBlock Text="{x:Bind ViewModel.SelectedRoute.Name}" FontSize="28" FontWeight="SemiBold" Padding="10" Grid.Column="1"/>
+        </Grid>
 
         <Grid x:Name="MapGrid" Background="{ThemeResource SystemBaseLowColor}" Grid.Row="1">
             <ArcGIS:MapView x:Name="MainMapView" Grid.Row="2" MinHeight="120">
