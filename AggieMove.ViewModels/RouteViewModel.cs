@@ -24,8 +24,7 @@ namespace AggieMove.ViewModels
             get => _SelectedRoute;
             set => SetProperty(ref _SelectedRoute, value);
         }
-
-
+        
         private PatternElement _SelectedPatternElement;
         public PatternElement SelectedPatternElement
         {

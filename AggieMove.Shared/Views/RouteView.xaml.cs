@@ -4,7 +4,6 @@ using Esri.ArcGISRuntime.Symbology;
 using Esri.ArcGISRuntime.UI;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using TamuBusFeed.Models;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -18,6 +17,8 @@ namespace AggieMove.Views
 	/// </summary>
 	public sealed partial class RouteView : Page
 	{
+        public System.Drawing.Color DrawingColor { get; set; }
+
 		public RouteView()
 		{
 			this.InitializeComponent();
@@ -31,13 +32,13 @@ namespace AggieMove.Views
             MapHelper.LoadMap(MainMapView, MapGraphics);
 
             await ViewModel.LoadPatternsAsync();
+            DrawingColor = ColorHelper.ParseCSSColorAsDrawingColor(ViewModel.SelectedRoute.Color);
+
             var routePoints = ViewModel.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, MapHelper.BUS_ROUTES_SR));
             var routePath = new PolylineBuilder(routePoints, MapHelper.BUS_ROUTES_SR).ToGeometry();
             // Create a simple line symbol to display the polyline
             var routeLineSymbol = new SimpleLineSymbol(
-                SimpleLineSymbolStyle.Solid,
-                System.Drawing.Color.Red,
-                4.0
+                SimpleLineSymbolStyle.Solid, DrawingColor, 4.0
             );
             MapGraphics.Graphics.Add(new Graphic(routePath, routeLineSymbol));
             await MainMapView.SetViewpointGeometryAsync(routePath);
@@ -45,7 +46,7 @@ namespace AggieMove.Views
             foreach (PatternElement elem in ViewModel.Stops)
             {
                 var point = new MapPoint(elem.Longitude, elem.Latitude, MapHelper.BUS_ROUTES_SR);
-                var stop = MapHelper.CreateRouteStop(point, System.Drawing.Color.White);
+                var stop = MapHelper.CreateRouteStop(point, DrawingColor);
                 MapGraphics.Graphics.Add(stop);
             }
 
