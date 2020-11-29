@@ -5,15 +5,18 @@
     xmlns:local="using:AggieMove.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ArcGIS="using:Esri.ArcGISRuntime.UI.Controls"
+    xmlns:ArcGISUI="using:Esri.ArcGISRuntime.UI"
     xmlns:viewmodels="using:AggieMove.ViewModels"
     xmlns:models="using:TamuBusFeed.Models"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded">
     
     <interactivity:Interaction.Behaviors>
-        <core:EventTriggerBehavior EventName="Loaded">
+        <core:EventTriggerBehavior EventName="Loading">
             <core:InvokeCommandAction Command="{x:Bind ViewModel.LoadPatternsCommand}"/>
         </core:EventTriggerBehavior>
     </interactivity:Interaction.Behaviors>
@@ -32,12 +35,25 @@
         <TextBlock Text="{x:Bind ViewModel.SelectedRoute.Name}" Padding="10"
                    FontSize="28" FontWeight="Bold"/>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Patterns}" Grid.Row="1">
+        <Grid x:Name="MapGrid" Background="{ThemeResource SystemBaseLowColor}" Grid.Row="1">
+            <ArcGIS:MapView x:Name="MainMapView" Grid.Row="2" MinHeight="120">
+                <ArcGIS:MapView.GraphicsOverlays>
+                    <ArcGISUI:GraphicsOverlay x:Name="MapGraphics"/>
+                </ArcGIS:MapView.GraphicsOverlays>
+            </ArcGIS:MapView>
+        </Grid>
+        
+        <ListView ItemsSource="{x:Bind ViewModel.Stops}" Grid.Row="2">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:PatternElement">
-                    <ListViewItem Content="{x:Bind Name}">
-                        
-                    </ListViewItem>
+                    <Grid Padding="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{x:Bind Name}" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{x:Bind Stop.StopCode}" Grid.Row="2"/>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

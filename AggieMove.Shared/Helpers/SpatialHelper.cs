@@ -32,13 +32,13 @@ namespace AggieMove.Helpers
         }
 
         public static Geolocator Geolocator { get; internal set; }
-        private static Point CurrentLocationCache { get; set; }
+        private static BasicGeoposition? CurrentLocationCache { get; set; } = null;
         private static DateTime? CurrentLocationLastUpdated { get; set; }
-        public static Point GetCachedLocation()
+        public static BasicGeoposition? GetCachedLocation()
         {
             return CurrentLocationCache;
         }
-        public async static System.Threading.Tasks.Task<Point> GetCurrentLocation(bool acceptCache = true)
+        public async static System.Threading.Tasks.Task<BasicGeoposition?> GetCurrentLocation(bool acceptCache = true)
         {
             if (CurrentLocationCache == null || !CurrentLocationLastUpdated.HasValue
                 || DateTime.Now.Subtract(CurrentLocationLastUpdated.Value).TotalMinutes > 5
@@ -48,12 +48,9 @@ namespace AggieMove.Helpers
                 var accessStatus = await Geolocator.RequestAccessAsync();
                 if (accessStatus == GeolocationAccessStatus.Allowed)
                 {
-                    double x, y;
                     Geolocator = new Geolocator { DesiredAccuracyInMeters = 1 };
                     Geoposition pos = await Geolocator.GetGeopositionAsync();
-                    y = pos.Coordinate.Point.Position.Latitude;
-                    x = pos.Coordinate.Point.Position.Longitude;
-                    CurrentLocationCache = new Point(x, y);
+                    return pos.Coordinate.Point.Position;
                 }
             }
 

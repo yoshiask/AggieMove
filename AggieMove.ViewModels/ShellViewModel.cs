@@ -2,6 +2,7 @@
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace AggieMove.ViewModels
 {
@@ -52,7 +53,12 @@ namespace AggieMove.ViewModels
             },
         };
 
-        public List<PageInfoBase> PageInfos = Pages;
+        private ObservableCollection<PageInfoBase> _PageInfos = new ObservableCollection<PageInfoBase>(Pages);
+        public ObservableCollection<PageInfoBase> PageInfos
+        {
+            get => _PageInfos;
+            set => SetProperty(ref _PageInfos, value);
+        }
 
         private PageInfoBase _SelectedPage;
         public PageInfoBase SelectedPage

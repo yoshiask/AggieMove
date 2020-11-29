@@ -54,13 +54,13 @@
         <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.Routes}" SelectedItem="{x:Bind ViewModel.SelectedRoute, Mode=TwoWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Route">
-                    <Grid>
+                    <Grid Padding="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <TextBlock Text="{x:Bind Name}" FontSize="14" FontWeight="SemiBold"/>
-                        <TextBlock Text="{x:Bind ShortName}" Grid.Row="2"/>
+                        <TextBlock Text="{x:Bind Group.Name}" Grid.Row="2"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

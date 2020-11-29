@@ -16,6 +16,8 @@ namespace AggieMove.ViewModels
 
         public ObservableCollection<PatternElement> Stops { get; } = new ObservableCollection<PatternElement>();
 
+        public ObservableCollection<PatternElement> PatternElements { get; } = new ObservableCollection<PatternElement>();
+
         private Route _SelectedRoute;
         public Route SelectedRoute
         {
@@ -31,13 +33,15 @@ namespace AggieMove.ViewModels
         public async Task LoadPatternsAsync()
         {
             Stops.Clear();
+            PatternElements.Clear();
             foreach (PatternElement p in await TamuBusFeedApi.GetPattern(SelectedRoute.ShortName))
             {
-                // Some of the names have leading whitespace for no reason
-                if (p.RouteHeaderRank == -1)
-                    continue;
                 p.Name = p.Name.Trim();
-                Stops.Add(p);
+                PatternElements.Add(p);
+
+                // Some of the names have leading whitespace for no reason
+                if (p.Stop != null)
+                    Stops.Add(p);
             }
         }
     }

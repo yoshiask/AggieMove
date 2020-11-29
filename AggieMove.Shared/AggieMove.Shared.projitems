@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\MapHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\NavigationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SpatialHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Shell.xaml.cs" />
