@@ -40,6 +40,7 @@ namespace AggieMove.Views
                 4.0
             );
             MapGraphics.Graphics.Add(new Graphic(routePath, routeLineSymbol));
+            await MainMapView.SetViewpointGeometryAsync(routePath);
 
             foreach (PatternElement elem in ViewModel.Stops)
             {
