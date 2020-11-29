@@ -59,8 +59,8 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold"/>
-                        <TextBlock Text="{Binding ShortName}" Grid.Row="2"/>
+                        <TextBlock Text="{x:Bind Name}" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{x:Bind ShortName}" Grid.Row="2"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

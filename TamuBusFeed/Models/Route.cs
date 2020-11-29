@@ -40,8 +40,8 @@ namespace TamuBusFeed.Models
             set => SetProperty(ref color, value);
         }
 
-        private List<Pattern> pattern;
-        public List<Pattern> Pattern
+        private Pattern pattern;
+        public Pattern Pattern
         {
             get => pattern;
             set => SetProperty(ref pattern, value);

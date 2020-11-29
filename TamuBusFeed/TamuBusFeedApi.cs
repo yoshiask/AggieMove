@@ -12,18 +12,18 @@ namespace TamuBusFeed
 	public class TamuBusFeedApi
 	{
 		// TODO: For some reason requests fail on Android [8.1] if https is used
-		private const string HOST_URL = "https://transport.tamu.edu/BusRoutesFeed/api";
+		private const string HOST_URL = "http://transport.tamu.edu/BusRoutesFeed/api";
 
 		public static async Task<List<Route>> GetRoutes()
 		{
-			//FlurlHttp.Configure(settings => {
-			//	settings.HttpClientFactory = new MyCustomHttpClientFactory();
-			//});
+            //FlurlHttp.Configure(settings => {
+            //	settings.HttpClientFactory = new MyCustomHttpClientFactory();
+            //});
 
-			return await HOST_URL
-				.AppendPathSegments("routes")
-				.GetJsonAsync<List<Route>>();
-		}
+            return await HOST_URL
+                .AppendPathSegments("routes")
+                .GetJsonAsync<List<Route>>();
+        }
 
 		public static async Task<List<PatternElement>> GetPattern(string shortname, DateTimeOffset date)
 		{

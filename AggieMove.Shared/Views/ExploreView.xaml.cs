@@ -67,7 +67,7 @@ namespace AggieMove.Views
 
         private async Task<RouteResult> LoadRouter()
 		{
-            var routeSourceUri = new Uri("https://gis.tamu.edu/arcgis/rest/services/Routing/20201126/NAServer/Route");
+            var routeSourceUri = new Uri("https://gis.tamu.edu/arcgis/rest/services/Routing/20201128/NAServer/Route");
             var routeTask = await RouteTask.CreateAsync(routeSourceUri);
 
             // get the default route parameters
@@ -75,7 +75,8 @@ namespace AggieMove.Views
             // explicitly set values for some params
             routeParams.ReturnDirections = true;
             routeParams.ReturnRoutes = true;
-            routeParams.OutputSpatialReference = MainMapView.SpatialReference;
+            if (MainMapView.SpatialReference != null)
+                routeParams.OutputSpatialReference = MainMapView.SpatialReference;
 
             // create a Stop for my location
             var curLoc = await SpatialHelper.GetCurrentLocation();
