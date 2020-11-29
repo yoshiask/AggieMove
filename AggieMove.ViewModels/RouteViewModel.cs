@@ -25,10 +25,23 @@ namespace AggieMove.ViewModels
             set => SetProperty(ref _SelectedRoute, value);
         }
 
+
+        private PatternElement _SelectedPatternElement;
+        public PatternElement SelectedPatternElement
+        {
+            get => _SelectedPatternElement;
+            set => SetProperty(ref _SelectedPatternElement, value);
+        }
+
         /// <summary>
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for loading patterns for the selected route.
         /// </summary>
         public IAsyncRelayCommand LoadPatternsCommand { get; }
+
+        /// <summary>
+        /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for zooming to the selected stop.
+        /// </summary>
+        public IAsyncRelayCommand ZoomToStopCommand { get; }
 
         public async Task LoadPatternsAsync()
         {

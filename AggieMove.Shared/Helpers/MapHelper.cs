@@ -13,7 +13,8 @@ namespace AggieMove.Helpers
 {
     public static class MapHelper
     {
-        public static readonly MapPoint TAMU_CenterPoint = new MapPoint(30.610190 , - 96.344800);
+        public static readonly MapPoint TAMU_CENTER_POINT = new MapPoint(30.610190 , - 96.344800);
+        public static readonly SpatialReference BUS_ROUTES_SR = new SpatialReference(3857);
 
         public static async Task<RouteResult> LoadRouter(MapView mapView)
         {
@@ -69,10 +70,10 @@ namespace AggieMove.Helpers
         }
         public static void LoadMap(MapView mapView, GraphicsOverlay mapGraphics)
         {
-            LoadMap(TAMU_CenterPoint.X, TAMU_CenterPoint.Y, mapView, mapGraphics);
+            LoadMap(TAMU_CENTER_POINT.X, TAMU_CENTER_POINT.Y, mapView, mapGraphics);
         }
 
-        public static async Task SetViewpointToCurrentLocation(MapView mapView, GraphicsOverlay mapGraphics, Windows.Foundation.TypedEventHandler<Windows.Devices.Geolocation.Geolocator, Windows.Devices.Geolocation.PositionChangedEventArgs> PositionChangedHandler)
+        public static async Task SetViewpointToCurrentLocation(MapView mapView, GraphicsOverlay mapGraphics, Windows.Foundation.TypedEventHandler<Windows.Devices.Geolocation.Geolocator, Windows.Devices.Geolocation.PositionChangedEventArgs> PositionChangedHandler, bool zoomToLocation = true)
         {
             var currentLoc = await SpatialHelper.GetCurrentLocation();
             if (currentLoc.HasValue)
@@ -80,8 +81,11 @@ namespace AggieMove.Helpers
                 var currentLocPoint = CreateRouteStop(currentLoc.Value.Latitude, currentLoc.Value.Longitude, System.Drawing.Color.Red);
                 currentLocPoint.Attributes.Add("id", "currentLocation");
                 mapGraphics.Graphics.Add(currentLocPoint);
-                await mapView.SetViewpointCenterAsync(currentLoc.Value.Latitude, currentLoc.Value.Longitude);
-                await mapView.SetViewpointScaleAsync(2000);
+                if (zoomToLocation)
+                {
+                    await mapView.SetViewpointCenterAsync(currentLoc.Value.Latitude, currentLoc.Value.Longitude);
+                    await mapView.SetViewpointScaleAsync(2000);
+                }
 
                 if (PositionChangedHandler != null)
                     SpatialHelper.Geolocator.PositionChanged += PositionChangedHandler;
@@ -90,9 +94,12 @@ namespace AggieMove.Helpers
 
         public static Graphic CreateRouteStop(double lat, double lon, System.Drawing.Color fill)
         {
-            // Now draw a point where the stop is
             var mapPoint = new MapPoint(Convert.ToDouble(lon),
                 Convert.ToDouble(lat), SpatialReferences.Wgs84);
+            return CreateRouteStop(mapPoint, fill);
+        }
+        public static Graphic CreateRouteStop(MapPoint mapPoint, System.Drawing.Color fill)
+        {
             var pointSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Circle, fill, 20);
             pointSymbol.Outline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.White, 5);
             return new Graphic(mapPoint, pointSymbol);

@@ -4,9 +4,8 @@ using Esri.ArcGISRuntime.Symbology;
 using Esri.ArcGISRuntime.UI;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TamuBusFeed.Models;
-using Windows.Foundation;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -27,23 +26,42 @@ namespace AggieMove.Views
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
 			ViewModel.SelectedRoute = e.Parameter as Route;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
             MapHelper.LoadMap(MainMapView, MapGraphics);
 
             await ViewModel.LoadPatternsAsync();
-            var legPoints = ViewModel.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, new SpatialReference(3857)));
-            var legPath = new PolylineBuilder(legPoints, new SpatialReference(3857)).ToGeometry();
-            // create a simple line symbol to display the polyline
-            var legLineSymbol = new SimpleLineSymbol(
+            var routePoints = ViewModel.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, MapHelper.BUS_ROUTES_SR));
+            var routePath = new PolylineBuilder(routePoints, MapHelper.BUS_ROUTES_SR).ToGeometry();
+            // Create a simple line symbol to display the polyline
+            var routeLineSymbol = new SimpleLineSymbol(
                 SimpleLineSymbolStyle.Solid,
                 System.Drawing.Color.Red,
                 4.0
             );
-            MapGraphics.Graphics.Add(new Graphic(legPath, legLineSymbol));
+            MapGraphics.Graphics.Add(new Graphic(routePath, routeLineSymbol));
 
-            MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged);
+            foreach (PatternElement elem in ViewModel.Stops)
+            {
+                var point = new MapPoint(elem.Longitude, elem.Latitude, MapHelper.BUS_ROUTES_SR);
+                var stop = MapHelper.CreateRouteStop(point, System.Drawing.Color.White);
+                MapGraphics.Graphics.Add(stop);
+            }
+
+            MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, false);
 
             base.OnNavigatedTo(e);
+        }
+
+        private async void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.SelectedPatternElement) && ViewModel.SelectedPatternElement != null)
+            {
+                PatternElement elem = ViewModel.SelectedPatternElement;
+                var point = new MapPoint(elem.Longitude, elem.Latitude, MapHelper.BUS_ROUTES_SR);
+                await MainMapView.SetViewpointCenterAsync(point);
+                await MainMapView.SetViewpointScaleAsync(2000);
+            }
         }
 
         private async void Geolocator_PositionChanged(Windows.Devices.Geolocation.Geolocator sender, Windows.Devices.Geolocation.PositionChangedEventArgs args)

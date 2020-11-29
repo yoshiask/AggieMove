@@ -42,7 +42,7 @@
             </ArcGIS:MapView>
         </Grid>
         
-        <ListView ItemsSource="{x:Bind ViewModel.Stops}" Grid.Row="2">
+        <ListView ItemsSource="{x:Bind ViewModel.Stops}" SelectedItem="{x:Bind ViewModel.SelectedPatternElement, Mode=TwoWay}" Grid.Row="2">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:PatternElement">
                     <Grid Padding="10">
@@ -55,6 +55,11 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="SelectionChanged">
+                    <core:InvokeCommandAction Command="{x:Bind ViewModel.ZoomToStopCommand}"/>
+                </core:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
         </ListView>
     </Grid>
 </Page>
