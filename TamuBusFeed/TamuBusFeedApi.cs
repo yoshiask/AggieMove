@@ -29,6 +29,11 @@ namespace TamuBusFeed
 
 		public static async Task<List<PatternElement>> GetPattern(string shortname, DateTimeOffset date)
 		{
+			FlurlHttp.Configure(settings =>
+			{
+				settings.HttpClientFactory = new TAMUTransportHttpClientFactory();
+			});
+
 			return await HOST_URL
 				.AppendPathSegments("route", shortname, "pattern", date.ToString("yyyy-MM-dd"))
 				.GetJsonAsync<List<PatternElement>>();

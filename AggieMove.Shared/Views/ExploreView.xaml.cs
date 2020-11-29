@@ -23,6 +23,15 @@ namespace AggieMove.Views
             MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged);
         }
 
+        private void OnRouteSelected(object sender, SelectionChangedEventArgs e)
+        {
+#if !NETFX_CORE
+            // TODO: This is an ugly, pattern-breaking workaround because Uno fires the SelectionChanged event before
+            // setting the selected item
+            ViewModel.SelectedRoute = e.AddedItems[0] as TamuBusFeed.Models.Route;
+#endif
+        }
+
         private async void Geolocator_PositionChanged(Windows.Devices.Geolocation.Geolocator sender, Windows.Devices.Geolocation.PositionChangedEventArgs args)
         {
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>

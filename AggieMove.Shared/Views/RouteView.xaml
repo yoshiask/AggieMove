@@ -45,9 +45,9 @@
                 <Border.Background>
                     <SolidColorBrush Color="{x:Bind ViewModel.SelectedRoute.Color, Converter={StaticResource CSSColorToWinUIColorConverter}, Mode=OneWay}"/>
                 </Border.Background>
-                <TextBlock Text="{x:Bind ViewModel.SelectedRoute.ShortName}" Foreground="White" FontSize="28" FontWeight="Bold"/>
+                <TextBlock Text="{x:Bind ViewModel.SelectedRoute.ShortName, Mode=OneWay}" Foreground="White" FontSize="28" FontWeight="Bold"/>
             </Border>
-            <TextBlock Text="{x:Bind ViewModel.SelectedRoute.Name}" FontSize="28" FontWeight="SemiBold" Padding="10" Grid.Column="1"/>
+            <TextBlock Text="{x:Bind ViewModel.SelectedRoute.Name, Mode=OneWay}" FontSize="28" FontWeight="SemiBold" Padding="10" Grid.Column="1"/>
         </Grid>
 
         <Grid x:Name="MapGrid" Background="{ThemeResource SystemBaseLowColor}" Grid.Row="1">

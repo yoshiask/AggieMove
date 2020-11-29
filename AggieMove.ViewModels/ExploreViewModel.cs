@@ -22,20 +22,24 @@ namespace AggieMove.ViewModels
         /// </summary>
         private readonly INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
 
+        [System.ComponentModel.Bindable(true)]
         public ObservableCollection<Route> Routes { get; } = new ObservableCollection<Route>();
 
         private Route selectedRoute;
+        [System.ComponentModel.Bindable(true)]
         public Route SelectedRoute
         {
             get => selectedRoute;
             set => SetProperty(ref selectedRoute, value);
         }
 
+        [System.ComponentModel.Bindable(true)]
         /// <summary>
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for loading posts.
         /// </summary>
         public IAsyncRelayCommand LoadRoutesCommand { get; }
 
+        [System.ComponentModel.Bindable(true)]
         /// <summary>
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for showing route details.
         /// </summary>

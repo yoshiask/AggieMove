@@ -34,6 +34,7 @@ namespace TamuBusFeed.Models
         }
 
         private string color;
+        [System.ComponentModel.Bindable(true)]
         public string Color
         {
             get => color;
@@ -55,6 +56,7 @@ namespace TamuBusFeed.Models
         }
 
         private string name;
+        [System.ComponentModel.Bindable(true)]
         public string Name
         {
             get => name;
@@ -62,6 +64,7 @@ namespace TamuBusFeed.Models
         }
 
         private string shortName;
+        [System.ComponentModel.Bindable(true)]
         public string ShortName
         {
             get => shortName;
