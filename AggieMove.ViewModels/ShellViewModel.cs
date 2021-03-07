@@ -27,6 +27,15 @@ namespace AggieMove.ViewModels
 
             new PageInfoBase()
             {
+                PageType = "AnnouncementsView",
+                Glyph = "\uE789", // Megaphone
+                Title = "Announcements",
+                Subhead = "",
+                Tooltip = ""
+            },
+
+            new PageInfoBase()
+            {
                 PageType = "DiscoverView",
                 Glyph = "\uE1C4", // Map
                 Title = "Discover",

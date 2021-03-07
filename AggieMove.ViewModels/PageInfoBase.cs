@@ -64,19 +64,7 @@ namespace AggieMove.ViewModels
         }
 
         // Derived properties
-        public string Protocol
-        {
-            get
-            {
-                return "aggiemove://" + Path;
-            }
-        }
-        public Uri IconAsset
-        {
-            get
-            {
-                return new Uri("ms-appx:///Assets/Icons/" + Path + ".png");
-            }
-        }
+        public string Protocol => "aggiemove://" + Path;
+        public Uri IconAsset => new Uri("ms-appx:///Assets/Icons/" + Path + ".png");
     }
 }

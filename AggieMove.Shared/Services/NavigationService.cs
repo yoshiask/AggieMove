@@ -6,6 +6,8 @@ namespace AggieMove.Services
 {
     public class NavigationService : INavigationService
     {
+        private const string ASSEMBLY_FRAGMENT = "AggieMove.Views.";
+
         public Frame CurrentFrame { get; set; }
 
         public void Navigate(Type page)
@@ -20,13 +22,13 @@ namespace AggieMove.Services
 
         public void Navigate(string page)
         {
-            Type type = Type.GetType("AggieMove.Views." + page);
+            Type type = Type.GetType(ASSEMBLY_FRAGMENT + page) ?? typeof(Views.ExploreView);
             Navigate(type);
         }
 
         public void Navigate(string page, object parameter)
         {
-            Type type = Type.GetType("AggieMove.Views." + page);
+            Type type = Type.GetType(ASSEMBLY_FRAGMENT + page);
             Navigate(type, parameter);
         }
 

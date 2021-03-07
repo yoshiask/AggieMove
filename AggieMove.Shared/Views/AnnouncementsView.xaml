@@ -1,0 +1,52 @@
+﻿<Page
+    x:Class="AggieMove.Views.AnnouncementsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AggieMove.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ArcGIS="using:Esri.ArcGISRuntime.UI.Controls"
+    xmlns:ArcGISUI="using:Esri.ArcGISRuntime.UI"
+    xmlns:models="using:TamuBusFeed.Models"
+    xmlns:viewmodels="using:AggieMove.ViewModels"
+    xmlns:converters="using:AggieMove.Converters"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.DataContext>
+        <viewmodels:AnnouncementsViewModel x:Name="ViewModel"/>
+    </Page.DataContext>
+
+    <interactivity:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{x:Bind ViewModel.LoadAnnouncementsCommand}"/>
+        </core:EventTriggerBehavior>
+    </interactivity:Interaction.Behaviors>
+    
+    <Grid>
+        <ListView ItemsSource="{x:Bind ViewModel.Feed.Items, Mode=OneWay}" SelectionMode="Single" IsItemClickEnabled="True"
+                  SelectedItem="{x:Bind ViewModel.SelectedAnnouncement, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:AnnouncementItem">
+                    <Grid Padding="10" ColumnSpacing="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{x:Bind Title.Text}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Summary.Text}" Grid.Row="2" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="SelectionChanged">
+                    <core:InvokeCommandAction Command="{x:Bind ViewModel.OpenInBrowserCommand}"/>
+                </core:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+        </ListView>
+    </Grid>
+
+</Page>

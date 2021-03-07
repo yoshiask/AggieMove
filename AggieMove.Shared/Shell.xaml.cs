@@ -79,21 +79,17 @@ namespace AggieMove
                 return;
             }
 
-            if (!(args.SelectedItem is NavigationViewItem navItem))
-            {
-                NavService.Navigate(typeof(Views.ExploreView));
-                return;
-            }
+            PageInfoBase pageInfo = null;
 
-            PageInfoBase pageInfo = ShellViewModel.Pages.Find((info) => info.Title == navItem.Content.ToString());
+            if (args.SelectedItem is PageInfoBase pageInfoBase)
+                pageInfo = pageInfoBase;
+            else if (args.SelectedItem is NavigationViewItem navItem)
+                pageInfo = ShellViewModel.Pages.Find((info) => info.Title == navItem.Content.ToString());
+
             if (pageInfo == null)
-            {
                 NavService.Navigate(typeof(Views.ExploreView));
-            }
             else
-            {
                 NavService.Navigate(pageInfo.PageType);
-            }
         }
     }
 }

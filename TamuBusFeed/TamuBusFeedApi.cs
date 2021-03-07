@@ -43,7 +43,17 @@ namespace TamuBusFeed
 			return await GetPattern(shortname, DateTimeOffset.Now);
 		}
 
-		
+		public static async Task<AnnouncementFeed> GetAnnouncements()
+        {
+			FlurlHttp.Configure(settings =>
+			{
+				settings.HttpClientFactory = new TAMUTransportHttpClientFactory();
+			});
+
+			return await HOST_URL
+				.AppendPathSegments("announcements")
+				.GetJsonAsync<AnnouncementFeed>();
+		}
 	}
 
 	public class TAMUTransportHttpClientFactory : DefaultHttpClientFactory

@@ -26,6 +26,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SpatialHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Shell.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\NavigationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\AnnouncementsView.xaml.cs">
+      <DependentUpon>AnnouncementsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\ExploreView.xaml.cs">
       <DependentUpon>ExploreView.xaml</DependentUpon>
     </Compile>
@@ -35,6 +38,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Shell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\AnnouncementsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
