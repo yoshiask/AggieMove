@@ -9,7 +9,7 @@
   <Identity
     Name="52374YoshiAskharoun.AggieMove"
     Publisher="CN=CD3113F3-18EB-4B8D-9D8A-C6D373E7A464"
-    Version="1.0.0.0" />
+    Version="1.1.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="13ceb154-8b20-48e8-90d6-6f9944359fe9" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

@@ -13,7 +13,7 @@
     </Page.DataContext>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <NavigationView x:Name="MainNav" PaneDisplayMode="Left" IsBackButtonVisible="Collapsed"
+        <NavigationView x:Name="MainNav" PaneDisplayMode="Left" IsBackButtonVisible="Auto"
                         SelectionChanged="NavigationView_SelectionChanged"
                         MenuItemsSource="{x:Bind ViewModel.PageInfos, Mode=TwoWay}"
                         SelectedItem="{x:Bind ViewModel.SelectedPage, Mode=TwoWay}">
@@ -118,10 +118,6 @@
                 </Viewbox>
             </NavigationView.PaneHeader>
 
-            <!--<NavigationView.MenuItems>
-                <NavigationViewItem Icon="Street" Content="Explore"/>
-            </NavigationView.MenuItems>-->
-
             <NavigationView.MenuItemTemplate>
                 <DataTemplate x:DataType="viewmodels:PageInfoBase">
                     <NavigationViewItem Content="{x:Bind Title}" ToolTipService.ToolTip="{x:Bind Tooltip}">
@@ -132,7 +128,7 @@
                 </DataTemplate>
             </NavigationView.MenuItemTemplate>
 
-            <Frame x:Name="MainFrame"/>
+            <Frame x:Name="MainFrame" Navigated="MainFrame_Navigated"/>
 
         </NavigationView>
 

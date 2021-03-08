@@ -41,6 +41,8 @@ namespace AggieMove
         {
             if (e.Parameter is Tuple<Type, object> launchInfo && launchInfo.Item1 != null)
                 NavService.Navigate(launchInfo.Item1, launchInfo.Item2);
+            else
+                NavService.Navigate(typeof(Views.ExploreView));
 
             base.OnNavigatedTo(e);
         }
@@ -48,31 +50,33 @@ namespace AggieMove
         private void MainFrame_Navigated(object sender, NavigationEventArgs e)
         {
             MainNav.IsBackEnabled = MainFrame.CanGoBack;
+
+            if (ViewModel.ChangedByUserFlag)
+            {
+                ViewModel.ChangedByUserFlag = false;
+                return;
+            }
+
             try
             {
                 // Update the NavView when the frame navigates on its own.
                 // This is in a try-catch block so that I don't have to do a dozen
                 // null checks.
-                var page = ShellViewModel.Pages.Find((info) =>
+                ViewModel.SelectedPage = ShellViewModel.Pages.Find((info) =>
                 {
                     Type pageType = Type.GetType("AggieMove.Views." + info.PageType);
                     return pageType == e.SourcePageType;
                 });
-                if (page == null)
-                {
-                    MainNav.SelectedItem = null;
-                    return;
-                }
-                MainNav.SelectedItem = MainNav.MenuItems.ToList().Find((obj) => (obj as NavigationViewItem).Content.ToString() == page.Title);
             }
             catch
             {
-                MainNav.SelectedItem = null;
+                ViewModel.SelectedPage = null;
             }
         }
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
+            ViewModel.ChangedByUserFlag = true;
             if (args.IsSettingsSelected)
             {
                 NavService.NavigateToSettingsPage(Services.SettingsPages.General);

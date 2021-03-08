@@ -31,7 +31,7 @@ namespace AggieMove.ViewModels
                 Glyph = "\uE789", // Megaphone
                 Title = "Announcements",
                 Subhead = "",
-                Tooltip = ""
+                Tooltip = "View announcements from Transporation Services"
             },
 
             new PageInfoBase()
@@ -75,6 +75,8 @@ namespace AggieMove.ViewModels
             get => _SelectedPage;
             set => SetProperty(ref _SelectedPage, value);
         }
+
+        public bool ChangedByUserFlag = false;
 
         /// <summary>
         /// Gets the <see cref="IRelayCommand{string}"/> instance responsible for navigating.
