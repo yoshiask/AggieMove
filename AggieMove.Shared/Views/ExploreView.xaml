@@ -61,7 +61,7 @@
                   SelectionChanged="OnRouteSelected">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Route">
-                    <Grid Padding="10" ColumnSpacing="10">
+                    <Grid Padding="10" ColumnSpacing="10" HorizontalAlignment="Stretch">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -76,8 +76,10 @@
                             </Border.Background>
                             <TextBlock Text="{x:Bind ShortName}" Foreground="White" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
                         </Border>
-                        <TextBlock Text="{x:Bind Name}" FontSize="16" FontWeight="SemiBold" Grid.Column="1" VerticalAlignment="Center"/>
-                        <TextBlock Text="{x:Bind Group.Name}" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Name}" FontSize="16" FontWeight="SemiBold" Grid.Column="1"
+                                   HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Group.Name}" Grid.Column="1" Grid.Row="2"
+                                   HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -60,11 +60,13 @@ namespace AggieMove
                 // Update the NavView when the frame navigates on its own.
                 // This is in a try-catch block so that I don't have to do a dozen
                 // null checks.
-                ViewModel.SelectedPage = ShellViewModel.Pages.Find((info) =>
+                var pageIdx = ShellViewModel.Pages.FindIndex((info) =>
                 {
                     Type pageType = Type.GetType(Services.NavigationService.ASSEMBLY_FRAGMENT + info.PageType);
                     return pageType == e.SourcePageType;
                 });
+                if (pageIdx >= 0)
+                    ViewModel.SelectedPage = ShellViewModel.Pages[pageIdx];
             }
             catch
             {

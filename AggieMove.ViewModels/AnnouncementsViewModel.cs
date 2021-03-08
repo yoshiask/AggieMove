@@ -1,4 +1,6 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using AggieMove.Services;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -12,7 +14,13 @@ namespace AggieMove.ViewModels
         public AnnouncementsViewModel()
         {
             LoadAnnouncementsCommand = new AsyncRelayCommand(LoadAnnouncementsAsync);
+            OpenAnnouncementCommand = new AsyncRelayCommand(OpenAnnouncementAsync);
         }
+
+        /// <summary>
+        /// The <see cref="INavigationService"/> instance currently in use.
+        /// </summary>
+        private readonly INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
 
         private AnnouncementFeed _Feed;
         public AnnouncementFeed Feed
@@ -36,11 +44,24 @@ namespace AggieMove.ViewModels
         /// <summary>
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for navigating to the announcement's URL (if specified).
         /// </summary>
-        public IAsyncRelayCommand OpenInBrowserCommand { get; }
+        public IAsyncRelayCommand OpenAnnouncementCommand { get; }
 
         public async Task LoadAnnouncementsAsync()
         {
             Feed = await TamuBusFeedApi.GetAnnouncements();
+        }
+
+        public async Task OpenAnnouncementAsync()
+        {
+            if (SelectedAnnouncement?.Links.Count >= 1 && SelectedAnnouncement.Links[0] != null)
+            {
+                string url = SelectedAnnouncement.Links[0].Uri;
+                if (!url.StartsWith("http"))
+                    url = "https:" + url;
+
+                await NavigationService.OpenInBrowser(url);
+                SelectedAnnouncement = null;
+            }
         }
     }
 }

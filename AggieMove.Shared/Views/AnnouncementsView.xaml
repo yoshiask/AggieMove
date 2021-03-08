@@ -35,7 +35,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="{x:Bind Title.Text}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Title.Text}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap"/>
                         <TextBlock Text="{x:Bind Summary.Text}" Grid.Row="2" VerticalAlignment="Center" TextWrapping="Wrap"/>
                     </Grid>
                 </DataTemplate>
@@ -43,7 +43,7 @@
             
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="SelectionChanged">
-                    <core:InvokeCommandAction Command="{x:Bind ViewModel.OpenInBrowserCommand}"/>
+                    <core:InvokeCommandAction Command="{x:Bind ViewModel.OpenAnnouncementCommand}"/>
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
         </ListView>
