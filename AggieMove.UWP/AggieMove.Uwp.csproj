@@ -23,6 +23,9 @@
       <Version>2.0.1</Version>
     </PackageReference>
     <PackageReference Include="Uno.Core" Version="2.3.0-dev.3" />
+    <PackageReference Include="Uno.Microsoft.Toolkit.Uwp.UI.Controls">
+      <Version>6.0.0-ge975abb046</Version>
+    </PackageReference>
     <PackageReference Include="Uno.UI" Version="3.6.0-dev.298" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.1" />

@@ -12,6 +12,7 @@
     xmlns:models="using:TamuBusFeed.Models"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -19,11 +20,12 @@
         <converters:CSSColorToWinUIColorConverter x:Name="CSSColorToWinUIColorConverter"/>
     </Page.Resources>
     
-    <!--<interactivity:Interaction.Behaviors>
+    <interactivity:Interaction.Behaviors>
         <core:EventTriggerBehavior EventName="Loading">
-            <core:InvokeCommandAction Command="{x:Bind ViewModel.LoadPatternsCommand}"/>
+            <!--<core:InvokeCommandAction Command="{x:Bind ViewModel.LoadPatternsCommand}"/>-->
+            <core:InvokeCommandAction Command="{x:Bind ViewModel.LoadTimeTableCommand}"/>
         </core:EventTriggerBehavior>
-    </interactivity:Interaction.Behaviors>-->
+    </interactivity:Interaction.Behaviors>
 
     <Page.DataContext>
         <viewmodels:RouteViewModel x:Name="ViewModel"/>
@@ -57,25 +59,64 @@
                 </ArcGIS:MapView.GraphicsOverlays>
             </ArcGIS:MapView>
         </Grid>
-        
-        <ListView ItemsSource="{x:Bind ViewModel.Stops}" SelectedItem="{x:Bind ViewModel.SelectedPatternElement, Mode=TwoWay}" Grid.Row="2">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="models:PatternElement">
-                    <Grid Padding="10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="{x:Bind Name}" FontSize="14" FontWeight="SemiBold"/>
-                        <TextBlock Text="{x:Bind Stop.StopCode}" Grid.Row="2"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <interactivity:Interaction.Behaviors>
-                <core:EventTriggerBehavior EventName="SelectionChanged">
-                    <core:InvokeCommandAction Command="{x:Bind ViewModel.ZoomToStopCommand}"/>
-                </core:EventTriggerBehavior>
-            </interactivity:Interaction.Behaviors>
-        </ListView>
+
+        <Pivot Grid.Row="2">
+            <PivotItem Header="Stops">
+                <ListView ItemsSource="{x:Bind ViewModel.Stops, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SelectedPatternElement, Mode=TwoWay}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:PatternElement">
+                            <Grid Padding="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{x:Bind Name}" FontSize="14" FontWeight="SemiBold"/>
+                                <TextBlock Text="{x:Bind Stop.StopCode}" Grid.Row="2"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="SelectionChanged">
+                            <core:InvokeCommandAction Command="{x:Bind ViewModel.ZoomToStopCommand}"/>
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </ListView>
+            </PivotItem>
+
+            <PivotItem Header="Times">
+                <ItemsControl ItemsSource="{x:Bind ViewModel.TimeTable.TimeStops, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:TimeStop">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="{x:Bind Name}" FontSize="14" FontWeight="SemiBold" Padding="4"/>
+                                <ListView ItemsSource="{x:Bind GetFormattedLeaveTimes(), Mode=OneWay}" Grid.Row="1">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="x:String">
+                                            <TextBlock Padding="4" Text="{x:Bind}"/>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <!--<interactivity:Interaction.Behaviors>
+                                        <core:EventTriggerBehavior EventName="SelectionChanged">
+                                            <core:InvokeCommandAction Command="{x:Bind ViewModel.ZoomToStopCommand}"/>
+                                        </core:EventTriggerBehavior>
+                                    </interactivity:Interaction.Behaviors>-->
+                                </ListView>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <toolkit:UniformGrid Rows="1"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </PivotItem>
+        </Pivot>
     </Grid>
 </Page>

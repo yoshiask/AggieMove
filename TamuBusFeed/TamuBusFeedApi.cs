@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using AngleSharp;
 using Flurl;
 using Flurl.Http;
 using Flurl.Http.Configuration;
@@ -11,30 +13,29 @@ using TamuBusFeed.Models;
 
 namespace TamuBusFeed
 {
-	public class TamuBusFeedApi
+	public static class TamuBusFeedApi
 	{
-		private const string HOST_URL = "https://transport.tamu.edu/BusRoutesFeed/api";
+		static TamuBusFeedApi()
+        {
+			FlurlHttp.Configure(settings =>
+			{
+				settings.HttpClientFactory = new TAMUTransportHttpClientFactory();
+			});
+		}
+
+		private const string HOST_BASE = "https://transport.tamu.edu";
+		private static readonly string FEED_API_URL = HOST_BASE.AppendPathSegments("BusRoutesFeed", "api");
 
 		public static async Task<List<Route>> GetRoutes()
 		{
-            FlurlHttp.Configure(settings =>
-            {
-                settings.HttpClientFactory = new TAMUTransportHttpClientFactory();
-            });
-
-            return await HOST_URL
+            return await FEED_API_URL
                 .AppendPathSegments("routes")
                 .GetJsonAsync<List<Route>>();
         }
 
 		public static async Task<List<PatternElement>> GetPattern(string shortname, DateTimeOffset date)
 		{
-			FlurlHttp.Configure(settings =>
-			{
-				settings.HttpClientFactory = new TAMUTransportHttpClientFactory();
-			});
-
-			return await HOST_URL
+			return await FEED_API_URL
 				.AppendPathSegments("route", shortname, "pattern", date.ToString("yyyy-MM-dd"))
 				.GetJsonAsync<List<PatternElement>>();
 		}
@@ -45,14 +46,50 @@ namespace TamuBusFeed
 
 		public static async Task<AnnouncementFeed> GetAnnouncements()
         {
-			FlurlHttp.Configure(settings =>
-			{
-				settings.HttpClientFactory = new TAMUTransportHttpClientFactory();
-			});
-
-			return await HOST_URL
+			return await FEED_API_URL
 				.AppendPathSegments("announcements")
 				.GetJsonAsync<AnnouncementFeed>();
+		}
+
+		public static async Task<TimeTable> GetTimetable(string shortname)
+        {
+			var response = await HOST_BASE
+				.AppendPathSegments("busroutes", "Routes.aspx").SetQueryParam("r", shortname)
+				.PostAsync();
+			string html = await response.GetStringAsync();
+
+			var config = Configuration.Default.WithDefaultLoader();
+			var context = BrowsingContext.New(config);
+			var document = await context.OpenAsync(req => req.Content(html));
+
+			var timeTable = new TimeTable();
+
+			var timeTableGrid = document.QuerySelector("#TimeTableGridView").LastElementChild.Children.ToList();
+			var headerRowIdx = timeTableGrid.FindLastIndex(e => e.ClassList.Contains("headRow"));
+			var headerRow = timeTableGrid[headerRowIdx];
+			timeTable.TimeStops = new System.Collections.ObjectModel.ObservableCollection<TimeStop>(
+				headerRow.Children.Select(timeStop => new TimeStop
+				{
+					Name = timeStop.TextContent, 
+					LeaveTimes = new System.Collections.ObjectModel.ObservableCollection<DateTimeOffset?>()
+				})
+			);
+
+			foreach (var row in timeTableGrid.Skip(headerRowIdx + 1))
+            {
+				for (int i = 0; i < timeTable.TimeStops.Count; i++)
+                {
+					var leaveTimes = timeTable.TimeStops[i].LeaveTimes;
+					var cell = row.Children[i].QuerySelector("time");
+
+					if (DateTimeOffset.TryParse(cell?.GetAttribute("dateTime"), out var time))
+						leaveTimes.Add(time);
+					else
+						leaveTimes.Add(null);
+				}
+			}
+
+			return timeTable;
 		}
 	}
 

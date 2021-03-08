@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="0.14.0" />
     <PackageReference Include="Flurl.Http" Version="3.0.1" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.0-preview5" />
   </ItemGroup>

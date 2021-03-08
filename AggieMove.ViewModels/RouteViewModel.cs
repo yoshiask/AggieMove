@@ -12,6 +12,7 @@ namespace AggieMove.ViewModels
         public RouteViewModel()
         {
             LoadPatternsCommand = new AsyncRelayCommand(LoadPatternsAsync);
+            LoadTimeTableCommand = new AsyncRelayCommand(LoadTimeTableAsync);
         }
 
         public ObservableCollection<PatternElement> Stops { get; } = new ObservableCollection<PatternElement>();
@@ -32,10 +33,22 @@ namespace AggieMove.ViewModels
             set => SetProperty(ref _SelectedPatternElement, value);
         }
 
+        private TimeTable _TimeTable;
+        public TimeTable TimeTable
+        {
+            get => _TimeTable;
+            set => SetProperty(ref _TimeTable, value);
+        }
+
         /// <summary>
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for loading patterns for the selected route.
         /// </summary>
         public IAsyncRelayCommand LoadPatternsCommand { get; }
+
+        /// <summary>
+        /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for loading the time table for the selected route.
+        /// </summary>
+        public IAsyncRelayCommand LoadTimeTableCommand { get; }
 
         /// <summary>
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for zooming to the selected stop.
@@ -55,6 +68,11 @@ namespace AggieMove.ViewModels
                 if (p.Stop != null)
                     Stops.Add(p);
             }
+        }
+
+        public async Task LoadTimeTableAsync()
+        {
+            TimeTable = await TamuBusFeedApi.GetTimetable(SelectedRoute.ShortName);
         }
     }
 }
