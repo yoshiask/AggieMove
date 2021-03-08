@@ -39,7 +39,7 @@ namespace AggieMove.Helpers
             //var queryParams = System.Web.HttpUtility.ParseQueryString(ptcl.Query.Replace("\r", String.Empty).Replace("\n", String.Empty));
 
             PageInfoBase pageInfo = ShellViewModel.Pages.Find(p => p.Path == path.Split('/', StringSplitOptions.RemoveEmptyEntries)[0]);
-            destination = pageInfo != null ? Type.GetType("AggieMove.Views." + pageInfo.PageType) : typeof(ExploreView);
+            destination = pageInfo != null ? Type.GetType(Services.NavigationService.ASSEMBLY_FRAGMENT + pageInfo.PageType) : typeof(ExploreView);
             return new Tuple<Type, object>(destination, null);
         }
         public static Tuple<Type, object> ParseProtocol(string url)

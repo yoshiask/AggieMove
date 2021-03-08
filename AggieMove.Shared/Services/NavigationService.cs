@@ -6,7 +6,7 @@ namespace AggieMove.Services
 {
     public class NavigationService : INavigationService
     {
-        private const string ASSEMBLY_FRAGMENT = "AggieMove.Views.";
+        public const string ASSEMBLY_FRAGMENT = "AggieMove.Views.";
 
         public Frame CurrentFrame { get; set; }
 
@@ -36,6 +36,21 @@ namespace AggieMove.Services
         {
             throw new NotImplementedException();
             //CurrentFrame.Navigate(typeof(Views.SettingsView), page);
+        }
+
+        public void GoBack()
+        {
+            CurrentFrame.GoBack();
+        }
+
+        public bool TryGoBack()
+        {
+            if (CurrentFrame.CanGoBack)
+            {
+                GoBack();
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> OpenInBrowser(string url)

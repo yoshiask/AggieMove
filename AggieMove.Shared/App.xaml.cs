@@ -1,3 +1,4 @@
+using AggieMove.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
@@ -10,6 +11,8 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -63,6 +66,17 @@ namespace AggieMove
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
+                // Add support for accelerator keys. 
+                // Listen to the window directly so the app responds
+                // to accelerator keys regardless of which element has focus.
+                Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += CoreDispatcher_AcceleratorKeyActivated;
+
+                // Add support for system back requests. 
+                SystemNavigationManager.GetForCurrentView().BackRequested += System_BackRequested;
+
+                // Add support for mouse navigation buttons. 
+                Window.Current.CoreWindow.PointerPressed += CoreWindow_PointerPressed;
+
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
                     //TODO: Load state from previously suspended application
@@ -74,7 +88,7 @@ namespace AggieMove
                 // Register services
                 Ioc.Default.ConfigureServices(
                     new ServiceCollection()
-                    .AddSingleton<Services.INavigationService, Services.NavigationService>()
+                    .AddSingleton<INavigationService, NavigationService>()
                     //.AddSingleton<ISettingsService, SettingsService>()
                     .BuildServiceProvider());
             }
@@ -116,6 +130,66 @@ namespace AggieMove
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+
+        /// <summary>
+        /// Invoked on every keystroke, including system keys such as Alt key combinations.
+        /// Used to detect keyboard navigation between pages even when the page itself
+        /// doesn't have focus.
+        /// </summary>
+        private void CoreDispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs e)
+        {
+            INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
+
+            // When Alt+Left are pressed navigate back.
+            // When Alt+Right are pressed navigate forward.
+            if (e.EventType == CoreAcceleratorKeyEventType.SystemKeyDown
+                && (e.VirtualKey == VirtualKey.Left || e.VirtualKey == VirtualKey.Right)
+                && e.KeyStatus.IsMenuKeyDown == true
+                && !e.Handled)
+            {
+                if (e.VirtualKey == VirtualKey.Left)
+                {
+                    e.Handled = NavigationService.TryGoBack();
+                }
+                else if (e.VirtualKey == VirtualKey.Right)
+                {
+                    // TODO: e.Handled = TryGoForward();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handle system back requests.
+        /// </summary>
+        private void System_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
+                e.Handled = NavigationService.TryGoBack();
+            }
+        }
+
+        /// <summary>
+        /// Handle mouse back button.
+        /// </summary>
+        private void CoreWindow_PointerPressed(CoreWindow sender, PointerEventArgs e)
+        {
+            INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
+
+            // For this event, e.Handled arrives as 'true', so invert the value.
+            if (e.CurrentPoint.Properties.IsXButton1Pressed
+                && e.Handled)
+            {
+                e.Handled = !NavigationService.TryGoBack();
+            }
+            else if (e.CurrentPoint.Properties.IsXButton2Pressed
+                    && e.Handled)
+            {
+                //e.Handled = !TryGoForward();
+            }
         }
 
 

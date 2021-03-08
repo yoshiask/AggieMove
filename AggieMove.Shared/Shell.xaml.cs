@@ -49,8 +49,6 @@ namespace AggieMove
 
         private void MainFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            MainNav.IsBackEnabled = MainFrame.CanGoBack;
-
             if (ViewModel.ChangedByUserFlag)
             {
                 ViewModel.ChangedByUserFlag = false;
@@ -64,7 +62,7 @@ namespace AggieMove
                 // null checks.
                 ViewModel.SelectedPage = ShellViewModel.Pages.Find((info) =>
                 {
-                    Type pageType = Type.GetType("AggieMove.Views." + info.PageType);
+                    Type pageType = Type.GetType(Services.NavigationService.ASSEMBLY_FRAGMENT + info.PageType);
                     return pageType == e.SourcePageType;
                 });
             }

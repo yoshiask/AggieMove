@@ -1,6 +1,7 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using AggieMove.Services;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -11,7 +12,13 @@ namespace AggieMove.ViewModels
         public ShellViewModel()
         {
             //NavigateCommand = new RelayCommand<string>(Navigate);
+            GoBackCommand = new RelayCommand(GoBack);
         }
+
+        /// <summary>
+        /// The <see cref="INavigationService"/> instance currently in use.
+        /// </summary>
+        private readonly INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
 
         // TODO: Is there a better way than to make this static?
         public static List<PageInfoBase> Pages = new List<PageInfoBase>
@@ -86,6 +93,16 @@ namespace AggieMove.ViewModels
         private void Navigate(string page)
         {
 
+        }
+
+        /// <summary>
+        /// Gets the <see cref="IRelayCommand"/> instance responsible for navigating backward.
+        /// </summary>
+        public IRelayCommand GoBackCommand { get; }
+
+        private void GoBack()
+        {
+            NavigationService.GoBack();
         }
     }
 }

@@ -15,6 +15,10 @@ namespace AggieMove.Services
 
         public void NavigateToSettingsPage(SettingsPages page);
 
+        public void GoBack();
+
+        public bool TryGoBack();
+
         public Task<bool> OpenInBrowser(string url);
 
         public Task<bool> OpenInBrowser(Uri uri);
