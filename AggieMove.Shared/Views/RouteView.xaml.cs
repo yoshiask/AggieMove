@@ -12,21 +12,21 @@ using Windows.UI.Xaml.Navigation;
 
 namespace AggieMove.Views
 {
-	/// <summary>
-	/// An empty page that can be used on its own or navigated to within a Frame.
-	/// </summary>
-	public sealed partial class RouteView : Page
-	{
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
+    public sealed partial class RouteView : Page
+    {
         public System.Drawing.Color DrawingColor { get; set; }
 
-		public RouteView()
-		{
-			this.InitializeComponent();
-		}
+        public RouteView()
+        {
+            this.InitializeComponent();
+        }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-			ViewModel.SelectedRoute = e.Parameter as Route;
+            ViewModel.SelectedRoute = e.Parameter as Route;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
             MapHelper.LoadMap(MainMapView);
