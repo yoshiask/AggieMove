@@ -147,6 +147,7 @@
                 <VisualState x:Name="Compact">
                     <VisualState.Setters>
                         <Setter Target="MainNav.PaneDisplayMode" Value="LeftCompact"/>
+                        <Setter Target="MainNav.IsPaneOpen" Value="False"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
