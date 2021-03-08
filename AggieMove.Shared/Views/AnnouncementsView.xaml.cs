@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+﻿using Windows.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -25,6 +12,14 @@ namespace AggieMove.Views
         public AnnouncementsView()
         {
             this.InitializeComponent();
+        }
+        private void OnAnnouncementSelected(object sender, SelectionChangedEventArgs e)
+        {
+#if !NETFX_CORE
+            // TODO: This is an ugly, pattern-breaking workaround because Uno fires the SelectionChanged event before
+            // setting the selected item
+            ViewModel.SelectedAnnouncement = e.AddedItems[0] as TamuBusFeed.Models.AnnouncementItem;
+#endif
         }
     }
 }

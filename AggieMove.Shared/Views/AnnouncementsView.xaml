@@ -27,7 +27,7 @@
     
     <Grid>
         <ListView ItemsSource="{x:Bind ViewModel.Feed.Items, Mode=OneWay}" SelectionMode="Single" IsItemClickEnabled="True"
-                  SelectedItem="{x:Bind ViewModel.SelectedAnnouncement, Mode=TwoWay}">
+                  SelectedItem="{x:Bind ViewModel.SelectedAnnouncement, Mode=TwoWay}" SelectionChanged="OnAnnouncementSelected">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:AnnouncementItem">
                     <Grid Padding="10" ColumnSpacing="10">
