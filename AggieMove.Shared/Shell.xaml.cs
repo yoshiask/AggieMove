@@ -87,7 +87,7 @@ namespace AggieMove
                 pageInfo = ShellViewModel.Pages.Find((info) => info.Title == navItem.Content.ToString());
 
             if (pageInfo == null)
-                NavService.Navigate(typeof(Views.ExploreView));
+                NavService.Navigate(typeof(Views.NotImplementedPage));
             else
                 NavService.Navigate(pageInfo.PageType);
         }

@@ -20,12 +20,12 @@
         <converters:CSSColorToWinUIColorConverter x:Name="CSSColorToWinUIColorConverter"/>
     </Page.Resources>
     
-    <interactivity:Interaction.Behaviors>
+    <!--<interactivity:Interaction.Behaviors>
         <core:EventTriggerBehavior EventName="Loading">
-            <!--<core:InvokeCommandAction Command="{x:Bind ViewModel.LoadPatternsCommand}"/>-->
+            <core:InvokeCommandAction Command="{x:Bind ViewModel.LoadPatternsCommand}"/>
             <core:InvokeCommandAction Command="{x:Bind ViewModel.LoadTimeTableCommand}"/>
         </core:EventTriggerBehavior>
-    </interactivity:Interaction.Behaviors>
+    </interactivity:Interaction.Behaviors>-->
 
     <Page.DataContext>
         <viewmodels:RouteViewModel x:Name="ViewModel"/>
@@ -84,7 +84,10 @@
             </PivotItem>
 
             <PivotItem Header="Times">
-                <ItemsControl ItemsSource="{x:Bind ViewModel.TimeTable.TimeStops, Mode=OneWay}">
+                <ScrollViewer>
+                    <ContentControl x:Name="TimeTablePresenter" HorizontalContentAlignment="Stretch"/>
+                </ScrollViewer>
+                <!--<ItemsControl ItemsSource="{x:Bind ViewModel.TimeTable.TimeStops, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="models:TimeStop">
                             <Grid>
@@ -100,11 +103,11 @@
                                             <TextBlock Padding="4" Text="{x:Bind}"/>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
-                                    <!--<interactivity:Interaction.Behaviors>
+                                    --><!--<interactivity:Interaction.Behaviors>
                                         <core:EventTriggerBehavior EventName="SelectionChanged">
                                             <core:InvokeCommandAction Command="{x:Bind ViewModel.ZoomToStopCommand}"/>
                                         </core:EventTriggerBehavior>
-                                    </interactivity:Interaction.Behaviors>-->
+                                    </interactivity:Interaction.Behaviors>--><!--
                                 </ListView>
                             </Grid>
                         </DataTemplate>
@@ -115,7 +118,7 @@
                             <toolkit:UniformGrid Rows="1"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-                </ItemsControl>
+                </ItemsControl>-->
             </PivotItem>
         </Pivot>
     </Grid>

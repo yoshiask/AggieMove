@@ -56,6 +56,10 @@ namespace AggieMove.Views
 
             MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, !hasRoutePoints);
 
+            // Show time table
+            await ViewModel.LoadTimeTableAsync();
+            TimeTablePresenter.Content = TimeTableUIFactory.CreateGridFromTimeTable(ViewModel.TimeTable);
+
             base.OnNavigatedTo(e);
         }
 

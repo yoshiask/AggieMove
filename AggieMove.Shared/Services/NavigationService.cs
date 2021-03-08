@@ -22,7 +22,7 @@ namespace AggieMove.Services
 
         public void Navigate(string page)
         {
-            Type type = Type.GetType(ASSEMBLY_FRAGMENT + page) ?? typeof(Views.ExploreView);
+            Type type = Type.GetType(ASSEMBLY_FRAGMENT + page) ?? typeof(Views.NotImplementedPage);
             Navigate(type);
         }
 

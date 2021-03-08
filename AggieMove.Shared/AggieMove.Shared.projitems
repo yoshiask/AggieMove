@@ -24,6 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\MapHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\NavigationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SpatialHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\TimeTableUIFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Shell.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\NavigationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\AnnouncementsView.xaml.cs">
@@ -31,6 +32,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\ExploreView.xaml.cs">
       <DependentUpon>ExploreView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\NotImplementedPage.xaml.cs">
+      <DependentUpon>NotImplementedPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\RouteView.xaml.cs">
       <DependentUpon>RouteView.xaml</DependentUpon>
@@ -46,6 +50,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\ExploreView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\NotImplementedPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
