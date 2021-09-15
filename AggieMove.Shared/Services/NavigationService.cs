@@ -34,8 +34,7 @@ namespace AggieMove.Services
 
         public void NavigateToSettingsPage(SettingsPages page)
         {
-            throw new NotImplementedException();
-            //CurrentFrame.Navigate(typeof(Views.SettingsView), page);
+            CurrentFrame.Navigate(typeof(Views.NotImplementedPage), page);
         }
 
         public void GoBack()
