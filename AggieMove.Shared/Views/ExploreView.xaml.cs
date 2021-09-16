@@ -1,5 +1,6 @@
 ﻿using AggieMove.Helpers;
 using System;
+using TamuBusFeed.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -15,6 +16,22 @@ namespace AggieMove.Views
         public ExploreView()
         {
             this.InitializeComponent();
+            ViewModel.Routes.CollectionChanged += Routes_CollectionChanged;
+        }
+
+        private void Routes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    Route route = item as Route;
+                    if (route == null)
+                        continue;
+
+
+                }
+            }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
