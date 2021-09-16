@@ -52,6 +52,7 @@ namespace AggieMove.ViewModels
             {
                 // Some of the names have leading whitespace for no reason
                 r.Name = r.Name.Trim();
+                await r.GetDetailedPatternAsync();
                 Routes.Add(r);
             }
         }

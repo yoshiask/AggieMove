@@ -1,5 +1,6 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TamuBusFeed.Models
 {
@@ -85,5 +86,23 @@ namespace TamuBusFeed.Models
             set => SetProperty(ref routeType, value);
         }
 
+        public List<PatternElement> Stops { get; } = new List<PatternElement>();
+        public List<PatternElement> DetailedPattern { get; } = new List<PatternElement>();
+        public async Task<List<PatternElement>> GetDetailedPatternAsync()
+        {
+            if (DetailedPattern == null || DetailedPattern.Count <= 0)
+            {
+                foreach (PatternElement p in await TamuBusFeedApi.GetPattern(ShortName))
+                {
+                    p.Name = p.Name.Trim();
+                    DetailedPattern.Add(p);
+
+                    // Some of the names have leading whitespace for no reason
+                    if (p.Stop != null)
+                        Stops.Add(p);
+                }
+            }
+            return DetailedPattern;
+        }
     }
 }

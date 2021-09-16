@@ -57,7 +57,7 @@
         </Grid>
 
         <ProgressRing Grid.Row="2" Visibility="{x:Bind ViewModel.LoadRoutesCommand.IsRunning, Mode=OneWay}"/>
-        <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.Routes}" SelectedItem="{x:Bind ViewModel.SelectedRoute, Mode=TwoWay}"
+        <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.Routes, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SelectedRoute, Mode=TwoWay}"
                   SelectionChanged="OnRouteSelected">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Route">

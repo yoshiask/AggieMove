@@ -13,11 +13,24 @@ namespace AggieMove.ViewModels
         {
             LoadPatternsCommand = new AsyncRelayCommand(LoadPatternsAsync);
             LoadTimeTableCommand = new AsyncRelayCommand(LoadTimeTableAsync);
+
+            PatternElements = new ObservableCollection<PatternElement>();
+            Stops = new ObservableCollection<PatternElement>();
         }
 
-        public ObservableCollection<PatternElement> Stops { get; } = new ObservableCollection<PatternElement>();
+        private ObservableCollection<PatternElement> _PatternElements;
+        public ObservableCollection<PatternElement> PatternElements
+        {
+            get => _PatternElements;
+            set => SetProperty(ref _PatternElements, value);
+        }
 
-        public ObservableCollection<PatternElement> PatternElements { get; } = new ObservableCollection<PatternElement>();
+        private ObservableCollection<PatternElement> _Stops;
+        public ObservableCollection<PatternElement> Stops
+        {
+            get => _Stops;
+            set => SetProperty(ref _Stops, value);
+        }
 
         private Route _SelectedRoute;
         public Route SelectedRoute
@@ -57,17 +70,8 @@ namespace AggieMove.ViewModels
 
         public async Task LoadPatternsAsync()
         {
-            Stops.Clear();
-            PatternElements.Clear();
-            foreach (PatternElement p in await TamuBusFeedApi.GetPattern(SelectedRoute.ShortName))
-            {
-                p.Name = p.Name.Trim();
-                PatternElements.Add(p);
-
-                // Some of the names have leading whitespace for no reason
-                if (p.Stop != null)
-                    Stops.Add(p);
-            }
+            PatternElements = new ObservableCollection<PatternElement>(await SelectedRoute.GetDetailedPatternAsync());
+            Stops = new ObservableCollection<PatternElement>(SelectedRoute.Stops);
         }
 
         public async Task LoadTimeTableAsync()
