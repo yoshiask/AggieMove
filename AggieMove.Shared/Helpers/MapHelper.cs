@@ -13,12 +13,12 @@ namespace AggieMove.Helpers
 {
     public static class MapHelper
     {
-        public static readonly MapPoint TAMU_CENTER_POINT = new MapPoint(30.610190 , -96.344800);
+        public static readonly MapPoint TAMU_CENTER_POINT = new MapPoint(30.610190, -96.344800);
         public static readonly SpatialReference BUS_ROUTES_SR = new SpatialReference(3857);
 
         public static async Task<RouteResult> LoadRouter(MapView mapView)
         {
-            var routeSourceUri = new Uri("https://gis.tamu.edu/arcgis/rest/services/Routing/20201128/NAServer/Route");
+            var routeSourceUri = new Uri("https://gis.tamu.edu/arcgis/rest/services/Routing/20210825/NAServer/Route");
             var routeTask = await RouteTask.CreateAsync(routeSourceUri);
 
             // get the default route parameters
