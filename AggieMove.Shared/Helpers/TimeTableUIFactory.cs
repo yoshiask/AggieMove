@@ -43,7 +43,8 @@ namespace AggieMove.Helpers
                     var block = new TextBlock()
                     {
                         Padding = new Thickness(4),
-                        Text = time
+                        Text = time,
+                        Tag = time
                     };
                     MainGrid.Children.Add(block);
                     Grid.SetColumn(block, t);

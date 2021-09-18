@@ -36,7 +36,7 @@ namespace AggieMove.Views
                         continue;
                     var rvm = new RouteViewModel(route);
                     await rvm.LoadPatternsAsync();
-                    MapHelper.DrawRouteAndStops(MainMapView, rvm, ColorHelper.ParseCSSColorAsDrawingColor(route.Color));
+                    MapHelper.DrawRouteAndStops(MainMapView, rvm, ColorHelper.ParseCSSColorAsDrawingColor(route.Color), false);
                 }
             }
         }
@@ -44,7 +44,7 @@ namespace AggieMove.Views
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             MapHelper.LoadMap(MainMapView);
-            MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged);
+            MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, scale: 4000);
         }
 
         private void OnRouteSelected(object sender, SelectionChangedEventArgs e)

@@ -76,7 +76,9 @@ namespace AggieMove.Helpers
             LoadMap(TAMU_CENTER_POINT.X, TAMU_CENTER_POINT.Y, mapView);
         }
 
-        public static async Task SetViewpointToCurrentLocation(MapView mapView, GraphicsOverlay mapGraphics, Windows.Foundation.TypedEventHandler<Windows.Devices.Geolocation.Geolocator, Windows.Devices.Geolocation.PositionChangedEventArgs> PositionChangedHandler, bool zoomToLocation = true)
+        public static async Task SetViewpointToCurrentLocation(MapView mapView, GraphicsOverlay mapGraphics,
+            Windows.Foundation.TypedEventHandler<Windows.Devices.Geolocation.Geolocator, Windows.Devices.Geolocation.PositionChangedEventArgs> PositionChangedHandler,
+            bool zoomToLocation = true, int scale = 2000)
         {
             var currentLoc = await SpatialHelper.GetCurrentLocation();
             if (currentLoc.HasValue)
@@ -87,7 +89,7 @@ namespace AggieMove.Helpers
                 if (zoomToLocation)
                 {
                     await mapView.SetViewpointCenterAsync(currentLoc.Value.Latitude, currentLoc.Value.Longitude);
-                    await mapView.SetViewpointScaleAsync(2000);
+                    await mapView.SetViewpointScaleAsync(scale);
                 }
 
                 if (PositionChangedHandler != null)
@@ -124,7 +126,7 @@ namespace AggieMove.Helpers
             return new Graphic(routePath, routeLineSymbol);
         }
 
-        public static async Task<Graphic> DrawRouteAndStops(MapView mapView, RouteViewModel route, Color routeColor)
+        public static async Task<Graphic> DrawRouteAndStops(MapView mapView, RouteViewModel route, Color routeColor, bool showStops = true)
         {
             var routePoints = route.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, BUS_ROUTES_SR));
             Graphic routePath = CreateRoutePath(routePoints, routeColor);
@@ -134,12 +136,13 @@ namespace AggieMove.Helpers
             };
             routeOverlay.Graphics.Add(routePath);
 
-            foreach (TamuBusFeed.Models.PatternElement elem in route.Stops)
-            {
-                var point = new MapPoint(elem.Longitude, elem.Latitude, BUS_ROUTES_SR);
-                var stop = CreateRouteStop(point, routeColor);
-                routeOverlay.Graphics.Add(stop);
-            }
+            if (showStops)
+                foreach (TamuBusFeed.Models.PatternElement elem in route.Stops)
+                {
+                    var point = new MapPoint(elem.Longitude, elem.Latitude, BUS_ROUTES_SR);
+                    var stop = CreateRouteStop(point, routeColor);
+                    routeOverlay.Graphics.Add(stop);
+                }
 
             mapView.GraphicsOverlays.Add(routeOverlay);
             return routePath;

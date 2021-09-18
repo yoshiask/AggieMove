@@ -5,6 +5,7 @@ using Esri.ArcGISRuntime.UI;
 using System;
 using System.Linq;
 using TamuBusFeed.Models;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -37,8 +38,10 @@ namespace AggieMove.Views
             bool hasRoutePoints = ViewModel.PatternElements.Count > 0;
             if (hasRoutePoints)
             {
-                var routePath = await MapHelper.DrawRouteAndStops(MainMapView, ViewModel, DrawingColor);
-                MainMapView.SetViewpointGeometryAsync(routePath.Geometry);
+                MapHelper.DrawRouteAndStops(MainMapView, ViewModel, DrawingColor).ContinueWith(async (Task) =>
+                {
+                    MainMapView.SetViewpointGeometryAsync(Task.Result.Geometry);
+                });
             }
             else
             {
@@ -47,7 +50,18 @@ namespace AggieMove.Views
 
             // Show time table
             await ViewModel.LoadTimeTableAsync();
-            TimeTablePresenter.Content = TimeTableUIFactory.CreateGridFromTimeTable(ViewModel.TimeTable);
+            var ttGrid = TimeTableUIFactory.CreateGridFromTimeTable(ViewModel.TimeTable);
+            TimeTablePresenter.Content = ttGrid;
+
+            // Bring current time into view
+            // TODO: Extend this to include the closest time
+            string nowTime = DateTime.Now.ToString("hh:mm tt");
+            TextBlock nowBlock = ttGrid.Children.FirstOrDefault(ui => (string)(ui as FrameworkElement)?.Tag == nowTime) as TextBlock;
+            if (ViewModel.TimeTable != null && nowBlock != null)
+            {
+                nowBlock.Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 0, 0));
+                nowBlock.StartBringIntoView();
+            }
 
             base.OnNavigatedTo(e);
         }
