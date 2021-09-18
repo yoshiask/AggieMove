@@ -34,27 +34,14 @@ namespace AggieMove.Views
             await ViewModel.LoadPatternsAsync();
             DrawingColor = ColorHelper.ParseCSSColorAsDrawingColor(ViewModel.SelectedRoute.Color);
 
-            bool hasRoutePoints = ViewModel.PatternElements.Count != 0;
+            bool hasRoutePoints = ViewModel.PatternElements.Count > 0;
             if (hasRoutePoints)
             {
-                var routePoints = ViewModel.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, MapHelper.BUS_ROUTES_SR));
-                var routePath = new PolylineBuilder(routePoints, MapHelper.BUS_ROUTES_SR).ToGeometry();
-                // Create a simple line symbol to display the polyline
-                var routeLineSymbol = new SimpleLineSymbol(
-                    SimpleLineSymbolStyle.Solid, DrawingColor, 4.0
-                );
-                MapGraphics.Graphics.Add(new Graphic(routePath, routeLineSymbol));
-                await MainMapView.SetViewpointGeometryAsync(routePath);
-
-                foreach (PatternElement elem in ViewModel.Stops)
-                {
-                    var point = new MapPoint(elem.Longitude, elem.Latitude, MapHelper.BUS_ROUTES_SR);
-                    var stop = MapHelper.CreateRouteStop(point, DrawingColor);
-                    MapGraphics.Graphics.Add(stop);
-                }
+                var routePath = await MapHelper.DrawRouteAndStops(MainMapView, MapGraphics, ViewModel, DrawingColor);
+                MainMapView.SetViewpointGeometryAsync(routePath.Geometry);
             }
 
-            MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, !hasRoutePoints);
+            //MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, !hasRoutePoints);
 
             // Show time table
             await ViewModel.LoadTimeTableAsync();

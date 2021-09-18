@@ -1,4 +1,5 @@
 ﻿using AggieMove.Helpers;
+using AggieMove.ViewModels;
 using System;
 using TamuBusFeed.Models;
 using Windows.UI.Xaml;
@@ -19,7 +20,7 @@ namespace AggieMove.Views
             ViewModel.Routes.CollectionChanged += Routes_CollectionChanged;
         }
 
-        private void Routes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private async void Routes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
@@ -28,8 +29,9 @@ namespace AggieMove.Views
                     Route route = item as Route;
                     if (route == null)
                         continue;
-
-
+                    var rvm = new RouteViewModel(route);
+                    await rvm.LoadPatternsAsync();
+                    await MapHelper.DrawRouteAndStops(MainMapView, MapGraphics, rvm, ColorHelper.ParseCSSColorAsDrawingColor(route.Color));
                 }
             }
         }

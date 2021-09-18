@@ -1,4 +1,5 @@
-﻿using Esri.ArcGISRuntime.Data;
+﻿using AggieMove.ViewModels;
+using Esri.ArcGISRuntime.Data;
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
 using Esri.ArcGISRuntime.Symbology;
@@ -7,6 +8,8 @@ using Esri.ArcGISRuntime.UI;
 using Esri.ArcGISRuntime.UI.Controls;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AggieMove.Helpers
@@ -92,21 +95,49 @@ namespace AggieMove.Helpers
             }
         }
 
-        public static Graphic CreateRouteStop(double lat, double lon, System.Drawing.Color fill)
+        public static Graphic CreateRouteStop(double lat, double lon, Color fill)
         {
             var mapPoint = new MapPoint(Convert.ToDouble(lon),
                 Convert.ToDouble(lat), SpatialReferences.Wgs84);
             return CreateRouteStop(mapPoint, fill);
         }
-        public static Graphic CreateRouteStop(MapPoint mapPoint, System.Drawing.Color fill)
+        public static Graphic CreateRouteStop(MapPoint mapPoint, Color fill)
         {
-            var pointSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Circle, fill, 20);
-            pointSymbol.Outline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.White, 5);
+            var pointSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Circle, fill, 20)
+            {
+                Outline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, Color.White, 5)
+            };
             return new Graphic(mapPoint, pointSymbol);
         }
         public static Graphic CreateInactiveRouteStop(double lat, double lon)
         {
-            return CreateRouteStop(lat, lon, System.Drawing.Color.Black);
+            return CreateRouteStop(lat, lon, Color.Black);
+        }
+
+        public static Graphic CreateRoutePath(IEnumerable<MapPoint> points, Color lineColor)
+        {
+            var routePath = new PolylineBuilder(points, BUS_ROUTES_SR).ToGeometry();
+            // Create a simple line symbol to display the polyline
+            var routeLineSymbol = new SimpleLineSymbol(
+                SimpleLineSymbolStyle.Solid, lineColor, 4.0
+            );
+            return new Graphic(routePath, routeLineSymbol);
+        }
+
+        public static async Task<Graphic> DrawRouteAndStops(MapView mapView, GraphicsOverlay mapGraphics, RouteViewModel route, Color routeColor)
+        {
+            var routePoints = route.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, BUS_ROUTES_SR));
+            Graphic routePath = CreateRoutePath(routePoints, routeColor);
+            mapGraphics.Graphics.Add(routePath);
+
+            foreach (TamuBusFeed.Models.PatternElement elem in route.Stops)
+            {
+                var point = new MapPoint(elem.Longitude, elem.Latitude, BUS_ROUTES_SR);
+                var stop = CreateRouteStop(point, routeColor);
+                mapGraphics.Graphics.Add(stop);
+            }
+
+            return routePath;
         }
     }
 }

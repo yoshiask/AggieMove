@@ -18,6 +18,11 @@ namespace AggieMove.ViewModels
             Stops = new ObservableCollection<PatternElement>();
         }
 
+        public RouteViewModel(Route route) : base()
+        {
+            SelectedRoute = route;
+        }
+
         private ObservableCollection<PatternElement> _PatternElements;
         public ObservableCollection<PatternElement> PatternElements
         {
