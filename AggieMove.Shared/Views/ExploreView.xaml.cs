@@ -1,6 +1,7 @@
 ﻿using AggieMove.Helpers;
 using AggieMove.ViewModels;
 using System;
+using System.Linq;
 using TamuBusFeed.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -22,7 +23,11 @@ namespace AggieMove.Views
 
         private async void Routes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+            {
+                MapHelper.ClearAllRouteOverlays(MainMapView);
+            }
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
                 foreach (var item in e.NewItems)
                 {
@@ -31,7 +36,7 @@ namespace AggieMove.Views
                         continue;
                     var rvm = new RouteViewModel(route);
                     await rvm.LoadPatternsAsync();
-                    await MapHelper.DrawRouteAndStops(MainMapView, MapGraphics, rvm, ColorHelper.ParseCSSColorAsDrawingColor(route.Color));
+                    MapHelper.DrawRouteAndStops(MainMapView, rvm, ColorHelper.ParseCSSColorAsDrawingColor(route.Color));
                 }
             }
         }
@@ -55,14 +60,22 @@ namespace AggieMove.Views
         {
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                MapGraphics.Graphics.Clear();
+                MapGraphics.Graphics.Where(g =>
+                {
+                    if (g.Attributes.ContainsKey("id"))
+                    {
+                        return (string)g.Attributes["id"] != "currentLocation";
+                    }
+                    return true;
+                });
 
-                var stopPoint = MapHelper.CreateRouteStop(
+                var currentLocation = MapHelper.CreateRouteStop(
                     args.Position.Coordinate.Point.Position.Latitude,
                     args.Position.Coordinate.Point.Position.Longitude,
                     System.Drawing.Color.Red
                 );
-                MapGraphics.Graphics.Add(stopPoint);
+                currentLocation.Attributes.Add("id", "currentLocation");
+                MapGraphics.Graphics.Add(currentLocation);
             });
         }
     }

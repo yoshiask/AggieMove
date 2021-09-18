@@ -37,11 +37,13 @@ namespace AggieMove.Views
             bool hasRoutePoints = ViewModel.PatternElements.Count > 0;
             if (hasRoutePoints)
             {
-                var routePath = await MapHelper.DrawRouteAndStops(MainMapView, MapGraphics, ViewModel, DrawingColor);
+                var routePath = await MapHelper.DrawRouteAndStops(MainMapView, ViewModel, DrawingColor);
                 MainMapView.SetViewpointGeometryAsync(routePath.Geometry);
             }
-
-            //MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, !hasRoutePoints);
+            else
+            {
+                MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, !hasRoutePoints);
+            }
 
             // Show time table
             await ViewModel.LoadTimeTableAsync();

@@ -124,20 +124,38 @@ namespace AggieMove.Helpers
             return new Graphic(routePath, routeLineSymbol);
         }
 
-        public static async Task<Graphic> DrawRouteAndStops(MapView mapView, GraphicsOverlay mapGraphics, RouteViewModel route, Color routeColor)
+        public static async Task<Graphic> DrawRouteAndStops(MapView mapView, RouteViewModel route, Color routeColor)
         {
             var routePoints = route.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, BUS_ROUTES_SR));
             Graphic routePath = CreateRoutePath(routePoints, routeColor);
-            mapGraphics.Graphics.Add(routePath);
+            var routeOverlay = new GraphicsOverlay
+            {
+                Id = "route_" + route.SelectedRoute.ShortName
+            };
+            routeOverlay.Graphics.Add(routePath);
 
             foreach (TamuBusFeed.Models.PatternElement elem in route.Stops)
             {
                 var point = new MapPoint(elem.Longitude, elem.Latitude, BUS_ROUTES_SR);
                 var stop = CreateRouteStop(point, routeColor);
-                mapGraphics.Graphics.Add(stop);
+                routeOverlay.Graphics.Add(stop);
             }
 
+            mapView.GraphicsOverlays.Add(routeOverlay);
             return routePath;
+        }
+
+        public static void ClearAllRouteOverlays(MapView mapView)
+        {
+            int i = 0;
+            while (i < mapView.GraphicsOverlays.Count)
+            {
+                var overlay = mapView.GraphicsOverlays[i];
+                if (overlay.Id != null && overlay.Id.StartsWith("route_"))
+                    mapView.GraphicsOverlays.RemoveAt(i);
+                else
+                    i++;
+            }
         }
     }
 }
