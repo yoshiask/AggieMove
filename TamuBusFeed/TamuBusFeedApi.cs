@@ -66,6 +66,9 @@ namespace TamuBusFeed
 
             var timeTableGrid = document.QuerySelector("#TimeTableGridView").LastElementChild.Children.ToList();
             var headerRowIdx = timeTableGrid.FindLastIndex(e => e.ClassList.Contains("headRow"));
+            if (headerRowIdx < 0)
+                return null;
+
             var headerRow = timeTableGrid[headerRowIdx];
             timeTable.TimeStops = new System.Collections.ObjectModel.ObservableCollection<TimeStop>(
                 headerRow.Children.Select(timeStop => new TimeStop

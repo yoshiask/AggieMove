@@ -50,7 +50,24 @@ namespace AggieMove.Views
 
             // Show time table
             await ViewModel.LoadTimeTableAsync();
-            var ttGrid = TimeTableUIFactory.CreateGridFromTimeTable(ViewModel.TimeTable);
+            Windows.UI.Xaml.Controls.Grid ttGrid;
+            if (ViewModel.TimeTable != null)
+            {
+                ttGrid = TimeTableUIFactory.CreateGridFromTimeTable(ViewModel.TimeTable);
+            }
+            else
+            {
+                ttGrid = new Windows.UI.Xaml.Controls.Grid
+                {
+                    Children =
+                    {
+                        new TextBlock
+                        {
+                            Text = "Unable to load stop timing."
+                        }
+                    }
+                };
+            }
             TimeTablePresenter.Content = ttGrid;
 
             // Bring current time into view
