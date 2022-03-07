@@ -25,17 +25,22 @@ namespace TamuBusFeed
 
         private const string HOST_BASE = "https://transport.tamu.edu";
         private static readonly string FEED_API_URL = HOST_BASE.AppendPathSegments("BusRoutesFeed", "api");
+        
+        private static IFlurlRequest GetBase()
+        {
+            return FEED_API_URL.WithHeader("Accept", "application/json");
+        }
 
         public static async Task<List<Route>> GetRoutes()
         {
-            return await FEED_API_URL
+            return await GetBase()
                 .AppendPathSegments("routes")
                 .GetJsonAsync<List<Route>>();
         }
 
         public static async Task<List<PatternElement>> GetPattern(string shortname, DateTimeOffset date)
         {
-            return await FEED_API_URL
+            return await GetBase()
                 .AppendPathSegments("route", shortname, "pattern", date.ToString("yyyy-MM-dd"))
                 .GetJsonAsync<List<PatternElement>>();
         }
@@ -46,7 +51,7 @@ namespace TamuBusFeed
 
         public static async Task<AnnouncementFeed> GetAnnouncements()
         {
-            return await FEED_API_URL
+            return await GetBase()
                 .AppendPathSegments("announcements")
                 .GetJsonAsync<AnnouncementFeed>();
         }
@@ -112,10 +117,9 @@ namespace TamuBusFeed
 
         private static bool ValidateTAMUTransportSSLCert(HttpRequestMessage sender, X509Certificate2 certificate, X509Chain chain, SslPolicyErrors sslPolicy)
         {
-            bool isValid = (certificate.Subject == "CN=transport.tamu.edu, OU=Texas A&M IT, O=Texas A & M University, STREET=112 Jack K Williams Admin Building, L=College Station, S=Texas, PostalCode=77843, C=US"
-                || certificate.Subject == "CN=transport.tamu.edu, OU=Texas A&M IT, O=Texas A & M University, STREET=112 Jack K Williams Admin Building, L=College Station, S=Texas, OID.2.5.4.17=77843, C=US")
-                && certificate.SerialNumber == "00E4773C658B1DC2028D5BF14E162711F2"
-                && certificate.Thumbprint == "01C6EFCA9730068A91E0DB01D8857575044FB6D0";
+            bool isValid = certificate.Subject == "CN=transport.tamu.edu, OU=Texas A&M IT, O=Texas A & M University, STREET=112 Jack K Williams Admin Building, L=College Station, S=Texas, PostalCode=77843, C=US"
+                || certificate.Subject == "CN=transport.tamu.edu, OU=Texas A&M IT, O=Texas A & M University, STREET=112 Jack K Williams Admin Building, L=College Station, S=Texas, OID.2.5.4.17=77843, C=US"
+                || certificate.Subject == "CN=transport.tamu.edu, OU=Texas A&M IT, O=Texas A & M University, L=College Station, S=Texas, C=US";
             return isValid;
         }
     }
