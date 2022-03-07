@@ -33,6 +33,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\ExploreView.xaml.cs">
       <DependentUpon>ExploreView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\NavigateView.xaml.cs">
+      <DependentUpon>NavigateView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\NotImplementedPage.xaml.cs">
       <DependentUpon>NotImplementedPage.xaml</DependentUpon>
     </Compile>
@@ -50,6 +53,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\ExploreView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\NavigateView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
