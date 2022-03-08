@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.16.0" />
-    <PackageReference Include="Esri.ArcGISRuntime" Version="100.11.2" />
+    <PackageReference Include="AngleSharp" Version="0.16.1" />
+    <PackageReference Include="Esri.ArcGISRuntime" Version="100.13.0" />
     <PackageReference Include="Flurl.Http" Version="3.2.2" />
-    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.2" />
+    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
   </ItemGroup>
 
 </Project>
