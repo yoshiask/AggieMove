@@ -42,7 +42,7 @@ namespace AggieMove
             if (e.Parameter is Tuple<Type, object> launchInfo && launchInfo.Item1 != null)
                 NavService.Navigate(launchInfo.Item1, launchInfo.Item2);
             else
-                NavService.Navigate(typeof(Views.ExploreView));
+                NavService.Navigate(typeof(Views.NavigateView));
 
             base.OnNavigatedTo(e);
         }

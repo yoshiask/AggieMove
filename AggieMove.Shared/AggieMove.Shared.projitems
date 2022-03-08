@@ -27,6 +27,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\TimeTableUIFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Shell.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\NavigationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\AddPointPage.xaml.cs">
+      <DependentUpon>AddPointPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\AnnouncementsView.xaml.cs">
       <DependentUpon>AnnouncementsView.xaml</DependentUpon>
     </Compile>
@@ -45,6 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Shell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\AddPointPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

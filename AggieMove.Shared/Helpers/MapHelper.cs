@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 
 namespace AggieMove.Helpers
 {
@@ -159,6 +160,29 @@ namespace AggieMove.Helpers
                 else
                     i++;
             }
+        }
+
+        public static async void Geolocator_PositionChanged(GraphicCollection graphics, CoreDispatcher dispatcher, Windows.Devices.Geolocation.Geolocator sender, Windows.Devices.Geolocation.PositionChangedEventArgs args)
+        {
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                graphics.Where(g =>
+                {
+                    if (g.Attributes.ContainsKey("id"))
+                    {
+                        return (string)g.Attributes["id"] != "currentLocation";
+                    }
+                    return true;
+                });
+
+                var currentLocation = CreateRouteStop(
+                    args.Position.Coordinate.Point.Position.Latitude,
+                    args.Position.Coordinate.Point.Position.Longitude,
+                    Color.Red
+                );
+                currentLocation.Attributes.Add("id", "currentLocation");
+                graphics.Add(currentLocation);
+            });
         }
     }
 }
