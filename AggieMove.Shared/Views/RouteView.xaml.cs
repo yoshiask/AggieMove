@@ -2,6 +2,7 @@
 using Esri.ArcGISRuntime.Geometry;
 using System;
 using System.Linq;
+using System.Timers;
 using TamuBusFeed.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,12 +17,24 @@ namespace AggieMove.Views
     /// </summary>
     public sealed partial class RouteView : Page
     {
-        public System.Drawing.Color DrawingColor { get; set; }
+        private readonly Windows.UI.Xaml.Media.SolidColorBrush currentTimeHighlightBrush = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 0, 0));
+        private readonly Windows.UI.Xaml.Media.SolidColorBrush pastTimeHighlightBrush = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 125, 125, 125));
+        private readonly BringIntoViewOptions currentTimeViewOptions = new BringIntoViewOptions
+        {
+            VerticalAlignmentRatio = 0.5f,
+        };
+        private readonly Timer clock;
 
-        public TextBlock CurrentTimeBlock { get; set; }
+        public System.Drawing.Color DrawingColor { get; private set; }
+        public TextBlock CurrentTimeBlock { get; private set; }
+        public Grid TimeTableGrid { get; private set; }
 
         public RouteView()
         {
+            clock = new Timer();
+            clock.Interval = 60 * 1000;     // One minute
+            clock.Elapsed += Clock_Elapsed;
+
             this.InitializeComponent();
         }
 
@@ -48,14 +61,15 @@ namespace AggieMove.Views
 
             // Show time table
             await ViewModel.LoadTimeTableAsync();
-            Windows.UI.Xaml.Controls.Grid ttGrid;
             if (ViewModel.TimeTable != null)
             {
-                ttGrid = TimeTableUIFactory.CreateGridFromTimeTable(ViewModel.TimeTable);
+                TimeTableGrid = TimeTableUIFactory.CreateGridFromTimeTable(ViewModel.TimeTable);
+                UpdateCurrentTimeBlock();
+                clock.Start();
             }
             else
             {
-                ttGrid = new Windows.UI.Xaml.Controls.Grid
+                TimeTableGrid = new Grid
                 {
                     Children =
                     {
@@ -66,15 +80,7 @@ namespace AggieMove.Views
                     }
                 };
             }
-            TimeTablePresenter.Content = ttGrid;
-
-            // Brings next nearest time into view
-            if (ViewModel.TimeTable != null &&
-                ttGrid.Children.FirstOrDefault(ui => ((ui as FrameworkElement)?.Tag as DateTimeOffset?) >= DateTimeOffset.Now) is TextBlock nowBlock)
-            {
-                CurrentTimeBlock = nowBlock;
-                nowBlock.Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 0, 0));
-            }
+            TimeTablePresenter.Content = TimeTableGrid;
 
             base.OnNavigatedTo(e);
         }
@@ -104,12 +110,29 @@ namespace AggieMove.Views
                 await System.Threading.Tasks.Task.Delay(10);
                 
                 // Scroll to current time
-                var options = new BringIntoViewOptions
-                {
-                    VerticalAlignmentRatio = 0.5f,
-                };
-                CurrentTimeBlock.StartBringIntoView(options);
+                CurrentTimeBlock.StartBringIntoView(currentTimeViewOptions);
             }
+        }
+
+        private void UpdateCurrentTimeBlock()
+        {
+            // Make sure a time isn't already highlighted
+            if (CurrentTimeBlock != null)
+            {
+                CurrentTimeBlock.Foreground = pastTimeHighlightBrush;
+            }
+
+            // Brings next nearest time into view
+            if (TimeTableGrid.Children.FirstOrDefault(ui => ((ui as FrameworkElement)?.Tag as DateTimeOffset?) >= DateTimeOffset.Now) is TextBlock nowBlock)
+            {
+                CurrentTimeBlock = nowBlock;
+                nowBlock.Foreground = currentTimeHighlightBrush;
+            }
+        }
+
+        private async void Clock_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, UpdateCurrentTimeBlock);
         }
     }
 }
