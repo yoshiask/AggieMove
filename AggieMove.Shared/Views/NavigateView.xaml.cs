@@ -67,7 +67,7 @@ namespace AggieMove.Views
 
                     double hue = 360 * i / routes.Count;
                     var color = tkColorHelper.FromHsl(hue, 0.85, 1.00).ToDrawingColor();
-                    MapGraphics.Graphics.Add(MapHelper.DrawDirections(MainMapView, route, color, true));
+                    MapHelper.DrawDirections(MainMapView, route, color, true);
                 }
             }
         }

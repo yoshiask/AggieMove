@@ -127,7 +127,7 @@ namespace AggieMove.Helpers
             return new Graphic(routePath, routeLineSymbol);
         }
 
-        public static async Task<Graphic> DrawRouteAndStops(MapView mapView, RouteViewModel route, Color routeColor, bool showStops = true)
+        public static Graphic DrawRouteAndStops(MapView mapView, RouteViewModel route, Color routeColor, bool showStops = true)
         {
             var routePoints = route.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, BUS_ROUTES_SR));
             Graphic routePath = CreateRoutePath(routePoints, routeColor);
