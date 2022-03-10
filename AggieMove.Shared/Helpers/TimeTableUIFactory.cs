@@ -38,14 +38,19 @@ namespace AggieMove.Helpers
                 Grid.SetColumn(header, t);
 
                 int i = 1;
-                foreach (string time in timeStop.GetFormattedLeaveTimes())
+                foreach (string timeStr in timeStop.GetFormattedLeaveTimes())
                 {
                     var block = new TextBlock()
                     {
                         Padding = new Thickness(4),
-                        Text = time,
-                        Tag = time
+                        Text = timeStr,
                     };
+
+                    if (DateTimeOffset.TryParse(timeStr, out var time))
+                    {
+                        block.Tag = time;
+                    }
+                    
                     MainGrid.Children.Add(block);
                     Grid.SetColumn(block, t);
                     Grid.SetRow(block, i++);

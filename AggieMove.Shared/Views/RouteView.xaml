@@ -60,7 +60,7 @@
             </ArcGIS:MapView>
         </Grid>
 
-        <Pivot Grid.Row="2">
+        <Pivot Grid.Row="2" SelectionChanged="Pivot_SelectionChanged">
             <PivotItem Header="Stops">
                 <ListView ItemsSource="{x:Bind ViewModel.Stops, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SelectedPatternElement, Mode=TwoWay}">
                     <ListView.ItemTemplate>

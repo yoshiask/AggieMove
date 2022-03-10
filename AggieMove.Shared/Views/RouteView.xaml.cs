@@ -1,7 +1,5 @@
 ﻿using AggieMove.Helpers;
 using Esri.ArcGISRuntime.Geometry;
-using Esri.ArcGISRuntime.Symbology;
-using Esri.ArcGISRuntime.UI;
 using System;
 using System.Linq;
 using TamuBusFeed.Models;
@@ -19,6 +17,8 @@ namespace AggieMove.Views
     public sealed partial class RouteView : Page
     {
         public System.Drawing.Color DrawingColor { get; set; }
+
+        public TextBlock CurrentTimeBlock { get; set; }
 
         public RouteView()
         {
@@ -38,14 +38,12 @@ namespace AggieMove.Views
             bool hasRoutePoints = ViewModel.PatternElements.Count > 0;
             if (hasRoutePoints)
             {
-                MapHelper.DrawRouteAndStops(MainMapView, ViewModel, DrawingColor).ContinueWith(async (Task) =>
-                {
-                    MainMapView.SetViewpointGeometryAsync(Task.Result.Geometry);
-                });
+                var geometry = MapHelper.DrawRouteAndStops(MainMapView, ViewModel, DrawingColor);
+                _ = MainMapView.SetViewpointGeometryAsync(geometry.Geometry);
             }
             else
             {
-                MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, !hasRoutePoints);
+                _ = MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, zoomToLocation: false);
             }
 
             // Show time table
@@ -70,14 +68,12 @@ namespace AggieMove.Views
             }
             TimeTablePresenter.Content = ttGrid;
 
-            // Bring current time into view
-            // TODO: Extend this to include the closest time
-            string nowTime = DateTime.Now.ToString("hh:mm tt");
-            TextBlock nowBlock = ttGrid.Children.FirstOrDefault(ui => (string)(ui as FrameworkElement)?.Tag == nowTime) as TextBlock;
-            if (ViewModel.TimeTable != null && nowBlock != null)
+            // Brings next nearest time into view
+            if (ViewModel.TimeTable != null &&
+                ttGrid.Children.FirstOrDefault(ui => ((ui as FrameworkElement)?.Tag as DateTimeOffset?) >= DateTimeOffset.Now) is TextBlock nowBlock)
             {
+                CurrentTimeBlock = nowBlock;
                 nowBlock.Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 0, 0));
-                nowBlock.StartBringIntoView();
             }
 
             base.OnNavigatedTo(e);
@@ -94,27 +90,26 @@ namespace AggieMove.Views
             }
         }
 
-        private async void Geolocator_PositionChanged(Windows.Devices.Geolocation.Geolocator sender, Windows.Devices.Geolocation.PositionChangedEventArgs args)
+        private void Geolocator_PositionChanged(Windows.Devices.Geolocation.Geolocator sender, Windows.Devices.Geolocation.PositionChangedEventArgs args)
         {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                MapGraphics.Graphics.Where(g =>
-                {
-                    if (g.Attributes.ContainsKey("id"))
-                    {
-                        return (string)g.Attributes["id"] != "currentLocation";
-                    }
-                    return true;
-                });
+            MapHelper.Geolocator_PositionChanged(MapGraphics.Graphics, Dispatcher, sender, args);
+        }
 
-                var currentLocation = MapHelper.CreateRouteStop(
-                    args.Position.Coordinate.Point.Position.Latitude,
-                    args.Position.Coordinate.Point.Position.Longitude,
-                    System.Drawing.Color.Red
-                );
-                currentLocation.Attributes.Add("id", "currentLocation");
-                MapGraphics.Graphics.Add(currentLocation);
-            });
+        private async void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is Pivot pivot && pivot.SelectedIndex == 1)
+            {
+                // If the Times tab hasn't been selected before,
+                // we have to wait a bit before trying to scroll
+                await System.Threading.Tasks.Task.Delay(10);
+                
+                // Scroll to current time
+                var options = new BringIntoViewOptions
+                {
+                    VerticalAlignmentRatio = 0.5f,
+                };
+                CurrentTimeBlock.StartBringIntoView(options);
+            }
         }
     }
 }
