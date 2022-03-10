@@ -1,5 +1,6 @@
 ﻿using Esri.ArcGISRuntime.Data;
 using Esri.ArcGISRuntime.Geometry;
+using Esri.ArcGISRuntime.Tasks.Geocoding;
 using Esri.ArcGISRuntime.Tasks.NetworkAnalysis;
 using Flurl;
 using Flurl.Http;
@@ -14,6 +15,8 @@ namespace TamuBusFeed
     public static class TamuArcGisApi
     {
         public const string SERVICES_BASE = "https://gis.tamu.edu/arcgis/rest/services";
+        // ILCB
+        public static readonly MapPoint TamuCenter = new MapPoint(-10724991.7064, 3582457.193500001, SpatialReference.Create(3857));
 
         public static async Task<IReadOnlyList<Route>> SolveRoute(IEnumerable<MapPoint> stopPoints)
         {
@@ -34,9 +37,11 @@ namespace TamuBusFeed
 
         public static async Task<IEnumerable<Models.SearchResult>> SearchAsync(string text)
         {
-            var listResults = await WhenAllSerial(SearchBuildings(text), SearchBuildingsStrict(text),
+            var listResults = await WhenAllSerial(
+                SearchBuildings(text), SearchBuildingsStrict(text),
                 SearchDepartments(text), SearchParkingGarages(text), SearchParkingLots(text),
-                SearchPointsOfInterest(text));
+                SearchPointsOfInterest(text), SearchWorld(text)
+            );
             return listResults.Aggregate((l1, l2) => l1.Union(l2));
         }
 
@@ -143,6 +148,20 @@ namespace TamuBusFeed
         {
             var results = await QueryPointsOfInterest(text);
             return Models.SearchResult.FromFeatureQueryResult(results, GetNameFunctionFromAttribute("Name"));
+        }
+
+        public static async Task<IEnumerable<Models.SearchResult>> SearchWorld(string text)
+        {
+            var locatorTask = new LocatorTask(new Uri("https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer"));
+            locatorTask.ApiKey = Secrets.ARCGIS_KEY;
+
+            var parameters = new GeocodeParameters();
+            parameters.PreferredSearchLocation = TamuCenter;
+            parameters.ResultAttributeNames.Add("Score");
+            parameters.ResultAttributeNames.Add("Distance");
+
+            var results = await locatorTask.GeocodeAsync(text, parameters);
+            return Models.SearchResult.FromGeocodeResults(results);
         }
 
         private static Func<Feature, string> GetNameFunctionFromAttribute(string attributeName)

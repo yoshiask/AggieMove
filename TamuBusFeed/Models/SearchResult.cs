@@ -1,6 +1,7 @@
 ﻿using Esri.ArcGISRuntime.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TamuBusFeed.Models
 {
@@ -26,6 +27,16 @@ namespace TamuBusFeed.Models
             foreach (var feature in fqr)
                 if (feature?.Geometry?.Extent != null)
                     yield return new SearchResult(getName(feature), feature.Geometry.Extent.GetCenter());
+        }
+
+        public static SearchResult FromGeocodeResult(Esri.ArcGISRuntime.Tasks.Geocoding.GeocodeResult geo)
+        {
+            return new SearchResult(geo.Label, geo.DisplayLocation);
+        }
+
+        public static IEnumerable<SearchResult> FromGeocodeResults(IEnumerable<Esri.ArcGISRuntime.Tasks.Geocoding.GeocodeResult> geos)
+        {
+            return geos.Select(FromGeocodeResult);
         }
     }
 }
