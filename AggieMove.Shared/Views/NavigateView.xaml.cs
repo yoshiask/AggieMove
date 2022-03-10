@@ -42,7 +42,8 @@ namespace AggieMove.Views
             {
                 foreach (var item in e.NewItems)
                 {
-                    var stopGraphic = MapHelper.CreateRouteStop((Esri.ArcGISRuntime.Geometry.MapPoint)item, System.Drawing.Color.Blue);
+                    var stop = (TamuBusFeed.Models.SearchResult)item;
+                    var stopGraphic = MapHelper.CreateRouteStop(stop.Point, System.Drawing.Color.Blue);
                     MapGraphics.Graphics.Add(stopGraphic);
                 }
             }

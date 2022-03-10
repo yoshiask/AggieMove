@@ -32,6 +32,14 @@ namespace TamuBusFeed
             return routeResult?.Routes;
         }
 
+        public static async Task<IEnumerable<Models.SearchResult>> SearchAsync(string text)
+        {
+            var listResults = await WhenAllSerial(SearchBuildings(text), SearchBuildingsStrict(text),
+                SearchDepartments(text), SearchParkingGarages(text), SearchParkingLots(text),
+                SearchPointsOfInterest(text));
+            return listResults.Aggregate((l1, l2) => l1.Union(l2));
+        }
+
         public static Task<FeatureQueryResult> QueryBuildings(string text)
         {
             text = text.ToUpperInvariant();
@@ -64,7 +72,7 @@ namespace TamuBusFeed
             text = text.ToUpperInvariant();
             string query = $"UPPER(LotName) LIKE '%{text}%' OR UPPER(Name) LIKE '%{text}%'";
 
-            var featureTable = new ServiceFeatureTable(new Uri(Url.Combine(SERVICES_BASE, "FCOR/TAMU_MapServer/MapServer/0")));
+            var featureTable = new ServiceFeatureTable(new Uri(Url.Combine(SERVICES_BASE, "FCOR/TAMU_BaseMap/MapServer/0")));
             return Query(query, featureTable);
         }
 
@@ -73,7 +81,7 @@ namespace TamuBusFeed
             text = text.ToUpperInvariant();
             string query = $"UPPER(LotName) LIKE '%{text}%'";
 
-            var featureTable = new ServiceFeatureTable(new Uri(Url.Combine(SERVICES_BASE, "FCOR/TAMU_MapServer/MapServer/12")));
+            var featureTable = new ServiceFeatureTable(new Uri(Url.Combine(SERVICES_BASE, "FCOR/TAMU_BaseMap/MapServer/12")));
             return Query(query, featureTable);
         }
 
@@ -96,9 +104,63 @@ namespace TamuBusFeed
             return await featureTable.QueryFeaturesAsync(queryParams, QueryFeatureFields.LoadAll);
         }
 
+        public static async Task<IEnumerable<Models.SearchResult>> SearchBuildings(string text)
+        {
+            var results = await QueryBuildings(text);
+            return Models.SearchResult.FromFeatureQueryResult(results, GetNameFunctionFromAttribute("BldgName"));
+        }
+
+        public static async Task<IEnumerable<Models.SearchResult>> SearchBuildingsStrict(string text)
+        {
+            var results = await QueryBuildingsStrict(text);
+            return Models.SearchResult.FromFeatureQueryResult(results, GetNameFunctionFromAttribute("BldgName"));
+        }
+
+        public static async Task<IEnumerable<Models.SearchResult>> SearchDepartments(string text)
+        {
+            var results = await QueryDepartments(text);
+            string getName(Feature feature)
+            {
+                return feature.GetAttributeValue("CollegeName").ToString()
+                    + feature.GetAttributeValue("DeptName").ToString();
+            }
+            return Models.SearchResult.FromFeatureQueryResult(results, getName);
+        }
+
+        public static async Task<IEnumerable<Models.SearchResult>> SearchParkingGarages(string text)
+        {
+            var results = await QueryParkingGarages(text);
+            return Models.SearchResult.FromFeatureQueryResult(results, GetNameFunctionFromAttribute("LotName"));
+        }
+
+        public static async Task<IEnumerable<Models.SearchResult>> SearchParkingLots(string text)
+        {
+            var results = await QueryParkingLots(text);
+            return Models.SearchResult.FromFeatureQueryResult(results, GetNameFunctionFromAttribute("LotName"));
+        }
+
+        public static async Task<IEnumerable<Models.SearchResult>> SearchPointsOfInterest(string text)
+        {
+            var results = await QueryPointsOfInterest(text);
+            return Models.SearchResult.FromFeatureQueryResult(results, GetNameFunctionFromAttribute("Name"));
+        }
+
+        private static Func<Feature, string> GetNameFunctionFromAttribute(string attributeName)
+        {
+            return feature => feature.GetAttributeValue(attributeName)?.ToString();
+        }
+
         private static IFlurlRequest GetBase()
         {
             return (IFlurlRequest)SERVICES_BASE.SetQueryParam("f", "json");
+        }
+
+        private static async Task<TResult[]> WhenAllSerial<TResult>(params Task<TResult>[] tasks)
+        {
+            var results = new TResult[tasks.Length];
+            for (int i = 0; i < tasks.Length; i++)
+                results[i] = await tasks[i];
+            return results;
         }
     }
 }

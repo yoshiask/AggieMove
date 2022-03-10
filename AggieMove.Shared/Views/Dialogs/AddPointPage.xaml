@@ -5,13 +5,18 @@
     xmlns:local="using:AggieMove.Views.Dialogs"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:AggieMove.ViewModels"
-    xmlns:ArcGISData="using:Esri.ArcGISRuntime.Data"
+    xmlns:models="using:TamuBusFeed.Models"
     Title="Add stop"
     PrimaryButtonText="Add"
     SecondaryButtonText="Cancel"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <local:AddPointDialog.Resources>
+        <DataTemplate x:Name="SearchResultTemplate" x:DataType="models:SearchResult">
+            <TextBlock Text="{x:Bind Name}"/>
+        </DataTemplate>
+    </local:AddPointDialog.Resources>
 
     <Grid Width="350" MinHeight="500">
         <Grid.RowDefinitions>
@@ -26,12 +31,8 @@
                             VerticalAlignment="Center" Margin="0,0,38,0"
                             CornerRadius="4,0,0,4"
                             IsEnabled="{x:Bind CurrentLocationButton.IsChecked.Value.Equals(x:False), Mode=OneWay}"
-                            QuerySubmitted="SearchBox_QuerySubmitted">
-                <AutoSuggestBox.ItemTemplate>
-                    <DataTemplate x:DataType="ArcGISData:Feature">
-                        <TextBlock Text="{x:Bind GetAttributeValue('BldgName')}"/>
-                    </DataTemplate>
-                </AutoSuggestBox.ItemTemplate>
+                            QuerySubmitted="SearchBox_QuerySubmitted"
+                            ItemTemplate="{StaticResource SearchResultTemplate}">
             </AutoSuggestBox>
             <ToggleButton x:Name="CurrentLocationButton" Content="&#xE707;"
                           CornerRadius="0,4,4,0"
@@ -41,13 +42,8 @@
 
         <ListView x:Name="SearchResultsList" Grid.Row="1"
                   SelectionMode="None" IsItemClickEnabled="True"
-                  ItemClick="SearchResult_ItemClick">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="ArcGISData:Feature">
-                    <TextBlock Text="{x:Bind GetAttributeValue('BldgName')}"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                  ItemClick="SearchResult_ItemClick"
+                  ItemTemplate="{StaticResource SearchResultTemplate}"/>
     </Grid>
     
 </local:AddPointDialog>

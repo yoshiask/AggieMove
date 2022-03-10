@@ -8,6 +8,7 @@ using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TamuBusFeed;
@@ -29,7 +30,7 @@ namespace AggieMove.ViewModels
         private readonly INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
 
         [System.ComponentModel.Bindable(true)]
-        public ObservableCollection<MapPoint> Stops { get; } = new ObservableCollection<MapPoint>();
+        public ObservableCollection<TamuBusFeed.Models.SearchResult> Stops { get; } = new ObservableCollection<TamuBusFeed.Models.SearchResult>();
 
         [System.ComponentModel.Bindable(true)]
         public ObservableCollection<Route> Routes { get; } = new ObservableCollection<Route>();
@@ -63,16 +64,16 @@ namespace AggieMove.ViewModels
         public async Task AddStopAsync()
         {
             var result = await NavigationService.ShowDialog("Dialogs.AddPointPage", this);
-            if (result.Button != DialogButtonResult.Secondary && result.Result is Feature feature)
+            if (result.Button != DialogButtonResult.Secondary && result.Result is TamuBusFeed.Models.SearchResult searchResult)
             {
-                Stops.Add(feature.Geometry.Extent.GetCenter());
+                Stops.Add(searchResult);
             }
         }
 
         public async Task LoadRoutesAsync()
         {
             Routes.Clear();
-            foreach (Route r in await TamuArcGisApi.SolveRoute(Stops))
+            foreach (Route r in await TamuArcGisApi.SolveRoute(Stops.Select(s => s.Point)))
             {
                 Routes.Add(r);
             }

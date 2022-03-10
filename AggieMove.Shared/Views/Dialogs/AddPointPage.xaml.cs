@@ -32,7 +32,7 @@ namespace AggieMove.Views.Dialogs
             if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput || !args.CheckCurrent())
                 return;
 
-            var results = await TamuArcGisApi.QueryBuildings(sender.Text);
+            var results = await TamuArcGisApi.SearchAsync(sender.Text);
             sender.Items.Clear();
             SearchResultsList.Items.Clear();
             foreach (var result in results)
@@ -54,7 +54,7 @@ namespace AggieMove.Views.Dialogs
 
         private void Close(object result)
         {
-            Result = (Feature)result;
+            Result = (TamuBusFeed.Models.SearchResult)result;
             Hide();
         }
     }
