@@ -84,5 +84,15 @@ namespace AggieMove.Helpers
             var drawingColor = ParseCSSColorAsDrawingColor(cssString);
             return Windows.UI.Color.FromArgb(drawingColor.A, drawingColor.R, drawingColor.G, drawingColor.B);
         }
+
+        public static System.Drawing.Color ToDrawingColor(this Windows.UI.Color winuiColor)
+        {
+            return System.Drawing.Color.FromArgb(winuiColor.A, winuiColor.R, winuiColor.G, winuiColor.B);
+        }
+
+        public static Windows.UI.Color ToWinUIColor(this System.Drawing.Color drawingColor)
+        {
+            return Windows.UI.Color.FromArgb(drawingColor.A, drawingColor.R, drawingColor.G, drawingColor.B);
+        }
     }
 }

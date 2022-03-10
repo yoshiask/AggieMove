@@ -63,9 +63,8 @@ namespace AggieMove.ViewModels
         public async Task AddStopAsync()
         {
             var result = await NavigationService.ShowDialog("Dialogs.AddPointPage", this);
-            if (result.Button != DialogButtonResult.Secondary)
+            if (result.Button != DialogButtonResult.Secondary && result.Result is Feature feature)
             {
-                Feature feature = (Feature)result.Result;
                 Stops.Add(feature.Geometry.Extent.GetCenter());
             }
         }

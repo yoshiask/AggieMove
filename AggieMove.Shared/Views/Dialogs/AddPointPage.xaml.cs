@@ -1,20 +1,8 @@
 ﻿using AggieMove.ViewModels;
 using Esri.ArcGISRuntime.Data;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using TamuBusFeed;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -46,15 +34,27 @@ namespace AggieMove.Views.Dialogs
 
             var results = await TamuArcGisApi.QueryBuildings(sender.Text);
             sender.Items.Clear();
+            SearchResultsList.Items.Clear();
             foreach (var result in results)
             {
                 sender.Items.Add(result);
+                SearchResultsList.Items.Add(result);
             }
         }
 
-        private async void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            Result = (Feature)(args.ChosenSuggestion ?? sender.Items.FirstOrDefault());
+            Close(args.ChosenSuggestion ?? sender.Items.FirstOrDefault());
+        }
+
+        private void SearchResult_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            Close(e.ClickedItem);
+        }
+
+        private void Close(object result)
+        {
+            Result = (Feature)result;
             Hide();
         }
     }

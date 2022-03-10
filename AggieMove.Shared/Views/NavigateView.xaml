@@ -11,7 +11,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -26,6 +26,11 @@
 
         <CommandBar Grid.Row="2">
             <AppBarButton Icon="Add" Label="Add stop" Command="{x:Bind ViewModel.AddStopCommand}"/>
+            <AppBarButton Label="Directions" Command="{x:Bind ViewModel.LoadRoutesCommand}">
+                <AppBarButton.Icon>
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE816;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
         </CommandBar>
     </Grid>
     

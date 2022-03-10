@@ -149,6 +149,30 @@ namespace AggieMove.Helpers
             return routePath;
         }
 
+        public static Graphic DrawDirections(MapView mapView, Route route, Color routeColor, bool showStops = true)
+        {
+            var routeLineSymbol = new SimpleLineSymbol(
+                   SimpleLineSymbolStyle.Solid, routeColor, 4.0
+               );
+            Graphic routePath = new Graphic(route.RouteGeometry, routeLineSymbol);
+            var routeOverlay = new GraphicsOverlay
+            {
+                Id = "directions_" + route.GetHashCode().ToString()
+            };
+            routeOverlay.Graphics.Add(routePath);
+
+            if (showStops)
+                foreach (var elem in route.Stops)
+                {
+                    var point = elem.Geometry;
+                    var stop = CreateRouteStop(point, routeColor);
+                    routeOverlay.Graphics.Add(stop);
+                }
+
+            mapView.GraphicsOverlays.Add(routeOverlay);
+            return routePath;
+        }
+
         public static void ClearAllRouteOverlays(MapView mapView)
         {
             int i = 0;

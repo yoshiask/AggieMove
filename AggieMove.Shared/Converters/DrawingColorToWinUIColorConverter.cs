@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AggieMove.Helpers;
+using System;
 using Windows.UI.Xaml.Data;
 
 namespace AggieMove.Converters
@@ -11,7 +12,7 @@ namespace AggieMove.Converters
                 return Windows.UI.Colors.Transparent;
 
             var drawingColor = (System.Drawing.Color)value;
-            return Windows.UI.Color.FromArgb(drawingColor.A, drawingColor.R, drawingColor.G, drawingColor.B);
+            return ColorHelper.ToWinUIColor(drawingColor); ;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -20,7 +21,7 @@ namespace AggieMove.Converters
                 return null;
 
             var winuiColor = (Windows.UI.Color)value;
-            return System.Drawing.Color.FromArgb(winuiColor.A, winuiColor.R, winuiColor.G, winuiColor.B);
+            return ColorHelper.ToDrawingColor(winuiColor);
         }
     }
 }

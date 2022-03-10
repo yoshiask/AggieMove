@@ -1,19 +1,9 @@
 ﻿using AggieMove.Helpers;
 using AggieMove.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Esri.ArcGISRuntime.Tasks.NetworkAnalysis;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using tkColorHelper = Microsoft.Toolkit.Uwp.Helpers.ColorHelper;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -28,6 +18,7 @@ namespace AggieMove.Views
         {
             ViewModel = new NavigateViewModel();
             ViewModel.Stops.CollectionChanged += Stops_CollectionChanged;
+            ViewModel.Routes.CollectionChanged += Routes_CollectionChanged;
 
             Loaded += Page_Loaded;
             this.InitializeComponent();
@@ -53,6 +44,30 @@ namespace AggieMove.Views
                 {
                     var stopGraphic = MapHelper.CreateRouteStop((Esri.ArcGISRuntime.Geometry.MapPoint)item, System.Drawing.Color.Blue);
                     MapGraphics.Graphics.Add(stopGraphic);
+                }
+            }
+        }
+
+        private void Routes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+            {
+                MapHelper.ClearAllRouteOverlays(MainMapView);
+            }
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                if (!(sender is System.Collections.ICollection routes))
+                    return;
+
+                for (int i = 0; i < e.NewItems.Count; i++)
+                {
+                    var item = e.NewItems[i];
+                    if (!(item is Route route))
+                        continue;
+
+                    double hue = 360 * i / routes.Count;
+                    var color = tkColorHelper.FromHsl(hue, 0.85, 1.00).ToDrawingColor();
+                    MapGraphics.Graphics.Add(MapHelper.DrawDirections(MainMapView, route, color, true));
                 }
             }
         }

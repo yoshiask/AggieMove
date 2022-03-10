@@ -13,10 +13,9 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid Width="350" MinHeight="500">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -24,7 +23,8 @@
         <Grid Grid.Row="0">
             <AutoSuggestBox x:Name="SearchBox"
                             QueryIcon="Find" PlaceholderText="Search..."
-                            VerticalAlignment="Center" Margin="0,0,33,0"
+                            VerticalAlignment="Center" Margin="0,0,38,0"
+                            CornerRadius="4,0,0,4"
                             IsEnabled="{x:Bind CurrentLocationButton.IsChecked.Value.Equals(x:False), Mode=OneWay}"
                             QuerySubmitted="SearchBox_QuerySubmitted">
                 <AutoSuggestBox.ItemTemplate>
@@ -34,9 +34,20 @@
                 </AutoSuggestBox.ItemTemplate>
             </AutoSuggestBox>
             <ToggleButton x:Name="CurrentLocationButton" Content="&#xE707;"
-                          VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="33"
+                          CornerRadius="0,4,4,0"
+                          VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="38"
                           FontFamily="Segoe MDL2 Assets" FontWeight="Normal" />
         </Grid>
+
+        <ListView x:Name="SearchResultsList" Grid.Row="1"
+                  SelectionMode="None" IsItemClickEnabled="True"
+                  ItemClick="SearchResult_ItemClick">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="ArcGISData:Feature">
+                    <TextBlock Text="{x:Bind GetAttributeValue('BldgName')}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
     
 </local:AddPointDialog>
