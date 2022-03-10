@@ -9,10 +9,6 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Page.DataContext>
-        <viewmodels:NavigateViewModel x:Name="ViewModel"/>
-    </Page.DataContext>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

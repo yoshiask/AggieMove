@@ -37,6 +37,19 @@ namespace AggieMove.Services
             CurrentFrame.Navigate(typeof(Views.NotImplementedPage), page);
         }
 
+        public Task<DialogResult> ShowDialog(string page, object parameter = null)
+        {
+            Type type = Type.GetType(ASSEMBLY_FRAGMENT + page);
+            return ShowDialog(type, parameter);
+        }
+
+        public async Task<DialogResult> ShowDialog(Type page, object parameter = null)
+        {
+            var inst = (IDialog)Activator.CreateInstance(page, parameter);
+            var buttonResult =  await inst.ShowAsync();
+            return new DialogResult((DialogButtonResult)buttonResult, inst.GetResult());
+        }
+
         public void GoBack()
         {
             CurrentFrame.GoBack();

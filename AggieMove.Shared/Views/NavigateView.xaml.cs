@@ -1,4 +1,5 @@
 ﻿using AggieMove.Helpers;
+using AggieMove.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,8 +26,35 @@ namespace AggieMove.Views
     {
         public NavigateView()
         {
+            ViewModel = new NavigateViewModel();
+            ViewModel.Stops.CollectionChanged += Stops_CollectionChanged;
+
             Loaded += Page_Loaded;
             this.InitializeComponent();
+        }
+
+        public NavigateViewModel ViewModel
+        {
+            get => (NavigateViewModel)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+        public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
+            nameof(ViewModel), typeof(NavigateViewModel), typeof(NavigateView), new PropertyMetadata(null));
+
+        private void Stops_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+            {
+                MainMapView.GraphicsOverlays.Clear();
+            }
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    var stopGraphic = MapHelper.CreateRouteStop((Esri.ArcGISRuntime.Geometry.MapPoint)item, System.Drawing.Color.Blue);
+                    MapGraphics.Graphics.Add(stopGraphic);
+                }
+            }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

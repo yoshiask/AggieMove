@@ -15,6 +15,10 @@ namespace AggieMove.Services
 
         public void NavigateToSettingsPage(SettingsPages page);
 
+        public Task<DialogResult> ShowDialog(string page, object parameter = null);
+
+        public Task<DialogResult> ShowDialog(Type page, object parameter = null);
+
         public void GoBack();
 
         public bool TryGoBack();

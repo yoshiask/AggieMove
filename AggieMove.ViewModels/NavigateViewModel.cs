@@ -1,4 +1,5 @@
 ﻿using AggieMove.Services;
+using Esri.ArcGISRuntime.Data;
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Tasks.NetworkAnalysis;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
@@ -19,7 +20,7 @@ namespace AggieMove.ViewModels
         {
             LoadRoutesCommand = new AsyncRelayCommand(LoadRoutesAsync);
             ViewRouteCommand = new RelayCommand(ViewRoute);
-            AddStopCommand = new RelayCommand(AddStop);
+            AddStopCommand = new AsyncRelayCommand(AddStopAsync);
         }
 
         /// <summary>
@@ -57,11 +58,16 @@ namespace AggieMove.ViewModels
         /// <summary>
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for adding stops.
         /// </summary>
-        public IRelayCommand AddStopCommand { get; }
+        public IAsyncRelayCommand AddStopCommand { get; }
 
-        public void AddStop()
+        public async Task AddStopAsync()
         {
-            NavigationService.Navigate("AddPointPage", this);
+            var result = await NavigationService.ShowDialog("Dialogs.AddPointPage", this);
+            if (result.Button != DialogButtonResult.Secondary)
+            {
+                Feature feature = (Feature)result.Result;
+                Stops.Add(feature.Geometry.Extent.GetCenter());
+            }
         }
 
         public async Task LoadRoutesAsync()
