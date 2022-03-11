@@ -8,6 +8,7 @@
     xmlns:viewmodels="using:AggieMove.ViewModels"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d">
     
     <Page.DataContext>
@@ -15,7 +16,7 @@
     </Page.DataContext>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <NavigationView x:Name="MainNav" PaneDisplayMode="Left"
+        <muxc:NavigationView x:Name="MainNav" PaneDisplayMode="Left"
                         SelectionChanged="NavigationView_SelectionChanged"
                         MenuItemsSource="{x:Bind ViewModel.PageInfos, Mode=TwoWay}"
                         SelectedItem="{x:Bind ViewModel.SelectedPage, Mode=TwoWay}"
@@ -27,7 +28,7 @@
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
 
-            <NavigationView.PaneHeader>
+            <muxc:NavigationView.PaneHeader>
                 <Viewbox x:Name="HeaderLogo" HorizontalAlignment="Left">
                     <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Width="200" Height="50">
                         <Canvas Name="g127">
@@ -125,21 +126,21 @@
                         <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeMiterLimit="2" StrokeLineJoin="Round" Data="M132.876 27.392L181.882 27.392L181.882 26.35L132.876 26.35L132.876 27.392Z"/>
                     </Canvas>
                 </Viewbox>
-            </NavigationView.PaneHeader>
+            </muxc:NavigationView.PaneHeader>
 
-            <NavigationView.MenuItemTemplate>
+            <muxc:NavigationView.MenuItemTemplate>
                 <DataTemplate x:DataType="viewmodels:PageInfoBase">
-                    <NavigationViewItem Content="{x:Bind Title}" ToolTipService.ToolTip="{x:Bind Tooltip}">
-                        <NavigationViewItem.Icon>
+                    <muxc:NavigationViewItem Content="{x:Bind Title}" ToolTipService.ToolTip="{x:Bind Tooltip}">
+                        <muxc:NavigationViewItem.Icon>
                             <FontIcon Glyph="{x:Bind Glyph}"/>
-                        </NavigationViewItem.Icon>
-                    </NavigationViewItem>
+                        </muxc:NavigationViewItem.Icon>
+                    </muxc:NavigationViewItem>
                 </DataTemplate>
-            </NavigationView.MenuItemTemplate>
+            </muxc:NavigationView.MenuItemTemplate>
 
             <Frame x:Name="MainFrame" Navigated="MainFrame_Navigated"/>
 
-        </NavigationView>
+        </muxc:NavigationView>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
