@@ -8,7 +8,7 @@
 
   <Identity
     Name="52374YoshiAskharoun.AggieMove"
-    Publisher="CN=jjask"
+    Publisher="CN=Joshua Askharoun, O=Joshua Askharoun, S=Texas, C=US"
     Version="1.1.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="13ceb154-8b20-48e8-90d6-6f9944359fe9" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
