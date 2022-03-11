@@ -19,7 +19,7 @@
         <Grid x:Name="MapGrid" Background="{ThemeResource SystemBaseLowColor}" Grid.Row="1">
             <ArcGIS:MapView x:Name="MainMapView" Grid.Row="2" MinHeight="120">
                 <ArcGIS:MapView.GraphicsOverlays>
-                    <ArcGISUI:GraphicsOverlay x:Name="MapGraphics"/>
+                    <ArcGISUI:GraphicsOverlay x:Name="MapGraphics" Id="MapGraphics"/>
                 </ArcGIS:MapView.GraphicsOverlays>
             </ArcGIS:MapView>
         </Grid>

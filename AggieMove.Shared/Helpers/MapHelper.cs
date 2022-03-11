@@ -152,8 +152,8 @@ namespace AggieMove.Helpers
         public static Graphic DrawDirections(MapView mapView, Route route, Color routeColor, bool showStops = true)
         {
             var routeLineSymbol = new SimpleLineSymbol(
-                   SimpleLineSymbolStyle.Solid, routeColor, 4.0
-               );
+                SimpleLineSymbolStyle.Solid, routeColor, 4.0
+            );
             Graphic routePath = new Graphic(route.RouteGeometry, routeLineSymbol);
             var routeOverlay = new GraphicsOverlay
             {
@@ -183,6 +183,18 @@ namespace AggieMove.Helpers
                     mapView.GraphicsOverlays.RemoveAt(i);
                 else
                     i++;
+            }
+        }
+
+        public static void ClearAllExceptMain(MapView mapView)
+        {
+            for (int i = 0; i < mapView.GraphicsOverlays.Count; i++)
+            {
+                var overlay = mapView.GraphicsOverlays[i];
+                if (overlay.Id == null || overlay.Id == "MapGraphics")
+                    continue;
+
+                mapView.GraphicsOverlays.RemoveAt(i--);
             }
         }
 

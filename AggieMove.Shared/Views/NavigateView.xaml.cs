@@ -36,7 +36,7 @@ namespace AggieMove.Views
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
             {
-                MainMapView.GraphicsOverlays.Clear();
+                MapGraphics.Graphics.Clear();
             }
             else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
@@ -53,7 +53,7 @@ namespace AggieMove.Views
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
             {
-                MapHelper.ClearAllRouteOverlays(MainMapView);
+                MapGraphics.Graphics.Clear();
             }
             else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
@@ -67,7 +67,7 @@ namespace AggieMove.Views
                         continue;
 
                     double hue = 360 * i / routes.Count;
-                    var color = tkColorHelper.FromHsl(hue, 0.85, 1.00).ToDrawingColor();
+                    var color = tkColorHelper.FromHsl(hue, 0.75, 0.60).ToDrawingColor();
                     MapHelper.DrawDirections(MainMapView, route, color, true);
                 }
             }
