@@ -36,6 +36,9 @@ namespace AggieMove.Views
             clock.Elapsed += Clock_Elapsed;
 
             this.InitializeComponent();
+
+            MainMapView.LocationDisplay.IsEnabled = true;
+            MainMapView.LocationDisplay.AutoPanMode = Esri.ArcGISRuntime.UI.LocationDisplayAutoPanMode.Recenter;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -53,10 +56,6 @@ namespace AggieMove.Views
             {
                 var geometry = MapHelper.DrawRouteAndStops(MainMapView, ViewModel, DrawingColor);
                 _ = MainMapView.SetViewpointGeometryAsync(geometry.Geometry);
-            }
-            else
-            {
-                _ = MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, zoomToLocation: false);
             }
 
             // Show time table
@@ -94,11 +93,6 @@ namespace AggieMove.Views
                 await MainMapView.SetViewpointCenterAsync(point);
                 await MainMapView.SetViewpointScaleAsync(2000);
             }
-        }
-
-        private void Geolocator_PositionChanged(Windows.Devices.Geolocation.Geolocator sender, Windows.Devices.Geolocation.PositionChangedEventArgs args)
-        {
-            MapHelper.Geolocator_PositionChanged(MapGraphics.Graphics, Dispatcher, sender, args);
         }
 
         private async void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)

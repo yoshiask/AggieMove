@@ -22,6 +22,9 @@ namespace AggieMove.Views
 
             Loaded += Page_Loaded;
             this.InitializeComponent();
+
+            MainMapView.LocationDisplay.IsEnabled = true;
+            MainMapView.LocationDisplay.AutoPanMode = Esri.ArcGISRuntime.UI.LocationDisplayAutoPanMode.Recenter;
         }
 
         public NavigateViewModel ViewModel
@@ -76,12 +79,6 @@ namespace AggieMove.Views
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             MapHelper.LoadMap(MainMapView);
-            MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, scale: 4000);
-        }
-
-        private void Geolocator_PositionChanged(Windows.Devices.Geolocation.Geolocator sender, Windows.Devices.Geolocation.PositionChangedEventArgs args)
-        {
-            MapHelper.Geolocator_PositionChanged(MapGraphics.Graphics, Dispatcher, sender, args);
         }
     }
 }

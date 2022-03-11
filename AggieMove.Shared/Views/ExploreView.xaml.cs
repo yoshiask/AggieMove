@@ -18,6 +18,10 @@ namespace AggieMove.Views
         public ExploreView()
         {
             this.InitializeComponent();
+
+            MainMapView.LocationDisplay.IsEnabled = true;
+            MainMapView.LocationDisplay.AutoPanMode = Esri.ArcGISRuntime.UI.LocationDisplayAutoPanMode.Recenter;
+
             ViewModel.Routes.CollectionChanged += Routes_CollectionChanged;
         }
 
@@ -25,7 +29,7 @@ namespace AggieMove.Views
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
             {
-                MapHelper.ClearAllRouteOverlays(MainMapView);
+                MapHelper.ClearAllExceptMain(MainMapView);
             }
             else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
@@ -44,7 +48,6 @@ namespace AggieMove.Views
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             MapHelper.LoadMap(MainMapView);
-            MapHelper.SetViewpointToCurrentLocation(MainMapView, MapGraphics, Geolocator_PositionChanged, scale: 4000);
         }
 
         private void OnRouteSelected(object sender, SelectionChangedEventArgs e)
@@ -54,29 +57,6 @@ namespace AggieMove.Views
             // setting the selected item
             ViewModel.SelectedRoute = e.AddedItems[0] as TamuBusFeed.Models.Route;
 #endif
-        }
-
-        private async void Geolocator_PositionChanged(Windows.Devices.Geolocation.Geolocator sender, Windows.Devices.Geolocation.PositionChangedEventArgs args)
-        {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                MapGraphics.Graphics.Where(g =>
-                {
-                    if (g.Attributes.ContainsKey("id"))
-                    {
-                        return (string)g.Attributes["id"] != "currentLocation";
-                    }
-                    return true;
-                });
-
-                var currentLocation = MapHelper.CreateRouteStop(
-                    args.Position.Coordinate.Point.Position.Latitude,
-                    args.Position.Coordinate.Point.Position.Longitude,
-                    System.Drawing.Color.Red
-                );
-                currentLocation.Attributes.Add("id", "currentLocation");
-                MapGraphics.Graphics.Add(currentLocation);
-            });
         }
     }
 }
