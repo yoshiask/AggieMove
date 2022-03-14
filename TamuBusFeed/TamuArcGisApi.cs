@@ -37,7 +37,7 @@ namespace TamuBusFeed
 
         public static async Task<IEnumerable<Models.SearchResult>> SearchAsync(string text)
         {
-            var listResults = await WhenAllSerial(
+            var listResults = await Task.WhenAll(
                 SearchBuildings(text), SearchBuildingsStrict(text),
                 SearchDepartments(text), SearchParkingGarages(text), SearchParkingLots(text),
                 SearchPointsOfInterest(text), SearchWorld(text)
@@ -172,14 +172,6 @@ namespace TamuBusFeed
         private static IFlurlRequest GetBase()
         {
             return (IFlurlRequest)SERVICES_BASE.SetQueryParam("f", "json");
-        }
-
-        private static async Task<TResult[]> WhenAllSerial<TResult>(params Task<TResult>[] tasks)
-        {
-            var results = new TResult[tasks.Length];
-            for (int i = 0; i < tasks.Length; i++)
-                results[i] = await tasks[i];
-            return results;
         }
     }
 }
