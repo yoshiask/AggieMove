@@ -21,12 +21,22 @@ namespace TamuBusFeed.Models
 
         }
 
-        public static IEnumerable<SearchResult> FromFeatureQueryResult(Esri.ArcGISRuntime.Data.FeatureQueryResult fqr,
-            Func<Esri.ArcGISRuntime.Data.Feature, string> getName)
+        public static SearchResult FromFeature(Esri.ArcGISRuntime.Data.Feature feature,
+            Func<Esri.ArcGISRuntime.Data.Feature, string> nameFactory)
         {
-            foreach (var feature in fqr)
-                if (feature?.Geometry?.Extent != null)
-                    yield return new SearchResult(getName(feature), feature.Geometry.Extent.GetCenter());
+            return FromFeature(feature, nameFactory(feature));
+        }
+
+        public static SearchResult FromFeature(Esri.ArcGISRuntime.Data.Feature feature, string name)
+        {
+            return new SearchResult(name, feature.Geometry.Extent.GetCenter());
+        }
+
+        public static IEnumerable<SearchResult> FromFeatureQueryResult(Esri.ArcGISRuntime.Data.FeatureQueryResult fqr,
+            Func<Esri.ArcGISRuntime.Data.Feature, string> nameFactory)
+        {
+            return fqr.Where(f => f?.Geometry?.Extent != null)
+                .Select(f => FromFeature(f, nameFactory(f)));
         }
 
         public static SearchResult FromGeocodeResult(Esri.ArcGISRuntime.Tasks.Geocoding.GeocodeResult geo)
