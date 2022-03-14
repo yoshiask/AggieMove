@@ -76,9 +76,9 @@ namespace AggieMove.Views
             }
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            MapHelper.LoadMap(MainMapView);
+            await MapHelper.LoadMap(MainMapView);
         }
     }
 }

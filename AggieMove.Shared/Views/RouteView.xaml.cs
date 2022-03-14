@@ -46,7 +46,7 @@ namespace AggieMove.Views
             ViewModel.SelectedRoute = e.Parameter as Route;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            MapHelper.LoadMap(MainMapView);
+            await MapHelper.LoadMap(MainMapView);
 
             await ViewModel.LoadPatternsAsync();
             DrawingColor = ColorHelper.ParseCSSColorAsDrawingColor(ViewModel.SelectedRoute.Color);
@@ -89,7 +89,7 @@ namespace AggieMove.Views
             if (e.PropertyName == nameof(ViewModel.SelectedPatternElement) && ViewModel.SelectedPatternElement != null)
             {
                 PatternElement elem = ViewModel.SelectedPatternElement;
-                var point = new MapPoint(elem.Longitude, elem.Latitude, MapHelper.BUS_ROUTES_SR);
+                var point = new MapPoint(elem.Longitude, elem.Latitude, SpatialReferences.Wgs84);
                 await MainMapView.SetViewpointCenterAsync(point);
                 await MainMapView.SetViewpointScaleAsync(2000);
             }
