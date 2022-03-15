@@ -29,7 +29,7 @@ namespace AggieMove.Views
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
             {
-                MapHelper.ClearAllExceptMain(MainMapView);
+                MainMapView.ClearAllExceptMain();
             }
             else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
@@ -40,14 +40,14 @@ namespace AggieMove.Views
                         continue;
                     var rvm = new RouteViewModel(route);
                     await rvm.LoadPatternsAsync();
-                    MapHelper.DrawRouteAndStops(MainMapView, rvm, ColorHelper.ParseCSSColorAsDrawingColor(route.Color), false);
+                    MainMapView.DrawRouteAndStops(rvm, ColorHelper.ParseCSSColorAsDrawingColor(route.Color), false);
                 }
             }
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await MapHelper.LoadMap(MainMapView);
+            await MainMapView.LoadMap();
         }
 
         private void OnRouteSelected(object sender, SelectionChangedEventArgs e)

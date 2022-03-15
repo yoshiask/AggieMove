@@ -47,7 +47,7 @@ namespace AggieMove.Views
             ViewModel.SelectedRoute = e.Parameter as Route;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            await MapHelper.LoadMap(MainMapView);
+            await MainMapView.LoadMap();
 
             await ViewModel.LoadPatternsAsync();
             DrawingColor = ColorHelper.ParseCSSColorAsDrawingColor(ViewModel.SelectedRoute.Color);
@@ -55,7 +55,7 @@ namespace AggieMove.Views
             bool hasRoutePoints = ViewModel.PatternElements.Count > 0;
             if (hasRoutePoints)
             {
-                var geometry = MapHelper.DrawRouteAndStops(MainMapView, ViewModel, DrawingColor);
+                var geometry = MainMapView.DrawRouteAndStops(ViewModel, DrawingColor);
                 _ = MainMapView.SetViewpointGeometryAsync(geometry.Geometry);
             }
 

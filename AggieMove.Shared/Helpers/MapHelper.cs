@@ -18,7 +18,7 @@ namespace AggieMove.Helpers
         public static readonly string TILE_LAYER_TEMPLATE = TamuBusFeed.TamuArcGisApi.SERVICES_BASE + 
             "/FCOR/TAMU_BaseMap/MapServer/tile/{level}/{row}/{col}?blankTile=false";
 
-        public static async Task LoadMap(MapView mapView)
+        public static async Task LoadMap(this MapView mapView)
         {
             var tiledLayer = new WebTiledLayer(TILE_LAYER_TEMPLATE);
             await tiledLayer.LoadAsync();
@@ -63,7 +63,7 @@ namespace AggieMove.Helpers
             return new Graphic(routePath, routeLineSymbol);
         }
 
-        public static Graphic DrawRouteAndStops(MapView mapView, RouteViewModel route, Color routeColor, bool showStops = true)
+        public static Graphic DrawRouteAndStops(this MapView mapView, RouteViewModel route, Color routeColor, bool showStops = true)
         {
             var routePoints = route.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, SpatialReferences.WebMercator));
             Graphic routePath = CreateRoutePath(routePoints, routeColor);
@@ -96,7 +96,7 @@ namespace AggieMove.Helpers
             return routePath;
         }
 
-        public static Graphic DrawDirections(MapView mapView, Route route, Color routeColor, bool showStops = true)
+        public static Graphic DrawDirections(this MapView mapView, Route route, Color routeColor, bool showStops = true)
         {
             var routeLineSymbol = new SimpleLineSymbol(
                 SimpleLineSymbolStyle.Solid, routeColor, 4.0
@@ -120,7 +120,7 @@ namespace AggieMove.Helpers
             return routePath;
         }
 
-        public static void ClearAllRouteOverlays(MapView mapView)
+        public static void ClearAllRouteOverlays(this MapView mapView)
         {
             int i = 0;
             while (i < mapView.GraphicsOverlays.Count)
@@ -133,7 +133,7 @@ namespace AggieMove.Helpers
             }
         }
 
-        public static void ClearAllExceptMain(MapView mapView)
+        public static void ClearAllExceptMain(this MapView mapView)
         {
             for (int i = 0; i < mapView.GraphicsOverlays.Count; i++)
             {
