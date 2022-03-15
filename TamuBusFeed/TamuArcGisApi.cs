@@ -115,13 +115,16 @@ namespace TamuBusFeed
         public static async Task<IEnumerable<Models.SearchResult>> SearchBuildings(string text, CancellationToken ct)
         {
             var results = await QueryBuildings(text, ct);
-            return Models.SearchResult.FromFeatureQueryResult(results, GetNameFunctionFromAttribute("BldgName"));
+            return Models.SearchResult.FromFeatureQueryResult(
+                results,
+                GetAttributeValueFunction("BldgName"),
+                f => string.Join(", ", f.GetAttributeValue("Address"), f.GetAttributeValue("City"), "Texas", f.GetAttributeValue("Zip")));
         }
 
         public static async Task<IEnumerable<Models.SearchResult>> SearchBuildingsStrict(string text, CancellationToken ct)
         {
             var results = await QueryBuildingsStrict(text, ct);
-            return Models.SearchResult.FromFeatureQueryResult(results, GetNameFunctionFromAttribute("BldgName"));
+            return Models.SearchResult.FromFeatureQueryResult(results, GetAttributeValueFunction("BldgName"));
         }
 
         public static async Task<IEnumerable<Models.SearchResult>> SearchDepartments(string text, CancellationToken ct)
@@ -138,19 +141,19 @@ namespace TamuBusFeed
         public static async Task<IEnumerable<Models.SearchResult>> SearchParkingGarages(string text, CancellationToken ct)
         {
             var results = await QueryParkingGarages(text, ct);
-            return Models.SearchResult.FromFeatureQueryResult(results, GetNameFunctionFromAttribute("LotName"));
+            return Models.SearchResult.FromFeatureQueryResult(results, GetAttributeValueFunction("LotName"));
         }
 
         public static async Task<IEnumerable<Models.SearchResult>> SearchParkingLots(string text, CancellationToken ct)
         {
             var results = await QueryParkingLots(text, ct);
-            return Models.SearchResult.FromFeatureQueryResult(results, GetNameFunctionFromAttribute("LotName"));
+            return Models.SearchResult.FromFeatureQueryResult(results, GetAttributeValueFunction("LotName"));
         }
 
         public static async Task<IEnumerable<Models.SearchResult>> SearchPointsOfInterest(string text, CancellationToken ct)
         {
             var results = await QueryPointsOfInterest(text, ct);
-            return Models.SearchResult.FromFeatureQueryResult(results, GetNameFunctionFromAttribute("Name"));
+            return Models.SearchResult.FromFeatureQueryResult(results, GetAttributeValueFunction("Name"));
         }
 
         public static async Task<IEnumerable<Models.SearchResult>> SearchWorld(string text, CancellationToken ct)
@@ -162,12 +165,13 @@ namespace TamuBusFeed
             parameters.PreferredSearchLocation = TamuCenter;
             parameters.ResultAttributeNames.Add("Score");
             parameters.ResultAttributeNames.Add("Distance");
+            parameters.ResultAttributeNames.Add("Place_addr");
 
-            var results = await locatorTask.GeocodeAsync(text, parameters);
+            var results = await locatorTask.GeocodeAsync(text, parameters, ct);
             return Models.SearchResult.FromGeocodeResults(results);
         }
 
-        private static Func<Feature, string> GetNameFunctionFromAttribute(string attributeName)
+        private static Func<Feature, string> GetAttributeValueFunction(string attributeName)
         {
             return feature => feature.GetAttributeValue(attributeName)?.ToString();
         }
