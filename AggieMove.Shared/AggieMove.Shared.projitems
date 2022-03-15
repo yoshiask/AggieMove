@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\DualPanelPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\CSSColorToWinUIColorConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\DrawingColorToWinUIColorConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ColorHelper.cs" />
