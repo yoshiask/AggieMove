@@ -91,7 +91,7 @@ namespace AggieMove.ViewModels
                     SearchResults.Add(result);
                 }
             }
-            catch (TaskCanceledException _) { }
+            catch (TaskCanceledException) { }
             catch (Exception ex)
             {
                 SearchResults.Add(new TamuBusFeed.Models.SearchResult(ex.Message, TamuBusFeed.TamuArcGisApi.TamuCenter));

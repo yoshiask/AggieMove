@@ -89,7 +89,7 @@ namespace AggieMove.Views
             if (e.PropertyName == nameof(ViewModel.SelectedPatternElement) && ViewModel.SelectedPatternElement != null)
             {
                 PatternElement elem = ViewModel.SelectedPatternElement;
-                var point = new MapPoint(elem.Longitude, elem.Latitude, SpatialReferences.Wgs84);
+                var point = new MapPoint(elem.Longitude, elem.Latitude, SpatialReferences.WebMercator);
                 await MainMapView.SetViewpointCenterAsync(point);
                 await MainMapView.SetViewpointScaleAsync(2000);
             }

@@ -18,7 +18,7 @@ namespace TamuBusFeed
     {
         public const string SERVICES_BASE = "https://gis.tamu.edu/arcgis/rest/services";
         // ILCB
-        public static readonly MapPoint TamuCenter = new(-10724991.7064, 3582457.193500001, SpatialReference.Create(3857));
+        public static readonly MapPoint TamuCenter = new(-10724991.7064, 3582457.193500001, SpatialReferences.WebMercator);
 
         public static async Task<IReadOnlyList<Route>> SolveRoute(IEnumerable<MapPoint> stopPoints)
         {
@@ -37,7 +37,7 @@ namespace TamuBusFeed
             return routeResult?.Routes;
         }
 
-        public static async Task<IEnumerable<Models.SearchResult>> SearchAsync(string text, [EnumeratorCancellation] CancellationToken ct)
+        public static async Task<IEnumerable<Models.SearchResult>> SearchAsync(string text, CancellationToken ct)
         {
             var listResults = await WhenAllSerial(ct,
                 ct => SearchBuildings(text, ct), ct => SearchDepartments(text, ct),
@@ -45,9 +45,6 @@ namespace TamuBusFeed
                 ct => SearchPointsOfInterest(text, ct), ct => SearchWorld(text, ct)
             );
             return listResults.Aggregate((l1, l2) => l1.Union(l2));
-            //foreach (var results in listResults)
-            //    foreach (var result in results)
-            //        yield return result;
         }
 
         public static Task<FeatureQueryResult> QueryBuildings(string text, CancellationToken ct)
