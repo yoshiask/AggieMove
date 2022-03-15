@@ -50,6 +50,7 @@ namespace AggieMove.Views.Dialogs
 
         private void Close(object result)
         {
+            ViewModel.SearchResults.Clear();
             Result = (TamuBusFeed.Models.SearchResult)result;
             Hide();
         }

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TamuBusFeed;
 
@@ -80,16 +81,17 @@ namespace AggieMove.ViewModels
             }
         }
 
-        public async Task SearchAsync(string query)
+        public async Task SearchAsync(string query, CancellationToken token)
         {
             SearchResults.Clear();
             try
             {
-                await foreach (var result in TamuArcGisApi.SearchAsync(query))
+                foreach (var result in await TamuArcGisApi.SearchAsync(query, token))
                 {
                     SearchResults.Add(result);
                 }
             }
+            catch (TaskCanceledException _) { }
             catch (Exception ex)
             {
                 SearchResults.Add(new TamuBusFeed.Models.SearchResult(ex.Message, TamuBusFeed.TamuArcGisApi.TamuCenter));

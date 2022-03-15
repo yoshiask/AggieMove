@@ -104,7 +104,7 @@ namespace AggieMove.Views
                 await System.Threading.Tasks.Task.Delay(10);
                 
                 // Scroll to current time
-                CurrentTimeBlock.StartBringIntoView(currentTimeViewOptions);
+                CurrentTimeBlock?.StartBringIntoView(currentTimeViewOptions);
             }
         }
 
