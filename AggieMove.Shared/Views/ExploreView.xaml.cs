@@ -21,6 +21,7 @@ namespace AggieMove.Views
 
             MainMapView.LocationDisplay.IsEnabled = true;
             MainMapView.LocationDisplay.AutoPanMode = Esri.ArcGISRuntime.UI.LocationDisplayAutoPanMode.Recenter;
+            MainMapView.GeoViewTapped += MainMapView_GeoViewTapped;
 
             ViewModel.Routes.CollectionChanged += Routes_CollectionChanged;
         }
@@ -57,6 +58,11 @@ namespace AggieMove.Views
             // setting the selected item
             ViewModel.SelectedRoute = e.AddedItems[0] as TamuBusFeed.Models.Route;
 #endif
+        }
+
+        private async void MainMapView_GeoViewTapped(object sender, Esri.ArcGISRuntime.UI.Controls.GeoViewInputEventArgs e)
+        {
+            await MainMapView.HandleGeoViewTapped(e);
         }
     }
 }
