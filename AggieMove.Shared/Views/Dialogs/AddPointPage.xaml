@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:TamuBusFeed.Models"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     Title="Add stop"
     PrimaryButtonText="Add"
     SecondaryButtonText="Cancel"
@@ -13,34 +14,42 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <local:AddPointDialog.Resources>
-        <DataTemplate x:Key="SearchResultTemplate" x:DataType="models:SearchResult">
-            <TextBlock Text="{x:Bind Name}"/>
-        </DataTemplate>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <muxc:XamlControlsResources/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate x:Key="SearchResultTemplate" x:DataType="models:SearchResult">
+                <TextBlock Text="{x:Bind Name}"/>
+            </DataTemplate>
+        </ResourceDictionary>
     </local:AddPointDialog.Resources>
 
-    <Grid Width="350" MinHeight="500">
+    <Grid Width="350" MinHeight="500" RowSpacing="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
-            <AutoSuggestBox x:Name="SearchBox"
-                            QueryIcon="Find" PlaceholderText="Search..."
-                            VerticalAlignment="Center" Margin="0,0,38,0"
-                            CornerRadius="4,0,0,4"
-                            IsEnabled="{x:Bind CurrentLocationButton.IsChecked.Value.Equals(x:False), Mode=OneWay}"
-                            QuerySubmitted="SearchBox_QuerySubmitted"
-                            ItemTemplate="{StaticResource SearchResultTemplate}">
-            </AutoSuggestBox>
+            <TextBox x:Name="SearchBox"
+                     PlaceholderText="Search..."
+                     VerticalAlignment="Center" Margin="0,0,38,0"
+                     CornerRadius="4,0,0,4"
+                     IsEnabled="{x:Bind CurrentLocationButton.IsChecked.Value.Equals(x:False), Mode=OneWay}">
+            </TextBox>
             <ToggleButton x:Name="CurrentLocationButton" Content="&#xE707;"
                           CornerRadius="0,4,4,0"
                           VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="38"
                           FontFamily="Segoe MDL2 Assets" FontWeight="Normal" />
         </Grid>
 
-        <ListView x:Name="SearchResultsList" Grid.Row="1"
+        <muxc:ProgressBar IsIndeterminate="True" Grid.Row="1"
+                          Visibility="{x:Bind ViewModel.SearchCommand.IsRunning, Mode=OneWay}"/>
+
+        <ListView x:Name="SearchResultsList" Grid.Row="2"
+                  ItemsSource="{x:Bind ViewModel.SearchResults}"
                   SelectionMode="None" IsItemClickEnabled="True"
                   ItemClick="SearchResult_ItemClick"
                   ItemTemplate="{StaticResource SearchResultTemplate}"/>

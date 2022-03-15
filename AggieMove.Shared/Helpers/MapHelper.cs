@@ -15,7 +15,6 @@ namespace AggieMove.Helpers
 {
     public static class MapHelper
     {
-        public static readonly MapPoint TAMU_CENTER_POINT = new MapPoint(-96.344800, 30.610190, SpatialReferences.Wgs84);
         public static readonly string TILE_LAYER_TEMPLATE = TamuBusFeed.TamuArcGisApi.SERVICES_BASE + 
             "/FCOR/TAMU_BaseMap/MapServer/tile/{level}/{row}/{col}?blankTile=false";
 
@@ -32,7 +31,7 @@ namespace AggieMove.Helpers
 
             mapView.Map = new Map(basemap);
             await mapView.Map.LoadAsync();
-            mapView.SetViewpoint(new Viewpoint(TAMU_CENTER_POINT, 36000));
+            mapView.SetViewpoint(new Viewpoint(TamuBusFeed.TamuArcGisApi.TamuCenter, 36000));
         }
 
         public static Graphic CreateRouteStop(double lat, double lon, Color fill)

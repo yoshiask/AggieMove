@@ -22,6 +22,7 @@ namespace AggieMove.ViewModels
             LoadRoutesCommand = new AsyncRelayCommand(LoadRoutesAsync);
             ViewRouteCommand = new RelayCommand(ViewRoute);
             AddStopCommand = new AsyncRelayCommand(AddStopAsync);
+            SearchCommand = new AsyncRelayCommand<string>(SearchAsync);
         }
 
         /// <summary>
@@ -31,6 +32,9 @@ namespace AggieMove.ViewModels
 
         [System.ComponentModel.Bindable(true)]
         public ObservableCollection<TamuBusFeed.Models.SearchResult> Stops { get; } = new ObservableCollection<TamuBusFeed.Models.SearchResult>();
+
+        [System.ComponentModel.Bindable(true)]
+        public ObservableCollection<TamuBusFeed.Models.SearchResult> SearchResults { get; } = new ObservableCollection<TamuBusFeed.Models.SearchResult>();
 
         [System.ComponentModel.Bindable(true)]
         public ObservableCollection<Route> Routes { get; } = new ObservableCollection<Route>();
@@ -61,12 +65,34 @@ namespace AggieMove.ViewModels
         /// </summary>
         public IAsyncRelayCommand AddStopCommand { get; }
 
+        [System.ComponentModel.Bindable(true)]
+        /// <summary>
+        /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for searching for stops.
+        /// </summary>
+        public IAsyncRelayCommand<string> SearchCommand { get; }
+
         public async Task AddStopAsync()
         {
             var result = await NavigationService.ShowDialog("Dialogs.AddPointPage", this);
             if (result.Button != DialogButtonResult.Secondary && result.Result is TamuBusFeed.Models.SearchResult searchResult)
             {
                 Stops.Add(searchResult);
+            }
+        }
+
+        public async Task SearchAsync(string query)
+        {
+            SearchResults.Clear();
+            try
+            {
+                await foreach (var result in TamuArcGisApi.SearchAsync(query))
+                {
+                    SearchResults.Add(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                SearchResults.Add(new TamuBusFeed.Models.SearchResult(ex.Message, TamuBusFeed.TamuArcGisApi.TamuCenter));
             }
         }
 

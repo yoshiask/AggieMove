@@ -16,7 +16,7 @@ namespace TamuBusFeed
     {
         public const string SERVICES_BASE = "https://gis.tamu.edu/arcgis/rest/services";
         // ILCB
-        public static readonly MapPoint TamuCenter = new MapPoint(-10724991.7064, 3582457.193500001, SpatialReference.Create(3857));
+        public static readonly MapPoint TamuCenter = new(-10724991.7064, 3582457.193500001, SpatialReference.Create(3857));
 
         public static async Task<IReadOnlyList<Route>> SolveRoute(IEnumerable<MapPoint> stopPoints)
         {
@@ -35,14 +35,15 @@ namespace TamuBusFeed
             return routeResult?.Routes;
         }
 
-        public static async Task<IEnumerable<Models.SearchResult>> SearchAsync(string text)
+        public static async IAsyncEnumerable<Models.SearchResult> SearchAsync(string text)
         {
-            var listResults = await Task.WhenAll(
-                SearchBuildings(text), SearchBuildingsStrict(text),
-                SearchDepartments(text), SearchParkingGarages(text), SearchParkingLots(text),
-                SearchPointsOfInterest(text), SearchWorld(text)
+            var listResults = WhenAllSerial2(
+                SearchBuildings(text), SearchDepartments(text), SearchParkingGarages(text),
+                SearchParkingLots(text), SearchPointsOfInterest(text), SearchWorld(text)
             );
-            return listResults.Aggregate((l1, l2) => l1.Union(l2));
+            await foreach (var results in listResults)
+                foreach (var result in results)
+                    yield return result;
         }
 
         public static Task<FeatureQueryResult> QueryBuildings(string text)
@@ -172,6 +173,20 @@ namespace TamuBusFeed
         private static IFlurlRequest GetBase()
         {
             return (IFlurlRequest)SERVICES_BASE.SetQueryParam("f", "json");
+        }
+
+        private static async Task<TResult[]> WhenAllSerial<TResult>(params Task<TResult>[] tasks)
+        {
+            var results = new TResult[tasks.Length];
+            for (int i = 0; i < tasks.Length; i++)
+                results[i] = await tasks[i];
+            return results;
+        }
+
+        private static async IAsyncEnumerable<TResult> WhenAllSerial2<TResult>(params Task<TResult>[] tasks)
+        {
+            for (int i = 0; i < tasks.Length; i++)
+                yield return await tasks[i];
         }
     }
 }

@@ -23,28 +23,24 @@ namespace AggieMove.Views.Dialogs
         public AddPointPage(object parameter) : base(parameter)
         {
             this.InitializeComponent();
+
             SearchBox.TextChanged += SearchBox_TextChanged;
+            this.PrimaryButtonClick += AddPointPage_PrimaryButtonClick;
+
             ViewModel = parameter as NavigateViewModel;
         }
 
-        private async void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        private void AddPointPage_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput || !args.CheckCurrent())
-                return;
-
-            var results = await TamuArcGisApi.SearchAsync(sender.Text);
-            sender.Items.Clear();
-            SearchResultsList.Items.Clear();
-            foreach (var result in results)
-            {
-                sender.Items.Add(result);
-                SearchResultsList.Items.Add(result);
-            }
+            Close(SearchResultsList.Items.FirstOrDefault());
         }
 
-        private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        private async void SearchBox_TextChanged(object sender, TextChangedEventArgs args)
         {
-            Close(args.ChosenSuggestion ?? sender.Items.FirstOrDefault());
+            if (ViewModel.SearchCommand.IsRunning && ViewModel.SearchCommand.CanBeCanceled)
+                ViewModel.SearchCommand.Cancel();
+
+            await ViewModel.SearchCommand.ExecuteAsync(SearchBox.Text);
         }
 
         private void SearchResult_ItemClick(object sender, ItemClickEventArgs e)

@@ -1,16 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AggieMove.Services\AggieMove.Services.csproj" />
-    <ProjectReference Include="..\TamuBusFeed\TamuBusFeed.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\AggieMove.Services\AggieMove.Services.csproj" />
+        <ProjectReference Include="..\TamuBusFeed\TamuBusFeed.csproj" />
+    </ItemGroup>
 
 </Project>
