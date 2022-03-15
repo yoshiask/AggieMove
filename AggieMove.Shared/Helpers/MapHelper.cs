@@ -67,6 +67,9 @@ namespace AggieMove.Helpers
         {
             var routePoints = route.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, SpatialReferences.WebMercator));
             Graphic routePath = CreateRoutePath(routePoints, routeColor);
+            routePath.Attributes.Add("Title", route.SelectedRoute.ShortName);
+            routePath.Attributes.Add("Description", route.SelectedRoute.Name);
+
             var routeOverlay = new GraphicsOverlay
             {
                 Id = "route_" + route.SelectedRoute.ShortName
@@ -78,6 +81,14 @@ namespace AggieMove.Helpers
                 {
                     var point = new MapPoint(elem.Longitude, elem.Latitude, SpatialReferences.WebMercator);
                     var stop = CreateRouteStop(point, routeColor);
+
+                    string title = elem.Name;
+                    if (elem.Stop.IsTimePoint)
+                        title = "⏱ " + title;
+
+                    stop.Attributes.Add("Title", title);
+                    stop.Attributes.Add("Description", elem.Stop.StopCode);
+
                     routeOverlay.Graphics.Add(stop);
                 }
 
@@ -132,6 +143,133 @@ namespace AggieMove.Helpers
 
                 mapView.GraphicsOverlays.RemoveAt(i--);
             }
+        }
+
+        public static CalloutDefinition CreateCallout(Esri.ArcGISRuntime.Data.GeoElement elem)
+        {
+            CalloutDefinition callout = new(elem)
+            {
+                Text = elem.Attributes["Title"]?.ToString(),
+                DetailText = elem.Attributes["Description"]?.ToString(),
+            };
+
+            return callout;
+        }
+
+        public static MapPoint GetMedianPoint(this Geometry geo)
+        {
+            if (geo is MapPoint pt)
+            {
+                return pt;
+            }
+            else if (geo is Polyline pl)
+            {
+                var medianPart = pl.Parts[pl.Parts.Count / 2];
+                var medianSegment = medianPart[medianPart.SegmentCount / 2];
+                if (medianSegment is LineSegment line)
+                {
+                    return AveragePoint(line.StartPoint, line.EndPoint);
+                }
+                else if (medianSegment is CubicBezierSegment cubic)
+                {
+                    MapPoint B(double t)
+                    {
+                        double t2 = t * t;
+                        double t3 = t2 * t;
+                        double invT = 1 - t;
+                        double invT2 = invT * invT;
+                        double invT3 = invT2 * invT;
+
+                        var term1 = cubic.StartPoint.Multiply(invT3);
+                        var term2 = cubic.ControlPoint1.Multiply(invT2 * t);
+                        var term3 = cubic.ControlPoint2.Multiply(invT * t2);
+                        var term4 = cubic.EndPoint.Multiply(t3);
+
+                        return term1.Add(term2).Add(term3).Add(term4);
+                    }
+                    return B(0.5);
+                }
+                //else if (medianSegment is EllipticArcSegment arc)
+                //{
+
+                //}
+            }
+            else if (geo is Polygon pg)
+            {
+                return pg.Extent.GetCenter();
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public static MapPoint GetClosestPoint(this Geometry geo, MapPoint target)
+        {
+            if (geo is MapPoint pt)
+            {
+                return pt;
+            }
+            else if (geo is Polyline pl)
+            {
+                return pl.Parts.SelectMany(part => part.Points)
+                    .MinElement(pt => pt.Distance(target));
+            }
+            else if (geo is Polygon pg)
+            {
+                return pg.Extent.IsWithin(target) ? target : pg.Extent.GetCenter();
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public static MapPoint AveragePoint(params MapPoint[] points)
+        {
+            int numPts = points.Length;
+            double x = points.Sum(pt => pt.X) / numPts;
+            double y = points.Sum(pt => pt.Y) / numPts;
+            double z = points.Sum(pt => pt.Z) / numPts;
+            return new MapPoint(x, y, x, points[0].SpatialReference);
+        }
+
+        public static MapPoint Add(this MapPoint pt1, MapPoint pt2)
+        {
+            return new MapPoint(pt1.X + pt2.X, pt1.Y + pt2.Y, pt1.Z + pt2.Z, pt1.SpatialReference);
+        }
+
+        public static MapPoint Multiply(this MapPoint pt1, double scalar)
+        {
+            return new MapPoint(pt1.X * scalar, pt1.Y * scalar, pt1.Z * scalar, pt1.SpatialReference);
+        }
+
+        public static double Distance(this MapPoint pt1, MapPoint pt2)
+        {
+            double dX = pt1.X - pt2.X;
+            double dY = pt1.Y - pt2.Y;
+            double dZ = pt1.Z - pt2.Z;
+            return Math.Sqrt((dX * dX) + (dY * dY) + (dZ * dZ));
+        }
+
+        public static bool IsWithin(this Envelope env, MapPoint pt)
+        {
+            return (pt.X >= env.XMin) && (pt.X <= env.XMax)
+                && (pt.Y >= env.YMin) && (pt.Y <= env.YMax);
+        }
+
+        public static T MinElement<T>(this IEnumerable<T> list, Func<T, double> selector)
+        {
+            T minElem = default;
+            double minVal = double.MaxValue;
+
+            foreach (T curElem in list)
+            {
+                double curVal = selector(curElem);
+                if (curVal < minVal)
+                {
+                    minElem = curElem;
+                    minVal = curVal;
+                }
+            }
+
+            return minElem;
         }
     }
 }

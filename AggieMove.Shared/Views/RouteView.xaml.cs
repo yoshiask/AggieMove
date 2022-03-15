@@ -39,6 +39,7 @@ namespace AggieMove.Views
 
             MainMapView.LocationDisplay.IsEnabled = true;
             MainMapView.LocationDisplay.AutoPanMode = Esri.ArcGISRuntime.UI.LocationDisplayAutoPanMode.Recenter;
+            MainMapView.GeoViewTapped += MainMapView_GeoViewTapped;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -127,6 +128,23 @@ namespace AggieMove.Views
         private async void Clock_Elapsed(object sender, ElapsedEventArgs e)
         {
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, UpdateCurrentTimeBlock);
+        }
+
+        private async void MainMapView_GeoViewTapped(object sender, Esri.ArcGISRuntime.UI.Controls.GeoViewInputEventArgs e)
+        {
+            // Identify graphics using the screen tap.
+            var screenPoint = e.Position;
+            var resultGraphics = await MainMapView.IdentifyGraphicsOverlaysAsync(screenPoint, 10, false);
+
+            // Show details in a callout for the first graphic identified (if any).
+            if (resultGraphics != null && resultGraphics.Count > 0)
+            {
+                var poiGraphic = resultGraphics.FirstOrDefault()?.Graphics.FirstOrDefault();
+                var callout = MapHelper.CreateCallout(poiGraphic);
+
+                MapPoint calloutAnchor = poiGraphic.Geometry.GetClosestPoint(e.Location);
+                MainMapView.ShowCalloutAt(calloutAnchor, callout);
+            }
         }
     }
 }

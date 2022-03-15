@@ -32,11 +32,11 @@ namespace TamuBusFeed.Models
             set => SetProperty(ref stopCode, value);
         }
 
-        private bool isTimeCode;
-        public bool IsTimeCode
+        private bool isTimePoint;
+        public bool IsTimePoint
         {
-            get => isTimeCode;
-            set => SetProperty(ref isTimeCode, value);
+            get => isTimePoint;
+            set => SetProperty(ref isTimePoint, value);
         }
     }
 }
