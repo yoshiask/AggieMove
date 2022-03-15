@@ -34,6 +34,27 @@ namespace AggieMove.Helpers
             mapView.SetViewpoint(new Viewpoint(TamuBusFeed.TamuArcGisApi.TamuCenter, 36000));
         }
 
+        public static async Task HandleGeoViewTapped(this MapView mapView, GeoViewInputEventArgs e)
+        {
+            // Identify graphics using the screen tap.
+            var screenPoint = e.Position;
+            var resultGraphics = await mapView.IdentifyGraphicsOverlaysAsync(screenPoint, 10, false);
+
+            // Show details in a callout for the first graphic identified (if any).
+            if (resultGraphics != null && resultGraphics.Count > 0)
+            {
+                var poiGraphic = resultGraphics.FirstOrDefault()?.Graphics.FirstOrDefault();
+                var callout = CreateCallout(poiGraphic);
+
+                MapPoint calloutAnchor = poiGraphic.Geometry.GetClosestPoint(e.Location);
+                mapView.ShowCalloutAt(calloutAnchor, callout);
+            }
+            else
+            {
+                mapView.DismissCallout();
+            }
+        }
+
         public static Graphic CreateRouteStop(double lat, double lon, Color fill)
         {
             var mapPoint = new MapPoint(Convert.ToDouble(lon),

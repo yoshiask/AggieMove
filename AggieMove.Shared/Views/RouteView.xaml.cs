@@ -17,9 +17,9 @@ namespace AggieMove.Views
     /// </summary>
     public sealed partial class RouteView : Page
     {
-        private readonly Windows.UI.Xaml.Media.SolidColorBrush currentTimeHighlightBrush = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 0, 0));
-        private readonly Windows.UI.Xaml.Media.SolidColorBrush pastTimeHighlightBrush = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 125, 125, 125));
-        private readonly BringIntoViewOptions currentTimeViewOptions = new BringIntoViewOptions
+        private readonly Windows.UI.Xaml.Media.SolidColorBrush currentTimeHighlightBrush = new(Windows.UI.Color.FromArgb(255, 200, 0, 0));
+        private readonly Windows.UI.Xaml.Media.SolidColorBrush pastTimeHighlightBrush = new(Windows.UI.Color.FromArgb(255, 125, 125, 125));
+        private readonly BringIntoViewOptions currentTimeViewOptions = new()
         {
             VerticalAlignmentRatio = 0.5f,
         };
@@ -55,8 +55,8 @@ namespace AggieMove.Views
             bool hasRoutePoints = ViewModel.PatternElements.Count > 0;
             if (hasRoutePoints)
             {
-                var geometry = MainMapView.DrawRouteAndStops(ViewModel, DrawingColor);
-                _ = MainMapView.SetViewpointGeometryAsync(geometry.Geometry);
+                var graphic = MainMapView.DrawRouteAndStops(ViewModel, DrawingColor);
+                _ = MainMapView.SetViewpointGeometryAsync(graphic.Geometry);
             }
 
             // Show time table
@@ -132,19 +132,7 @@ namespace AggieMove.Views
 
         private async void MainMapView_GeoViewTapped(object sender, Esri.ArcGISRuntime.UI.Controls.GeoViewInputEventArgs e)
         {
-            // Identify graphics using the screen tap.
-            var screenPoint = e.Position;
-            var resultGraphics = await MainMapView.IdentifyGraphicsOverlaysAsync(screenPoint, 10, false);
-
-            // Show details in a callout for the first graphic identified (if any).
-            if (resultGraphics != null && resultGraphics.Count > 0)
-            {
-                var poiGraphic = resultGraphics.FirstOrDefault()?.Graphics.FirstOrDefault();
-                var callout = MapHelper.CreateCallout(poiGraphic);
-
-                MapPoint calloutAnchor = poiGraphic.Geometry.GetClosestPoint(e.Location);
-                MainMapView.ShowCalloutAt(calloutAnchor, callout);
-            }
+            await MainMapView.HandleGeoViewTapped(e);
         }
     }
 }
