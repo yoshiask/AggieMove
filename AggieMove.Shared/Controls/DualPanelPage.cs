@@ -8,7 +8,7 @@ namespace AggieMove.Controls
 {
     [TemplatePart(Name = nameof(PrimaryContentControl))]
     [TemplatePart(Name = nameof(SecondaryContentControl))]
-    public sealed class DualPanelPage : Control
+    public sealed partial class DualPanelPage : Control
     {
         private DependencyObject PrimaryContentControl = null;
         private DependencyObject SecondaryContentControl = null;

@@ -6,6 +6,7 @@ using System.Timers;
 using TamuBusFeed.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -17,9 +18,9 @@ namespace AggieMove.Views
     /// </summary>
     public sealed partial class RouteView : Page
     {
-        private readonly Windows.UI.Xaml.Media.SolidColorBrush currentTimeHighlightBrush = new(Windows.UI.Color.FromArgb(255, 200, 0, 0));
-        private readonly Windows.UI.Xaml.Media.SolidColorBrush pastTimeHighlightBrush = new(Windows.UI.Color.FromArgb(255, 125, 125, 125));
-        private readonly BringIntoViewOptions currentTimeViewOptions = new()
+        private readonly SolidColorBrush currentTimeHighlightBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 0, 0));
+        private readonly SolidColorBrush pastTimeHighlightBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 125, 125, 125));
+        private readonly BringIntoViewOptions currentTimeViewOptions = new BringIntoViewOptions
         {
             VerticalAlignmentRatio = 0.5f,
         };

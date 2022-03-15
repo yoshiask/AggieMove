@@ -168,7 +168,7 @@ namespace AggieMove.Helpers
 
         public static CalloutDefinition CreateCallout(Esri.ArcGISRuntime.Data.GeoElement elem)
         {
-            CalloutDefinition callout = new(elem)
+            CalloutDefinition callout = new CalloutDefinition(elem)
             {
                 Text = elem.Attributes["Title"]?.ToString(),
                 DetailText = elem.Attributes["Description"]?.ToString(),
