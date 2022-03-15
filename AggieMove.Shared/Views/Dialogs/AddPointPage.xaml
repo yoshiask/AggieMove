@@ -13,7 +13,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <local:AddPointDialog.Resources>
-        <DataTemplate x:Name="SearchResultTemplate" x:DataType="models:SearchResult">
+        <DataTemplate x:Key="SearchResultTemplate" x:DataType="models:SearchResult">
             <TextBlock Text="{x:Bind Name}"/>
         </DataTemplate>
     </local:AddPointDialog.Resources>

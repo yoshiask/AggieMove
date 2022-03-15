@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace AggieMove.Views.Dialogs
 {
-    public abstract class Dialog<TViewModel> : ContentDialog, IDialog
+    public abstract partial class Dialog<TViewModel> : ContentDialog, IDialog
     {
         public Dialog(object parameter)
         {

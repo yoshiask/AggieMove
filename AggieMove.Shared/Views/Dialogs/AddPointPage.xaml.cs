@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace AggieMove.Views.Dialogs
 {
-    public abstract class AddPointDialog : Dialog<NavigateViewModel>
+    public abstract partial class AddPointDialog : Dialog<NavigateViewModel>
     {
         public AddPointDialog(object parameter) : base(parameter)
         {

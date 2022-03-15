@@ -73,9 +73,17 @@ namespace AggieMove.ViewModels
         public async Task LoadRoutesAsync()
         {
             Routes.Clear();
-            foreach (Route r in await TamuArcGisApi.SolveRoute(Stops.Select(s => s.Point)))
+            try
             {
-                Routes.Add(r);
+                var routes = await TamuArcGisApi.SolveRoute(Stops.Select(s => s.Point));
+                foreach (Route r in routes)
+                {
+                    Routes.Add(r);
+                }
+            }
+            catch
+            {
+                throw;
             }
         }
 
