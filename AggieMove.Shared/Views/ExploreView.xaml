@@ -95,7 +95,7 @@
             </controls:DualPanelPage.SecondaryContent>
         </controls:DualPanelPage>
 
-        <CommandBar x:Name="AppBar" Grid.Row="3" Style="{ThemeResource CommandBarRevealStyle}">
+        <CommandBar x:Name="AppBar" Grid.Row="1">
             <AppBarButton Icon="Refresh" Label="Refresh" Command="{x:Bind ViewModel.LoadRoutesCommand}"/>
         </CommandBar>
     </Grid>
