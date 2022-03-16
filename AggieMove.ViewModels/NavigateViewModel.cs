@@ -20,6 +20,7 @@ namespace AggieMove.ViewModels
     {
         public NavigateViewModel()
         {
+            InitializeCommand = new AsyncRelayCommand(InitAsync);
             LoadRoutesCommand = new AsyncRelayCommand(LoadRoutesAsync);
             ViewRouteCommand = new RelayCommand(ViewRoute);
             AddStopCommand = new AsyncRelayCommand(AddStopAsync);

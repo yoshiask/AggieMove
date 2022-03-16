@@ -11,6 +11,7 @@
     xmlns:controls="using:AggieMove.Controls"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -34,15 +35,25 @@
         <controls:DualPanelPage.SecondaryContent>
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                <muxc:RadioButtons Style="{StaticResource SegmentedButtonsStyle}"
+                                   Header="Travel mode" SelectedIndex="0" Margin="8">
+                    <RadioButton Content="Car" Style="{StaticResource SegmentedLeftButtonStyle}"/>
+                    <RadioButton Content="Bus" Style="{StaticResource SegmentedCenterButtonStyle}" />
+                    <RadioButton Content="Walk" Style="{StaticResource SegmentedCenterButtonStyle}" />
+                    <RadioButton Content="Bike" Style="{StaticResource SegmentedRightButtonStyle}" />
+                </muxc:RadioButtons>
+
                 <ListView ItemsSource="{x:Bind ViewModel.Stops, Mode=TwoWay}"
                           ItemTemplate="{StaticResource SearchResultTemplate}"
-                          CanReorderItems="True" ReorderMode="Enabled"/>
+                          CanReorderItems="True" ReorderMode="Enabled"
+                          Grid.Row="1"/>
 
-                <CommandBar Grid.Row="1">
+                <CommandBar Grid.Row="2">
                     <AppBarButton Icon="Add" Label="Add stop" Command="{x:Bind ViewModel.AddStopCommand}"/>
                     <AppBarButton Label="Directions" Command="{x:Bind ViewModel.LoadRoutesCommand}">
                         <AppBarButton.Icon>
