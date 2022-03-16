@@ -20,17 +20,22 @@ namespace TamuBusFeed
         // ILCB
         public static readonly MapPoint TamuCenter = new(-10724991.7064, 3582457.193500001, SpatialReferences.WebMercator);
 
-        public static async Task<IReadOnlyList<Route>> SolveRoute(IEnumerable<MapPoint> stopPoints)
+        public static Task<RouteTask> StartRouteTask()
+            => RouteTask.CreateAsync(new Uri(Url.Combine(SERVICES_BASE, "/Routing/20220119/NAServer/Route")));
+
+        public static async Task<IReadOnlyList<Route>> SolveRoute(RouteTask routeTask, IEnumerable<Models.SearchResult> stopPoints)
         {
-            var routeTask = await RouteTask.CreateAsync(new Uri(Url.Combine(SERVICES_BASE, "/Routing/20220119/NAServer/Route")));
             var routeParameters = await routeTask.CreateDefaultParametersAsync();
-
-            var stops = stopPoints.Select(g => new Stop(g));
-            routeParameters.SetStops(stops);
-
-            // Return driving directions in user's language
+            
+            // Set parameters
+            routeParameters.DirectionsStyle = DirectionsStyle.Campus;
             routeParameters.ReturnDirections = true;
+            routeParameters.ReturnRoutes = true;
+            routeParameters.ReturnStops = true;
             routeParameters.DirectionsLanguage = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+            var stops = stopPoints.Select(r => new Stop(r.Point) { Name = r.Name });
+            routeParameters.SetStops(stops);
 
             var routeResult = await routeTask.SolveRouteAsync(routeParameters);
 

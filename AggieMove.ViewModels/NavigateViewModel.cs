@@ -31,14 +31,23 @@ namespace AggieMove.ViewModels
         /// </summary>
         private readonly INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
 
+        private RouteTask _router;
+        private ObservableCollection<TravelMode> _travelModes;
+
         [System.ComponentModel.Bindable(true)]
-        public ObservableCollection<TamuBusFeed.Models.SearchResult> Stops { get; } = new ObservableCollection<TamuBusFeed.Models.SearchResult>();
+        public ObservableCollection<TamuBusFeed.Models.SearchResult> Stops { get; set; } = new ObservableCollection<TamuBusFeed.Models.SearchResult>();
 
         [System.ComponentModel.Bindable(true)]
         public ObservableCollection<TamuBusFeed.Models.SearchResult> SearchResults { get; } = new ObservableCollection<TamuBusFeed.Models.SearchResult>();
 
         [System.ComponentModel.Bindable(true)]
         public ObservableCollection<Route> Routes { get; } = new ObservableCollection<Route>();
+
+        public ObservableCollection<TravelMode> TravelModes
+        {
+            get => _travelModes;
+            set => SetProperty(ref _travelModes, value);
+        }
 
         private Route selectedRoute;
         [System.ComponentModel.Bindable(true)]
@@ -47,6 +56,12 @@ namespace AggieMove.ViewModels
             get => selectedRoute;
             set => SetProperty(ref selectedRoute, value);
         }
+
+        [System.ComponentModel.Bindable(true)]
+        /// <summary>
+        /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for initialization.
+        /// </summary>
+        public IAsyncRelayCommand InitializeCommand { get; }
 
         [System.ComponentModel.Bindable(true)]
         /// <summary>
@@ -71,6 +86,12 @@ namespace AggieMove.ViewModels
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for searching for stops.
         /// </summary>
         public IAsyncRelayCommand<string> SearchCommand { get; }
+
+        public async Task InitAsync()
+        {
+            _router = await TamuArcGisApi.StartRouteTask();
+            TravelModes = new(_router.RouteTaskInfo.TravelModes);
+        }
 
         public async Task AddStopAsync()
         {
@@ -103,7 +124,7 @@ namespace AggieMove.ViewModels
             Routes.Clear();
             try
             {
-                var routes = await TamuArcGisApi.SolveRoute(Stops.Select(s => s.Point));
+                var routes = await TamuArcGisApi.SolveRoute(_router, Stops);
                 foreach (Route r in routes)
                 {
                     Routes.Add(r);

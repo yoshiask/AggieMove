@@ -18,13 +18,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <muxc:XamlControlsResources/>
             </ResourceDictionary.MergedDictionaries>
-
-            <DataTemplate x:Key="SearchResultTemplate" x:DataType="models:SearchResult">
-                <TextBlock Padding="0,8">
-                    <Run Text="{x:Bind Name}" FontWeight="Bold"/>
-                    <LineBreak/><Run Text="{x:Bind Address}" Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}"/>
-                </TextBlock>
-            </DataTemplate>
         </ResourceDictionary>
     </local:AddPointDialog.Resources>
 

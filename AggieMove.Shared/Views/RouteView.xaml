@@ -19,13 +19,6 @@
     <Page.Resources>
         <converters:CSSColorToWinUIColorConverter x:Name="CSSColorToWinUIColorConverter"/>
     </Page.Resources>
-    
-    <!--<interactivity:Interaction.Behaviors>
-        <core:EventTriggerBehavior EventName="Loading">
-            <core:InvokeCommandAction Command="{x:Bind ViewModel.LoadPatternsCommand}"/>
-            <core:InvokeCommandAction Command="{x:Bind ViewModel.LoadTimeTableCommand}"/>
-        </core:EventTriggerBehavior>
-    </interactivity:Interaction.Behaviors>-->
 
     <Page.DataContext>
         <viewmodels:RouteViewModel x:Name="ViewModel"/>
