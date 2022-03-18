@@ -23,7 +23,8 @@ namespace TamuBusFeed
         public static Task<RouteTask> StartRouteTask()
             => RouteTask.CreateAsync(new Uri(Url.Combine(SERVICES_BASE, "/Routing/20220119/NAServer/Route")));
 
-        public static async Task<IReadOnlyList<Route>> SolveRoute(RouteTask routeTask, IEnumerable<Models.SearchResult> stopPoints)
+        public static async Task<IReadOnlyList<Route>> SolveRoute(RouteTask routeTask, IEnumerable<Models.SearchResult> stopPoints,
+            TravelMode travelMode = null)
         {
             var routeParameters = await routeTask.CreateDefaultParametersAsync();
             
@@ -33,6 +34,7 @@ namespace TamuBusFeed
             routeParameters.ReturnRoutes = true;
             routeParameters.ReturnStops = true;
             routeParameters.DirectionsLanguage = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            routeParameters.TravelMode = travelMode;
 
             var stops = stopPoints.Select(r => new Stop(r.Point) { Name = r.Name });
             routeParameters.SetStops(stops);

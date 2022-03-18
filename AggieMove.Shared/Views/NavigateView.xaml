@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ArcGIS="using:Esri.ArcGISRuntime.UI.Controls"
     xmlns:ArcGISUI="using:Esri.ArcGISRuntime.UI"
+    xmlns:ArcGISNA="using:Esri.ArcGISRuntime.Tasks.NetworkAnalysis"
     xmlns:viewmodels="using:AggieMove.ViewModels"
     xmlns:controls="using:AggieMove.Controls"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
@@ -40,13 +41,15 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <muxc:RadioButtons Style="{StaticResource SegmentedButtonsStyle}"
-                                   Header="Travel mode" SelectedIndex="0" Margin="8">
-                    <RadioButton Content="Car" Style="{StaticResource SegmentedLeftButtonStyle}"/>
-                    <RadioButton Content="Bus" Style="{StaticResource SegmentedCenterButtonStyle}" />
-                    <RadioButton Content="Walk" Style="{StaticResource SegmentedCenterButtonStyle}" />
-                    <RadioButton Content="Bike" Style="{StaticResource SegmentedRightButtonStyle}" />
-                </muxc:RadioButtons>
+                <ComboBox Header="Travel mode" SelectedIndex="0" Margin="8"
+                          ItemsSource="{x:Bind ViewModel.TravelModes}"
+                          SelectedItem="{x:Bind ViewModel.SelectedTravelMode, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="ArcGISNA:TravelMode">
+                            <TextBlock Text="{x:Bind viewmodels:NavigateViewModel.GetTravelModeDisplayName(Name)}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
                 <ListView ItemsSource="{x:Bind ViewModel.Stops, Mode=TwoWay}"
                           ItemTemplate="{StaticResource SearchResultTemplate}"

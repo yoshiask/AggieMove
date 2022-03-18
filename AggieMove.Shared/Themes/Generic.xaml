@@ -77,8 +77,7 @@
 
     <Style TargetType="controls:DualPanelPage" BasedOn="{StaticResource DefaultDualPanelPageStyle}"/>
 
-    <Style x:Key="SegmentedButtonStyle" TargetType="RadioButton"
-           BasedOn="{StaticResource DefaultRadioButtonStyle}">
+    <Style x:Key="SegmentedButtonStyle" TargetType="RadioButton">
         <Setter Property="Background" Value="{ThemeResource ToggleButtonBackground}" />
         <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
         <Setter Property="Foreground" Value="{ThemeResource ToggleButtonForeground}" />
@@ -93,6 +92,7 @@
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="Width" Value="Auto" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
@@ -318,7 +318,8 @@
                                           Margin="{ThemeResource RadioButtonsTopHeaderMargin}"/>
                         <muxc:ItemsRepeater x:Name="InnerRepeater">
                             <muxc:ItemsRepeater.Layout>
-                                <muxc:StackLayout Orientation="Horizontal"/>
+                                <muxc:UniformGridLayout Orientation="Horizontal"
+                                                        MinRowSpacing="4"/>
                             </muxc:ItemsRepeater.Layout>
                         </muxc:ItemsRepeater>
                     </StackPanel>

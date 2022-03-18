@@ -1,6 +1,7 @@
 ﻿using AggieMove.Helpers;
 using AggieMove.ViewModels;
 using Esri.ArcGISRuntime.Tasks.NetworkAnalysis;
+using System.Collections.Specialized;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using tkColorHelper = Microsoft.Toolkit.Uwp.Helpers.ColorHelper;
@@ -35,13 +36,13 @@ namespace AggieMove.Views
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
             nameof(ViewModel), typeof(NavigateViewModel), typeof(NavigateView), new PropertyMetadata(null));
 
-        private void Stops_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Stops_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+            if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 MapGraphics.Graphics.Clear();
             }
-            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            else if (e.Action == NotifyCollectionChangedAction.Add)
             {
                 foreach (var item in e.NewItems)
                 {
@@ -52,13 +53,13 @@ namespace AggieMove.Views
             }
         }
 
-        private void Routes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Routes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+            if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 MapGraphics.Graphics.Clear();
             }
-            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            else if (e.Action == NotifyCollectionChangedAction.Add)
             {
                 if (!(sender is System.Collections.ICollection routes))
                     return;

@@ -1,4 +1,5 @@
-﻿using AggieMove.Services;
+﻿using AggieMove.Helpers;
+using AggieMove.Services;
 using Esri.ArcGISRuntime.Data;
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Tasks.NetworkAnalysis;
@@ -33,7 +34,7 @@ namespace AggieMove.ViewModels
         private readonly INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
 
         private RouteTask _router;
-        private ObservableCollection<TravelMode> _travelModes;
+        private TravelMode _selectedTravelMode;
 
         [System.ComponentModel.Bindable(true)]
         public ObservableCollection<TamuBusFeed.Models.SearchResult> Stops { get; set; } = new ObservableCollection<TamuBusFeed.Models.SearchResult>();
@@ -44,11 +45,7 @@ namespace AggieMove.ViewModels
         [System.ComponentModel.Bindable(true)]
         public ObservableCollection<Route> Routes { get; } = new ObservableCollection<Route>();
 
-        public ObservableCollection<TravelMode> TravelModes
-        {
-            get => _travelModes;
-            set => SetProperty(ref _travelModes, value);
-        }
+        public ObservableCollection<TravelMode> TravelModes { get; } = new ObservableCollection<TravelMode>();
 
         private Route selectedRoute;
         [System.ComponentModel.Bindable(true)]
@@ -56,6 +53,13 @@ namespace AggieMove.ViewModels
         {
             get => selectedRoute;
             set => SetProperty(ref selectedRoute, value);
+        }
+
+        [System.ComponentModel.Bindable(true)]
+        public TravelMode SelectedTravelMode
+        {
+            get => _selectedTravelMode;
+            set => SetProperty(ref _selectedTravelMode, value);
         }
 
         [System.ComponentModel.Bindable(true)]
@@ -91,7 +95,7 @@ namespace AggieMove.ViewModels
         public async Task InitAsync()
         {
             _router = await TamuArcGisApi.StartRouteTask();
-            TravelModes = new(_router.RouteTaskInfo.TravelModes);
+            TravelModes.AddRange(_router.RouteTaskInfo.TravelModes);
         }
 
         public async Task AddStopAsync()
@@ -122,10 +126,10 @@ namespace AggieMove.ViewModels
 
         public async Task LoadRoutesAsync()
         {
-            Routes.Clear();
             try
             {
-                var routes = await TamuArcGisApi.SolveRoute(_router, Stops);
+                var routes = await TamuArcGisApi.SolveRoute(_router, Stops, SelectedTravelMode);
+                Routes.Clear();
                 foreach (Route r in routes)
                 {
                     Routes.Add(r);
@@ -141,5 +145,7 @@ namespace AggieMove.ViewModels
         {
             NavigationService.Navigate("RouteView", SelectedRoute);
         }
+
+        public static string GetTravelModeDisplayName(string name) => name.Replace('_', ' ');
     }
 }
