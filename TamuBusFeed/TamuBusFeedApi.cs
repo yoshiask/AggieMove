@@ -5,10 +5,10 @@ using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using AngleSharp;
 using Flurl;
 using Flurl.Http;
 using Flurl.Http.Configuration;
+using Newtonsoft.Json.Linq;
 using TamuBusFeed.Models;
 
 namespace TamuBusFeed
@@ -38,15 +38,12 @@ namespace TamuBusFeed
                 .GetJsonAsync<List<Route>>();
         }
 
-        public static async Task<List<PatternElement>> GetPattern(string shortname, DateTimeOffset date)
+        public static async Task<List<PatternElement>> GetPattern(string shortname, DateTimeOffset? date = null)
         {
+            date ??= DateTimeOffset.Now;
             return await GetBase()
-                .AppendPathSegments("route", shortname, "pattern", date.ToString("yyyy-MM-dd"))
+                .AppendPathSegments("route", shortname, "pattern", date.Value.ToString("yyyy-MM-dd"))
                 .GetJsonAsync<List<PatternElement>>();
-        }
-        public static async Task<List<PatternElement>> GetPattern(string shortname)
-        {
-            return await GetPattern(shortname, DateTimeOffset.Now);
         }
 
         public static async Task<AnnouncementFeed> GetAnnouncements()
@@ -56,44 +53,47 @@ namespace TamuBusFeed
                 .GetJsonAsync<AnnouncementFeed>();
         }
 
-        public static async Task<TimeTable> GetTimetable(string shortname)
+        public static async Task<TimeTable> GetTimetable(string shortname, DateTimeOffset? date = null)
         {
-            var response = await HOST_BASE
-                .AppendPathSegments("busroutes", "Routes.aspx").SetQueryParam("r", shortname)
-                .PostAsync();
-            string html = await response.GetStringAsync();
+            date ??= DateTimeOffset.Now;
+            var response = await GetBase()
+                .AppendPathSegments("route", shortname, "TimeTable", "2022-03-24")//date.Value.ToString("yyyy-MM-dd"))
+                .GetJsonAsync<List<JObject>>();
 
-            var config = Configuration.Default.WithDefaultLoader();
-            var context = BrowsingContext.New(config);
-            var document = await context.OpenAsync(req => req.Content(html));
-
-            var timeTable = new TimeTable();
-
-            var timeTableGrid = document.QuerySelector("#TimeTableGridView").LastElementChild.Children.ToList();
-            var headerRowIdx = timeTableGrid.FindLastIndex(e => e.ClassList.Contains("headRow"));
-            if (headerRowIdx < 0)
-                return null;
-
-            var headerRow = timeTableGrid[headerRowIdx];
-            timeTable.TimeStops = new System.Collections.ObjectModel.ObservableCollection<TimeStop>(
-                headerRow.Children.Select(timeStop => new TimeStop
-                {
-                    Name = timeStop.TextContent, 
-                    LeaveTimes = new System.Collections.ObjectModel.ObservableCollection<DateTimeOffset?>()
-                })
-            );
-
-            foreach (var row in timeTableGrid.Skip(headerRowIdx + 1))
+            TimeTable timeTable = new()
             {
-                for (int i = 0; i < timeTable.TimeStops.Count; i++)
-                {
-                    var leaveTimes = timeTable.TimeStops[i].LeaveTimes;
-                    var cell = row.Children[i].QuerySelector("time");
+                TimeStops = new()
+            };
 
-                    if (DateTimeOffset.TryParse(cell?.GetAttribute("dateTime"), out var time))
-                        leaveTimes.Add(time);
-                    else
-                        leaveTimes.Add(null);
+            // Check for no service
+            if (response.Count == 1 && response[0].ContainsKey(" "))
+                return timeTable;
+
+            // Add stops
+            int guidLength = Guid.Empty.ToString().Length;
+            foreach (var stop in response[0])
+            {
+                // The JSON keys look like "e6266125-1350-4226-8413-b41869f0c313Trigon"
+                string name = stop.Key.Remove(0, guidLength);
+                timeTable.TimeStops.Add(new()
+                {
+                    Name = name,
+                    LeaveTimes = new()
+                });
+            }
+
+            // Populate times
+            foreach (var row in response)
+            {
+                var rowTimes = row.Children().Select(c => c.Value<string>()).ToArray();
+                for (int col = 0; col < row.Count; col++)
+                {
+                    DateTimeOffset? time = null;
+                    string timeStr = rowTimes[col];
+                    if (timeStr != null)
+                        time = DateTimeOffset.Parse(timeStr);
+
+                    timeTable.TimeStops[col].LeaveTimes.Add(time);
                 }
             }
 

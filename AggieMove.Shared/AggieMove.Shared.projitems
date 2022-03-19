@@ -26,6 +26,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\NavigationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SpatialHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\TimeTableUIFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Secrets.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Shell.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\NavigationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Dialogs\AddPointPage.xaml.cs">

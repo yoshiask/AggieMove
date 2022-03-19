@@ -339,3 +339,4 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /TamuBusFeed/Secrets.cs
+/AggieMove.Shared/Secrets.cs

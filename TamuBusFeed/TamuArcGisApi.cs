@@ -16,12 +16,19 @@ namespace TamuBusFeed
 {
     public static class TamuArcGisApi
     {
+        public static string ApiKey { get; set; }
+
         public const string SERVICES_BASE = "https://gis.tamu.edu/arcgis/rest/services";
         // ILCB
         public static readonly MapPoint TamuCenter = new(-10724991.7064, 3582457.193500001, SpatialReferences.WebMercator);
 
-        public static Task<RouteTask> StartRouteTask()
-            => RouteTask.CreateAsync(new Uri(Url.Combine(SERVICES_BASE, "/Routing/20220119/NAServer/Route")));
+        public static async Task<RouteTask> StartRouteTask()
+        {
+            var routeTask = await RouteTask.CreateAsync(new Uri(Url.Combine(SERVICES_BASE, "/Routing/20220119/NAServer/Route")));
+            routeTask.ApiKey = ApiKey;
+
+            return routeTask;
+        }
 
         public static async Task<IReadOnlyList<Route>> SolveRoute(RouteTask routeTask, IEnumerable<Models.SearchResult> stopPoints,
             TravelMode travelMode = null)
@@ -166,7 +173,7 @@ namespace TamuBusFeed
         public static async Task<IEnumerable<Models.SearchResult>> SearchWorld(string text, CancellationToken ct)
         {
             var locatorTask = new LocatorTask(new Uri("https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer"));
-            locatorTask.ApiKey = Secrets.ARCGIS_KEY;
+            locatorTask.ApiKey = ApiKey;
 
             var parameters = new GeocodeParameters();
             parameters.PreferredSearchLocation = TamuCenter;

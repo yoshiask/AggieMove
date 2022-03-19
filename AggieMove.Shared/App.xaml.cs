@@ -39,6 +39,7 @@ namespace AggieMove
         {
             //Uno.Material.Resources.Init(this, new ResourceDictionary() { Source = new Uri("ms-appx:///ColorPaletteOverride.xaml") });
             Esri.ArcGISRuntime.ArcGISRuntimeEnvironment.SetLicense("runtimelite,1000,rud5976483922,none,GB2PMD17J06HZF3RE159");
+            TamuBusFeed.TamuArcGisApi.ApiKey = Secrets.ARCGIS_KEY;
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
