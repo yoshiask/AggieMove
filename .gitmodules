@@ -1,0 +1,3 @@
+[submodule "submodules/TamuBusFeed"]
+	path = submodules/TamuBusFeed
+	url = https://github.com/yoshiask/TamuBusFeed

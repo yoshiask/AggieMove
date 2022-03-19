@@ -48,7 +48,7 @@
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
-	  <LangVersion>9</LangVersion>
+    <LangVersion>9</LangVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -171,8 +171,8 @@
       <Project>{b50efb9a-a6cc-4108-ab49-1fba00272f3e}</Project>
       <Name>AggieMove.ViewModels</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TamuBusFeed\TamuBusFeed.csproj">
-      <Project>{8a118c53-3bfe-4919-a396-dc673cdffd9d}</Project>
+    <ProjectReference Include="..\submodules\TamuBusFeed\TamuBusFeed\TamuBusFeed.csproj">
+      <Project>{ea931e67-6859-4cdb-b650-301d67fafeff}</Project>
       <Name>TamuBusFeed</Name>
     </ProjectReference>
   </ItemGroup>
