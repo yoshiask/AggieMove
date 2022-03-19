@@ -1,7 +1,7 @@
 using AggieMove.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
