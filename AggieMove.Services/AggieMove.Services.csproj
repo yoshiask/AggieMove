@@ -5,4 +5,8 @@
         <LangVersion>9</LangVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="OwlCore" Version="0.0.57" />
+    </ItemGroup>
+
 </Project>

@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using TamuBusFeed;
@@ -22,15 +23,16 @@ namespace AggieMove.ViewModels
         /// </summary>
         private readonly INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
 
+        private Route _selectedRoute;
+
         [System.ComponentModel.Bindable(true)]
         public ObservableCollection<Route> Routes { get; } = new ObservableCollection<Route>();
-
-        private Route selectedRoute;
+        
         [System.ComponentModel.Bindable(true)]
         public Route SelectedRoute
         {
-            get => selectedRoute;
-            set => SetProperty(ref selectedRoute, value);
+            get => _selectedRoute;
+            set => SetProperty(ref _selectedRoute, value);
         }
 
         [System.ComponentModel.Bindable(true)]
@@ -52,7 +54,7 @@ namespace AggieMove.ViewModels
             {
                 // Some of the names have leading whitespace for no reason
                 r.Name = r.Name.Trim();
-                await r.GetDetailedPatternAsync();
+                await r.GetDetailedPatternAsync(TargetDate);
                 Routes.Add(r);
             }
         }

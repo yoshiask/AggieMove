@@ -53,14 +53,17 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    
-                    <muxc:ProgressBar IsIndeterminate="True"
+
+                    <DatePicker Header="View schedule for:" Padding="8"
+                                Date="{x:Bind ViewModel.TargetDate, Mode=TwoWay}"/>
+                    <muxc:ProgressBar IsIndeterminate="True" Grid.Row="1"
                                       Visibility="{x:Bind ViewModel.LoadRoutesCommand.IsRunning, Mode=OneWay}"/>
                     <ListView ItemsSource="{x:Bind ViewModel.Routes, Mode=OneWay}"
                               SelectedItem="{x:Bind ViewModel.SelectedRoute, Mode=TwoWay}"
-                              SelectionChanged="OnRouteSelected" Grid.Row="1">
+                              SelectionChanged="OnRouteSelected" Grid.Row="2">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:Route">
                                 <Grid Padding="10" ColumnSpacing="10" HorizontalAlignment="Stretch">

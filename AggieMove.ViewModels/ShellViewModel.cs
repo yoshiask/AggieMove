@@ -83,6 +83,13 @@ namespace AggieMove.ViewModels
             set => SetProperty(ref _SelectedPage, value);
         }
 
+        private System.DateTimeOffset _targetDate;
+        public System.DateTimeOffset TargetDate
+        {
+            get => _targetDate;
+            set => SetProperty(ref _targetDate, value);
+        }
+
         public bool ChangedByUserFlag = false;
 
         /// <summary>
