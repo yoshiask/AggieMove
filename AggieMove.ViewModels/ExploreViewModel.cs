@@ -1,7 +1,7 @@
 ﻿using AggieMove.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -22,6 +22,7 @@ namespace AggieMove.ViewModels
         /// The <see cref="INavigationService"/> instance currently in use.
         /// </summary>
         private readonly INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
+        private readonly SettingsService SettingsService = Ioc.Default.GetRequiredService<SettingsService>();
 
         private Route _selectedRoute;
 
@@ -49,12 +50,13 @@ namespace AggieMove.ViewModels
 
         public async Task LoadRoutesAsync()
         {
+            var targetDate = SettingsService.TargetDate;
             Routes.Clear();
             foreach (Route r in await TamuBusFeedApi.GetRoutes())
             {
                 // Some of the names have leading whitespace for no reason
                 r.Name = r.Name.Trim();
-                await r.GetDetailedPatternAsync(TargetDate);
+                await r.GetDetailedPatternAsync(targetDate);
                 Routes.Add(r);
             }
         }

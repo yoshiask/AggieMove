@@ -1,7 +1,7 @@
 using AggieMove.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -81,7 +81,7 @@ namespace AggieMove
                 Ioc.Default.ConfigureServices(
                     new ServiceCollection()
                     .AddSingleton<INavigationService, NavigationService>()
-                    //.AddSingleton<ISettingsService, SettingsService>()
+                    .AddSingleton(new SettingsService(new FolderData(Windows.Storage.ApplicationData.Current.RoamingFolder)))
                     .BuildServiceProvider());
             }
 

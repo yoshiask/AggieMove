@@ -1,7 +1,7 @@
 ﻿using AggieMove.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -81,13 +81,6 @@ namespace AggieMove.ViewModels
         {
             get => _SelectedPage;
             set => SetProperty(ref _SelectedPage, value);
-        }
-
-        private System.DateTimeOffset _targetDate;
-        public System.DateTimeOffset TargetDate
-        {
-            get => _targetDate;
-            set => SetProperty(ref _targetDate, value);
         }
 
         public bool ChangedByUserFlag = false;

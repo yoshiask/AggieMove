@@ -1,5 +1,5 @@
 using AggieMove.ViewModels;
-using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

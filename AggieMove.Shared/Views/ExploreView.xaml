@@ -57,8 +57,6 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <DatePicker Header="View schedule for:" Padding="8"
-                                Date="{x:Bind ViewModel.TargetDate, Mode=TwoWay}"/>
                     <muxc:ProgressBar IsIndeterminate="True" Grid.Row="1"
                                       Visibility="{x:Bind ViewModel.LoadRoutesCommand.IsRunning, Mode=OneWay}"/>
                     <ListView ItemsSource="{x:Bind ViewModel.Routes, Mode=OneWay}"
