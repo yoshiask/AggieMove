@@ -19,7 +19,7 @@
         <muxc:NavigationView x:Name="MainNav" PaneDisplayMode="Left"
                         SelectionChanged="NavigationView_SelectionChanged"
                         MenuItemsSource="{x:Bind ViewModel.PageInfos, Mode=TwoWay}"
-                        SelectedItem="{x:Bind ViewModel.SelectedPage, Mode=TwoWay}"
+                        SelectedItem="{x:Bind ViewModel.SelectedPage, Mode=OneWay}"
                         IsBackEnabled="{x:Bind MainFrame.CanGoBack, Mode=OneWay}">
 
             <interactivity:Interaction.Behaviors>

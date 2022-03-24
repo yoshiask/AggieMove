@@ -1,4 +1,6 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using AggieMove.Services;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -9,6 +11,8 @@ namespace AggieMove.ViewModels
 {
     public class RouteViewModel : ObservableRecipient
     {
+        private readonly SettingsService SettingsService = Ioc.Default.GetRequiredService<SettingsService>();
+
         public RouteViewModel()
         {
             LoadPatternsCommand = new AsyncRelayCommand(LoadPatternsAsync);
@@ -75,13 +79,14 @@ namespace AggieMove.ViewModels
 
         public async Task LoadPatternsAsync()
         {
-            PatternElements = new ObservableCollection<PatternElement>(await SelectedRoute.GetDetailedPatternAsync());
+            var patternElements = await SelectedRoute.GetDetailedPatternAsync(SettingsService.TargetDate);
+            PatternElements = new ObservableCollection<PatternElement>(patternElements);
             Stops = new ObservableCollection<PatternElement>(SelectedRoute.Stops);
         }
 
         public async Task LoadTimeTableAsync()
         {
-            TimeTable = await TamuBusFeedApi.GetTimetable(SelectedRoute.ShortName);
+            TimeTable = await TamuBusFeedApi.GetTimetable(SelectedRoute.ShortName, SettingsService.TargetDate);
         }
     }
 }

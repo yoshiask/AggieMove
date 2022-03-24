@@ -18,6 +18,7 @@ namespace AggieMove
     public sealed partial class Shell : Page
     {
         private Services.NavigationService NavService { get; } = Ioc.Default.GetService<Services.INavigationService>() as Services.NavigationService;
+        private Services.SettingsService Settings { get; } = Ioc.Default.GetService<Services.SettingsService>();
 
         public Shell()
         {
@@ -25,6 +26,12 @@ namespace AggieMove
 
             NavService.CurrentFrame = MainFrame;
             SizeChanged += Shell_SizeChanged;
+            Loaded += Shell_Loaded;
+        }
+
+        private async void Shell_Loaded(object sender, RoutedEventArgs e)
+        {
+            await Settings.LoadAsync();
         }
 
         private void Shell_SizeChanged(object sender, SizeChangedEventArgs e)

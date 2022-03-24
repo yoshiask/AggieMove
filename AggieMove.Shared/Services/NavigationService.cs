@@ -34,7 +34,7 @@ namespace AggieMove.Services
 
         public void NavigateToSettingsPage(SettingsPages page)
         {
-            CurrentFrame.Navigate(typeof(Views.NotImplementedPage), page);
+            CurrentFrame.Navigate(typeof(Views.SettingsPage), page);
         }
 
         public Task<DialogResult> ShowDialog(string page, object parameter = null)

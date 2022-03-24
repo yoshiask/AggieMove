@@ -20,7 +20,7 @@ namespace AggieMove.Services
 
         public StorageFile StorageFile { get; }
 
-        public string Id => throw new NotImplementedException();
+        public string Id => StorageFile.FolderRelativeId;
 
         public string Path => StorageFile.Path;
 
