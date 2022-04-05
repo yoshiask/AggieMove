@@ -54,12 +54,12 @@ namespace AggieMove.ViewModels
             set => SetProperty(ref _routesLoaded, value);
         }
 
-        private Route selectedRoute;
+        private int _selectedRouteIndex;
         [System.ComponentModel.Bindable(true)]
-        public Route SelectedRoute
+        public int SelectedRouteIndex
         {
-            get => selectedRoute;
-            set => SetProperty(ref selectedRoute, value);
+            get => _selectedRouteIndex;
+            set => SetProperty(ref _selectedRouteIndex, value);
         }
 
         [System.ComponentModel.Bindable(true)]
@@ -68,6 +68,8 @@ namespace AggieMove.ViewModels
             get => _selectedTravelMode;
             set => SetProperty(ref _selectedTravelMode, value);
         }
+
+        public RouteResult Solve { get; private set; }
 
         [System.ComponentModel.Bindable(true)]
         /// <summary>
@@ -135,10 +137,10 @@ namespace AggieMove.ViewModels
         {
             try
             {
-                var routes = await TamuArcGisApi.SolveRoute(_router, Stops, SelectedTravelMode);
+                Solve = await TamuArcGisApi.SolveRoute(_router, Stops, SelectedTravelMode);
                 Routes.Clear();
                 RoutesLoaded = true;
-                foreach (Route r in routes)
+                foreach (Route r in Solve.Routes)
                 {
                     Routes.Add(r);
                 }
@@ -151,7 +153,9 @@ namespace AggieMove.ViewModels
 
         public void ViewRoute()
         {
-            NavigationService.Navigate("RouteView", SelectedRoute);
+            if (SelectedRouteIndex < 0)
+                return;
+            NavigationService.Navigate("DirectionsView", this);
         }
     }
 }

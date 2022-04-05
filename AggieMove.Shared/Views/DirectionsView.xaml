@@ -1,0 +1,55 @@
+﻿<Page
+    x:Class="AggieMove.Views.DirectionsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AggieMove.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ArcGIS="using:Esri.ArcGISRuntime.UI.Controls"
+    xmlns:ArcGISUI="using:Esri.ArcGISRuntime.UI"
+    xmlns:ArcGISNA="using:Esri.ArcGISRuntime.Tasks.NetworkAnalysis"
+    xmlns:viewmodels="using:AggieMove.ViewModels"
+    xmlns:controls="using:AggieMove.Controls"
+    xmlns:converters="using:AggieMove.Converters"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:wctconvert="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <controls:DualPanelPage>
+        <controls:DualPanelPage.PrimaryContent>
+            <Grid x:Name="MapGrid" Background="{ThemeResource SystemBaseLowColor}">
+                <ArcGIS:MapView x:Name="MainMapView" Grid.Row="2" MinHeight="120">
+                    <ArcGIS:MapView.GraphicsOverlays>
+                        <ArcGISUI:GraphicsOverlay x:Name="MapGraphics" Id="MapGraphics"/>
+                    </ArcGIS:MapView.GraphicsOverlays>
+                </ArcGIS:MapView>
+            </Grid>
+        </controls:DualPanelPage.PrimaryContent>
+
+        <controls:DualPanelPage.SecondaryContent>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <!--<ListView x:Name="StopsListView"
+                          Visibility="{x:Bind ViewModel.RoutesLoaded, Mode=OneWay, Converter={StaticResource NotBoolToVisibleConverter}}"
+                          ItemsSource="{x:Bind ViewModel.Stops, Mode=TwoWay}"
+                          ItemTemplate="{StaticResource SearchResultTemplate}"/>-->
+                <TextBlock x:Name="MessagesTextBlock"/>
+
+                <ListView x:Name="DirectionsListView">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="ArcGISNA:DirectionManeuver">
+                            <TextBlock Text="{x:Bind DirectionText}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </controls:DualPanelPage.SecondaryContent>
+    </controls:DualPanelPage>
+
+</Page>

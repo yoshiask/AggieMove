@@ -67,6 +67,8 @@
 
                 <ListView x:Name="RoutesListView" x:Load="{x:Bind ViewModel.RoutesLoaded, Mode=OneWay}"
                           ItemsSource="{x:Bind ViewModel.Routes, Mode=OneWay}"
+                          SelectedIndex="{x:Bind ViewModel.SelectedRouteIndex, Mode=TwoWay}"
+                          IsItemClickEnabled="True"
                           Grid.Row="1">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="ArcGISNA:Route">
@@ -77,6 +79,11 @@
                             </TextBlock>
                         </DataTemplate>
                     </ListView.ItemTemplate>
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="ItemClick">
+                            <core:InvokeCommandAction Command="{x:Bind ViewModel.ViewRouteCommand}"/>
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
                 </ListView>
 
                 <CommandBar Grid.Row="2">
