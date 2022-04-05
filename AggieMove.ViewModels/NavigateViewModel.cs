@@ -47,6 +47,13 @@ namespace AggieMove.ViewModels
 
         public ObservableCollection<TravelMode> TravelModes { get; } = new ObservableCollection<TravelMode>();
 
+        private bool _routesLoaded = false;
+        public bool RoutesLoaded
+        {
+            get => _routesLoaded;
+            set => SetProperty(ref _routesLoaded, value);
+        }
+
         private Route selectedRoute;
         [System.ComponentModel.Bindable(true)]
         public Route SelectedRoute
@@ -130,6 +137,7 @@ namespace AggieMove.ViewModels
             {
                 var routes = await TamuArcGisApi.SolveRoute(_router, Stops, SelectedTravelMode);
                 Routes.Clear();
+                RoutesLoaded = true;
                 foreach (Route r in routes)
                 {
                     Routes.Add(r);
@@ -145,7 +153,5 @@ namespace AggieMove.ViewModels
         {
             NavigationService.Navigate("RouteView", SelectedRoute);
         }
-
-        public static string GetTravelModeDisplayName(string name) => name.Replace('_', ' ');
     }
 }

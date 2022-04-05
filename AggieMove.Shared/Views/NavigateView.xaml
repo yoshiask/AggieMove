@@ -10,12 +10,19 @@
     xmlns:ArcGISNA="using:Esri.ArcGISRuntime.Tasks.NetworkAnalysis"
     xmlns:viewmodels="using:AggieMove.ViewModels"
     xmlns:controls="using:AggieMove.Controls"
+    xmlns:converters="using:AggieMove.Converters"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:wctconvert="using:Microsoft.Toolkit.Uwp.UI.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <wctconvert:BoolToVisibilityConverter x:Key="NotBoolToVisibleConverter"
+                                              TrueValue="Collapsed" FalseValue="Visible"/>
+    </Page.Resources>
+    
     <interactivity:Interaction.Behaviors>
         <core:EventTriggerBehavior EventName="Loading">
             <core:InvokeCommandAction Command="{x:Bind ViewModel.InitializeCommand}"/>
@@ -46,15 +53,31 @@
                           SelectedItem="{x:Bind ViewModel.SelectedTravelMode, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate x:DataType="ArcGISNA:TravelMode">
-                            <TextBlock Text="{x:Bind viewmodels:NavigateViewModel.GetTravelModeDisplayName(Name)}"/>
+                            <TextBlock Text="{x:Bind converters:FormatConverters.GetTravelModeDisplayName(Name)}"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
-                <ListView ItemsSource="{x:Bind ViewModel.Stops, Mode=TwoWay}"
+                <ListView x:Name="StopsListView"
+                          Visibility="{x:Bind ViewModel.RoutesLoaded, Mode=OneWay, Converter={StaticResource NotBoolToVisibleConverter}}"
+                          ItemsSource="{x:Bind ViewModel.Stops, Mode=TwoWay}"
                           ItemTemplate="{StaticResource SearchResultTemplate}"
                           CanReorderItems="True" ReorderMode="Enabled"
                           Grid.Row="1"/>
+
+                <ListView x:Name="RoutesListView" x:Load="{x:Bind ViewModel.RoutesLoaded, Mode=OneWay}"
+                          ItemsSource="{x:Bind ViewModel.Routes, Mode=OneWay}"
+                          Grid.Row="1">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="ArcGISNA:Route">
+                            <TextBlock Padding="0,8">
+                                <Run Text="{x:Bind RouteName}" FontWeight="Bold"/><LineBreak/>
+                                <Run Text="{x:Bind converters:FormatConverters.FormatDistance(TotalLength)}"/>
+                                <Run Text="{x:Bind converters:FormatConverters.FormatDuration(TotalTime)}"/>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
 
                 <CommandBar Grid.Row="2">
                     <AppBarButton Icon="Add" Label="Add stop" Command="{x:Bind ViewModel.AddStopCommand}"/>
