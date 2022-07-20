@@ -37,7 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <!-- Note that for WebAssembly version 1.1.1 of the console logger required -->
-    <PackageReference Include="Esri.ArcGISRuntime" Version="100.9.0" />
+    <PackageReference Include="Esri.ArcGISRuntime" Version="100.13.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.1" />
     <PackageReference Include="Uno.Microsoft.Toolkit.Uwp.UI.Controls" Version="6.0.0-ge975abb046" />
@@ -52,7 +52,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AggieMove.Services\AggieMove.Services.csproj" />
     <ProjectReference Include="..\AggieMove.ViewModels\AggieMove.ViewModels.csproj" />
-    <ProjectReference Include="..\TamuBusFeed\TamuBusFeed.csproj" />
+    <ProjectReference Include="..\submodules\TamuBusFeed\TamuBusFeed\TamuBusFeed.csproj" />
   </ItemGroup>
   <Import Project="..\AggieMove.Shared\AggieMove.Shared.projitems" Label="Shared" Condition="Exists('..\AggieMove.Shared\AggieMove.Shared.projitems')" />
 </Project>
