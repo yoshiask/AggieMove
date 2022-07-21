@@ -43,7 +43,7 @@ namespace AggieMove.Services
             return ras.AsStream();
         }
 
-        public async Task<Stream> GetThumbnailAsync(ThumbnailMode thumbnailMode, uint requiredSize)
+        public async Task<Stream> GetThumbnailAsync(OwlCore.AbstractStorage.ThumbnailMode thumbnailMode, uint requiredSize)
         {
             var ras = await StorageFile.GetThumbnailAsync((Windows.Storage.FileProperties.ThumbnailMode)thumbnailMode, requiredSize);
             return ras.AsStream();
