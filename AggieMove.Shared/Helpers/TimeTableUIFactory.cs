@@ -15,6 +15,16 @@ namespace AggieMove.Helpers
         {
             Grid MainGrid = new Grid();
 
+            // Check if there are any times available
+            if (timeTable.TimeStops.Count <= 0)
+            {
+                MainGrid.Children.Add(new TextBlock
+                {
+                    Text = "There are no times available."
+                });
+                return MainGrid;
+            }
+
             // Create a column for each time stop
             for (int i = 0; i < timeTable.TimeStops.Count; i++)
                 MainGrid.ColumnDefinitions.Add(new ColumnDefinition());
