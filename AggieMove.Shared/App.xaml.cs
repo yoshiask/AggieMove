@@ -1,7 +1,7 @@
 using AggieMove.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -35,11 +35,11 @@ namespace AggieMove
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             //Uno.Material.Resources.Init(this, new ResourceDictionary() { Source = new Uri("ms-appx:///ColorPaletteOverride.xaml") });
             Esri.ArcGISRuntime.ArcGISRuntimeEnvironment.SetLicense("runtimelite,1000,rud5976483922,none,GB2PMD17J06HZF3RE159");
-            TamuBusFeed.TamuArcGisApi.ApiKey = Secrets.ARCGIS_KEY;
+            await TamuBusFeed.TamuBusFeedApi.InitAsync(Secrets.ARCGIS_KEY);
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)

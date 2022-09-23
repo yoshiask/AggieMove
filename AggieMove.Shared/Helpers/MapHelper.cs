@@ -15,8 +15,8 @@ namespace AggieMove.Helpers
 {
     public static class MapHelper
     {
-        public static readonly string TILE_LAYER_TEMPLATE = TamuBusFeed.TamuArcGisApi.SERVICES_BASE + 
-            "/FCOR/TAMU_BaseMap/MapServer/tile/{level}/{row}/{col}?blankTile=false";
+        public static readonly string TILE_LAYER_TEMPLATE = TamuBusFeed.TamuArcGisApi.BaspMapUrl.TrimEnd('/') + 
+            "/tile/{level}/{row}/{col}";
 
         public static async Task LoadMap(this MapView mapView)
         {
