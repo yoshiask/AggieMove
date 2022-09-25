@@ -1,12 +1,12 @@
 ﻿using AggieMove.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TamuBusFeed;
-using TamuBusFeed.Models;
 
 namespace AggieMove.Services
 {
@@ -31,14 +31,44 @@ namespace AggieMove.Services
 
         private async Task OnTick()
         {
-            var newVehicles = await TamuBusFeedApi.GetVehicles(RouteShortName);
+            var newMentors = await TamuBusFeedApi.GetVehicles(RouteShortName);
+
+            // Construct a hash table to keep track of vehicles that have been updated
+            List<string> updatedVehicles = new(Vehicles.Count);
 
             // Use the vehicle ID to match the previous vehicle object with the latest information
-            // TODO: The resulting enumerable will not include vehicles that were added or removed from the list
-            var prevCurPairs = newVehicles.Join(Vehicles, m => m.Key, v => v.Mentor.Key, (mentor, vehicle) => (vehicle, mentor));
-            foreach (var (vehicle, mentor) in prevCurPairs)
+            foreach (var newMentor in newMentors)
             {
-                vehicle.UpdateSpeed(mentor.GPS);
+                var vehicle = Vehicles.FirstOrDefault(v => v.Mentor.Key == newMentor.Key);
+
+                if (vehicle == null)
+                {
+                    // This vehicle has just been added to the list,
+                    // create a new view model for it
+                    vehicle = new(newMentor);
+                    Vehicles.Add(vehicle);
+
+                    updatedVehicles.Add(newMentor.Key);
+                }
+                else
+                {
+                    // This vehicle was already in service,
+                    // update the previous entry
+                    vehicle.UpdateSpeed(newMentor.GPS);
+
+                    updatedVehicles.Add(newMentor.Key);
+                }
+            }
+
+            // Remove any vehicles that weren't updated
+            int i = 0;
+            while (i < Vehicles.Count)
+            {
+                var vehicle = Vehicles[i];
+                if (!updatedVehicles.Contains(vehicle.Mentor.Key))
+                    Vehicles.RemoveAt(i);
+                else
+                    i++;
             }
         }
 

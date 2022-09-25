@@ -1,10 +1,14 @@
 ﻿using AggieMove.Helpers;
+using AggieMove.ViewModels;
 using Esri.ArcGISRuntime.Geometry;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Timers;
 using TamuBusFeed.Models;
+using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -85,6 +89,7 @@ namespace AggieMove.Views
             TimeTablePresenter.Content = TimeTableGrid;
 
             // Start watching for vehicle udpates
+            MainMapView.CreateVehiclesOverlay();
             ViewModel.StartWatchingVehicles(OnVehiclesUpdated);
 
             base.OnNavigatedTo(e);
@@ -108,7 +113,7 @@ namespace AggieMove.Views
                 // If the Times tab hasn't been selected before,
                 // we have to wait a bit before trying to scroll
                 await System.Threading.Tasks.Task.Delay(10);
-                
+
                 // Scroll to current time
                 CurrentTimeBlock?.StartBringIntoView(currentTimeViewOptions);
             }
@@ -142,7 +147,40 @@ namespace AggieMove.Views
 
         private async void OnVehiclesUpdated(object sender, NotifyCollectionChangedEventArgs e)
         {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, delegate
+            {
+                UpdateVehicles(e.Action, e.NewItems.Cast<VehicleViewModel>());
+            });
+        }
 
+        private void UpdateVehicles(NotifyCollectionChangedAction action, IEnumerable<VehicleViewModel> newItems)
+        {
+            switch (action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    {
+                        foreach (var vehicle in newItems)
+                        {
+                            MainMapView.DrawVehicle(vehicle);
+                        }
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    {
+                        foreach (var vehicle in newItems)
+                        {
+                            MainMapView.RemoveVehicle(vehicle.Mentor.Key);
+                        }
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Reset:
+                    {
+                        MainMapView.ClearVehiclesOverlay();
+                    }
+                    break;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AggieMove.ViewModels;
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
+using Esri.ArcGISRuntime.Mapping.Popups;
 using Esri.ArcGISRuntime.Symbology;
 using Esri.ArcGISRuntime.Tasks.NetworkAnalysis;
 using Esri.ArcGISRuntime.UI;
@@ -9,7 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using TamuBusFeed.Models;
+using Uno.Extensions;
 
 namespace AggieMove.Helpers
 {
@@ -17,6 +21,8 @@ namespace AggieMove.Helpers
     {
         public static readonly string TILE_LAYER_TEMPLATE = TamuBusFeed.TamuArcGisApi.BaspMapUrl.TrimEnd('/') + 
             "/tile/{level}/{row}/{col}";
+
+        public const string VehiclesLayerId = "vehicles";
 
         public static async Task LoadMap(this MapView mapView)
         {
@@ -55,10 +61,20 @@ namespace AggieMove.Helpers
             }
         }
 
+        public static GraphicsOverlay CreateVehiclesOverlay(this MapView mapView)
+        {
+            var vehiclesLayer = new GraphicsOverlay
+            {
+                Id = VehiclesLayerId,
+            };
+
+            mapView.GraphicsOverlays.Add(vehiclesLayer);
+            return vehiclesLayer;
+        }
+
         public static Graphic CreateRouteStop(double lat, double lon, Color fill)
         {
-            var mapPoint = new MapPoint(Convert.ToDouble(lon),
-                Convert.ToDouble(lat), SpatialReferences.Wgs84);
+            var mapPoint = new MapPoint(lon, lat, SpatialReferences.Wgs84);
             return CreateRouteStop(mapPoint, fill);
         }
         public static Graphic CreateRouteStop(MapPoint mapPoint, Color fill)
@@ -84,6 +100,18 @@ namespace AggieMove.Helpers
             return new Graphic(routePath, routeLineSymbol);
         }
 
+        public static Graphic CreateVehicle(double lat, double lon, double heading)
+        {
+            var pointSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Triangle, Color.Maroon, 20)
+            {
+                Outline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, Color.White, 5),
+                Angle = heading,
+                AngleAlignment = SymbolAngleAlignment.Map,
+            };
+            var mapPoint = new MapPoint(lon, lat);
+            return new Graphic(mapPoint, pointSymbol);
+        }
+
         public static Graphic DrawRouteAndStops(this MapView mapView, RouteViewModel route, Color routeColor, bool showStops = true)
         {
             var routePoints = route.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, SpatialReferences.WebMercator));
@@ -98,7 +126,7 @@ namespace AggieMove.Helpers
             routeOverlay.Graphics.Add(routePath);
 
             if (showStops)
-                foreach (TamuBusFeed.Models.PatternElement elem in route.Stops)
+                foreach (PatternElement elem in route.Stops)
                 {
                     var point = new MapPoint(elem.Longitude, elem.Latitude, SpatialReferences.WebMercator);
                     var stop = CreateRouteStop(point, routeColor);
@@ -117,7 +145,7 @@ namespace AggieMove.Helpers
             return routePath;
         }
 
-        public static Graphic DrawDirections(this MapView mapView, Route route, Color routeColor, bool showStops = true)
+        public static Graphic DrawDirections(this MapView mapView, Esri.ArcGISRuntime.Tasks.NetworkAnalysis.Route route, Color routeColor, bool showStops = true)
         {
             var routeLineSymbol = new SimpleLineSymbol(
                 SimpleLineSymbolStyle.Solid, routeColor, 4.0
@@ -141,6 +169,30 @@ namespace AggieMove.Helpers
             return routePath;
         }
 
+        public static Graphic DrawVehicle(this MapView mapView, VehicleViewModel vehicle)
+        {
+            var route = vehicle.Mentor.CurrentWork.Route;
+
+            Graphic vehicleGraphic = CreateVehicle(vehicle.Mentor.GPS.Lat, vehicle.Mentor.GPS.Long, vehicle.Mentor.GPS.Dir);
+            vehicleGraphic.Attributes.Add("VehicleId", vehicle.Mentor.Key);
+            vehicleGraphic.Attributes.Add("Title", $"{route.RouteNumber} {route.Name}");
+            vehicleGraphic.Attributes.Add("Description", GetVehicleCalloutDescription(vehicle));
+
+            vehicle.PropertyChanged += Vehicle_PropertyChanged;
+            vehicle.Graphic = vehicleGraphic;
+
+            var vehiclesOverlay = mapView.GraphicsOverlays[VehiclesLayerId];
+            vehiclesOverlay.Graphics.Add(vehicleGraphic);
+
+            return vehicleGraphic;
+        }
+
+        public static void RemoveVehicle(this MapView mapView, string key)
+        {
+            var vehiclesOverlay = mapView.GraphicsOverlays[VehiclesLayerId];
+            vehiclesOverlay.Graphics.Remove(g => g.Attributes["VehicleId"]?.ToString() == key);
+        }
+
         public static void ClearAllRouteOverlays(this MapView mapView)
         {
             int i = 0;
@@ -152,6 +204,12 @@ namespace AggieMove.Helpers
                 else
                     i++;
             }
+        }
+
+        public static void ClearVehiclesOverlay(this MapView mapView)
+        {
+            var vehiclesOverlay = mapView.GraphicsOverlays[VehiclesLayerId];
+            vehiclesOverlay.Graphics.Clear();
         }
 
         public static void ClearAllExceptMain(this MapView mapView)
@@ -175,6 +233,44 @@ namespace AggieMove.Helpers
             };
 
             return callout;
+        }
+
+        public static string GetVehicleCalloutDescription(VehicleViewModel vehicle)
+        {
+            var apc = vehicle.Mentor.APC;
+            var nextStop = vehicle.Mentor.NextStops.FirstOrDefault();
+
+            StringBuilder desc = new($"{apc.TotalPassenger} of {apc.PassengerCapacity} passengers");
+
+            if (nextStop != null)
+                desc.AppendLine($"Next stop: {nextStop.Name}");
+
+            if (vehicle.Speed > 0)
+                desc.AppendLine($"Speed: {vehicle.Speed}");
+
+            return desc.ToString();
+        }
+
+        public static PopupDefinition CreateVehiclePopup(VehicleViewModel vehicle)
+        {
+            var route = vehicle.Mentor.CurrentWork.Route;
+            var apc = vehicle.Mentor.APC;
+            var nextStop = vehicle.Mentor.NextStops.FirstOrDefault();
+
+            PopupDefinition popup = new PopupDefinition()
+            {
+                Title = "Bus",
+            };
+            popup.Elements.Add(new TextPopupElement($"**{route.RouteNumber} {route.Name}**"));
+            popup.Elements.Add(new TextPopupElement($"{apc.TotalPassenger} of {apc.PassengerCapacity} passengers"));
+
+            if (nextStop != null)
+                popup.Elements.Add(new TextPopupElement($"Next stop: {nextStop.Name}"));
+
+            if (vehicle.Speed > 0)
+                popup.Elements.Add(new TextPopupElement($"Speed: {vehicle.Speed}"));
+
+            return popup;
         }
 
         public static MapPoint GetMedianPoint(this Geometry geo)
@@ -291,6 +387,19 @@ namespace AggieMove.Helpers
             }
 
             return minElem;
+        }
+
+        private static void Vehicle_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(VehicleViewModel.Speed) || sender is not VehicleViewModel vehicle)
+                return;
+
+            vehicle.Graphic.Attributes["Description"] = GetVehicleCalloutDescription(vehicle);
+
+            var gps = vehicle.GpsHistory.First.Value;
+            vehicle.Graphic.Geometry = new MapPoint(gps.Long, gps.Lat);
+            if (vehicle.Graphic.Symbol is MarkerSymbol markerSymbol)
+                markerSymbol.Angle = gps.Dir;
         }
     }
 }

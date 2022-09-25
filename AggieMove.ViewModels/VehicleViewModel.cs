@@ -1,5 +1,7 @@
 ﻿using AggieMove.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Esri.ArcGISRuntime.Geometry;
+using Esri.ArcGISRuntime.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,11 @@ namespace AggieMove.ViewModels
         /// </summary>
         public LinkedList<GpsData> GpsHistory { get; }
 
+        /// <summary>
+        /// The map graphic representing this vehicle.
+        /// </summary>
+        public Graphic Graphic { get; set; }
+
         [ObservableProperty]
         private double _speed;
 
@@ -37,23 +44,24 @@ namespace AggieMove.ViewModels
 
         public void UpdateSpeed(GpsData newGpsData)
         {
+            // Ignore duplicate data entries
+            if (newGpsData.Date == GpsHistory.First.Value.Date)
+                return;
+
             InsertIntoHistory(newGpsData);
 
             // Compute average speed
             var ticks = GpsHistory.Select(d => d.Date.UtcTicks);
-            (long t_lat, double latSpeed) = GpsHistory.Select(d => d.Lat)
+
+            (long t_lat, double latSpeed) = GpsHistory.Select(d => new MapPoint(d.Long, d.Lat, TamuBusFeed.TamuArcGisApi.TamuSpatialReference))
                 .Zip(ticks, (l, t) => (t, l))
-                .BackwardFiniteDifference()
-                .AsParallel().Last();
-            (long t_long, double longSpeed) = GpsHistory.Select(d => d.Long)
-                .Zip(ticks, (l, t) => (t, l))
-                .BackwardFiniteDifference()
+                .BackwardFiniteDifference(
+                    (left, right) => GeometryEngine.DistanceGeodetic(left, right, LinearUnits.Miles, null, GeodeticCurveType.Geodesic).Distance,
+                    (dy, dx) => dy / dx)
                 .AsParallel().Last();
 
-            SynchronizationContext.Current.Post(_ =>
-            {
-                Speed = Math.Sqrt(latSpeed * latSpeed + longSpeed * longSpeed);
-            }, null);
+            // Convert miles per tick to miles per hour
+            Speed = latSpeed * TimeSpan.TicksPerHour;
         }
 
         private void InsertIntoHistory(GpsData newData)
