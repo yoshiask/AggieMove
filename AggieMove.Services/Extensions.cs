@@ -11,5 +11,47 @@ namespace AggieMove.Helpers
             foreach (T item in range)
                 col.Add(item);
         }
+
+        public static IEnumerable<(double x_prime, double y_prime)> BackwardFiniteDifference(this IEnumerable<(double x, double y)> src)
+        {
+            var en = src.GetEnumerator();
+            en.MoveNext();
+            (double x_prev, double y_prev) = en.Current;
+
+            while (en.MoveNext())
+            {
+                (double x_cur, double y_cur) = en.Current;
+
+                var dx = x_cur - x_prev;
+                var dy = y_cur - y_prev;
+                var x_i_prime = (x_cur + x_prev) / 2;
+
+                x_prev = x_cur;
+                y_prev = y_cur;
+
+                yield return (x_i_prime, dy / dx);
+            }
+        }
+
+        public static IEnumerable<(long x_prime, double y_prime)> BackwardFiniteDifference(this IEnumerable<(long x, double y)> src)
+        {
+            var en = src.GetEnumerator();
+            en.MoveNext();
+            (long x_prev, double y_prev) = en.Current;
+
+            while (en.MoveNext())
+            {
+                (long x_cur, double y_cur) = en.Current;
+
+                var dx = x_cur - x_prev;
+                var dy = y_cur - y_prev;
+                var x_i_prime = (x_cur + x_prev) / 2;
+
+                x_prev = x_cur;
+                y_prev = y_cur;
+
+                yield return (x_i_prime, dy / dx);
+            }
+        }
     }
 }

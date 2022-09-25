@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
 using TamuBusFeed;
 using TamuBusFeed.Models;
@@ -42,6 +43,9 @@ namespace AggieMove.ViewModels
         [ObservableProperty]
         private TimeTable _timeTable;
 
+        [ObservableProperty]
+        private RouteVehiclesWatcher _routeVehiclesWatcher;
+
         /// <summary>
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for loading patterns for the selected route.
         /// </summary>
@@ -67,6 +71,11 @@ namespace AggieMove.ViewModels
         public async Task LoadTimeTableAsync()
         {
             TimeTable = await TamuBusFeedApi.GetTimetable(SelectedRoute.ShortName, SettingsService.TargetDate);
+        }
+
+        public void StartWatchingVehicles(NotifyCollectionChangedEventHandler vehiclesChangedHandler = null)
+        {
+            RouteVehiclesWatcher = new(SelectedRoute.ShortName, vehiclesChangedHandler);
         }
     }
 }

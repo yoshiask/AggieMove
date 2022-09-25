@@ -1,6 +1,7 @@
 ﻿using AggieMove.Helpers;
 using Esri.ArcGISRuntime.Geometry;
 using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Timers;
 using TamuBusFeed.Models;
@@ -83,6 +84,9 @@ namespace AggieMove.Views
             }
             TimeTablePresenter.Content = TimeTableGrid;
 
+            // Start watching for vehicle udpates
+            ViewModel.StartWatchingVehicles(OnVehiclesUpdated);
+
             base.OnNavigatedTo(e);
         }
 
@@ -134,6 +138,11 @@ namespace AggieMove.Views
         private async void MainMapView_GeoViewTapped(object sender, Esri.ArcGISRuntime.UI.Controls.GeoViewInputEventArgs e)
         {
             await MainMapView.HandleGeoViewTapped(e);
+        }
+
+        private async void OnVehiclesUpdated(object sender, NotifyCollectionChangedEventArgs e)
+        {
+
         }
     }
 }
