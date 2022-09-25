@@ -9,7 +9,7 @@ using TamuBusFeed.Models;
 
 namespace AggieMove.ViewModels
 {
-    public class RouteViewModel : ObservableRecipient
+    public partial class RouteViewModel : ObservableObject
     {
         private readonly SettingsService SettingsService = Ioc.Default.GetRequiredService<SettingsService>();
 
@@ -27,40 +27,20 @@ namespace AggieMove.ViewModels
             SelectedRoute = route;
         }
 
-        private ObservableCollection<PatternElement> _PatternElements;
-        public ObservableCollection<PatternElement> PatternElements
-        {
-            get => _PatternElements;
-            set => SetProperty(ref _PatternElements, value);
-        }
+        [ObservableProperty]
+        private ObservableCollection<PatternElement> _patternElements;
 
-        private ObservableCollection<PatternElement> _Stops;
-        public ObservableCollection<PatternElement> Stops
-        {
-            get => _Stops;
-            set => SetProperty(ref _Stops, value);
-        }
+        [ObservableProperty]
+        private ObservableCollection<PatternElement> _stops;
 
-        private Route _SelectedRoute;
-        public Route SelectedRoute
-        {
-            get => _SelectedRoute;
-            set => SetProperty(ref _SelectedRoute, value);
-        }
-        
-        private PatternElement _SelectedPatternElement;
-        public PatternElement SelectedPatternElement
-        {
-            get => _SelectedPatternElement;
-            set => SetProperty(ref _SelectedPatternElement, value);
-        }
+        [ObservableProperty]
+        private Route _selectedRoute;
 
-        private TimeTable _TimeTable;
-        public TimeTable TimeTable
-        {
-            get => _TimeTable;
-            set => SetProperty(ref _TimeTable, value);
-        }
+        [ObservableProperty]
+        private PatternElement _selectedPatternElement;
+
+        [ObservableProperty]
+        private TimeTable _timeTable;
 
         /// <summary>
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for loading patterns for the selected route.
