@@ -1,15 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace AggieMove.Helpers
 {
     public static class Extensions
     {
-        public static void AddRange<T>(this ObservableCollection<T> col, IEnumerable<T> range)
+        public static void AddRange<T>(this ICollection<T> col, IEnumerable<T> range)
         {
             foreach (T item in range)
                 col.Add(item);
+        }
+
+        public static void RemoveAll<T>(this IList<T> col, Predicate<T> predicate)
+        {
+            int i = 0;
+            while (i < col.Count)
+            {
+                var item = col[i];
+                if (predicate(item))
+                    col.RemoveAt(i);
+                else
+                    i++;
+            }
         }
 
         public static IEnumerable<(double x_prime, double y_prime)> BackwardFiniteDifference(this IEnumerable<(double x, double y)> src)

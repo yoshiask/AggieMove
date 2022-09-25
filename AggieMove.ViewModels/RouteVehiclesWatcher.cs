@@ -1,4 +1,5 @@
-﻿using AggieMove.ViewModels;
+﻿using AggieMove.Helpers;
+using AggieMove.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -61,15 +62,7 @@ namespace AggieMove.Services
             }
 
             // Remove any vehicles that weren't updated
-            int i = 0;
-            while (i < Vehicles.Count)
-            {
-                var vehicle = Vehicles[i];
-                if (!updatedVehicles.Contains(vehicle.Mentor.Key))
-                    Vehicles.RemoveAt(i);
-                else
-                    i++;
-            }
+            Vehicles.RemoveAll(vehicle => !updatedVehicles.Contains(vehicle.Mentor.Key));
         }
 
         public void Dispose()

@@ -3,7 +3,6 @@ using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
 using Esri.ArcGISRuntime.Mapping.Popups;
 using Esri.ArcGISRuntime.Symbology;
-using Esri.ArcGISRuntime.Tasks.NetworkAnalysis;
 using Esri.ArcGISRuntime.UI;
 using Esri.ArcGISRuntime.UI.Controls;
 using System;
@@ -47,10 +46,22 @@ namespace AggieMove.Helpers
             var resultGraphics = await mapView.IdentifyGraphicsOverlaysAsync(screenPoint, 10, false);
 
             // Show details in a callout for the first graphic identified (if any).
-            if (resultGraphics != null && resultGraphics.Count > 0)
+            var result = resultGraphics.FirstOrDefault();
+            if (result != null && result.Graphics.Count > 0)
             {
-                var poiGraphic = resultGraphics.FirstOrDefault()?.Graphics.FirstOrDefault();
+                var poiPopup = result.Popups.FirstOrDefault();
+
+                if (poiPopup != null)
+                {
+                    result.GraphicsOverlay.PopupDefinition = poiPopup.PopupDefinition;
+                    result.GraphicsOverlay.IsPopupEnabled = true;
+                }
+
+                var poiGraphic = result.Graphics.First();
                 var callout = CreateCallout(poiGraphic);
+
+                var popup = new Popup(poiGraphic, poiGraphic.Attributes["Popup"] as PopupDefinition);
+                Esri.ArcGISRuntime.
 
                 MapPoint calloutAnchor = poiGraphic.Geometry.GetClosestPoint(e.Location);
                 mapView.ShowCalloutAt(calloutAnchor, callout);
@@ -194,17 +205,7 @@ namespace AggieMove.Helpers
         }
 
         public static void ClearAllRouteOverlays(this MapView mapView)
-        {
-            int i = 0;
-            while (i < mapView.GraphicsOverlays.Count)
-            {
-                var overlay = mapView.GraphicsOverlays[i];
-                if (overlay.Id != null && overlay.Id.StartsWith("route_"))
-                    mapView.GraphicsOverlays.RemoveAt(i);
-                else
-                    i++;
-            }
-        }
+            => mapView.GraphicsOverlays.RemoveAll(overlay => overlay.Id != null && overlay.Id.StartsWith("route_"));
 
         public static void ClearVehiclesOverlay(this MapView mapView)
         {
@@ -213,16 +214,7 @@ namespace AggieMove.Helpers
         }
 
         public static void ClearAllExceptMain(this MapView mapView)
-        {
-            for (int i = 0; i < mapView.GraphicsOverlays.Count; i++)
-            {
-                var overlay = mapView.GraphicsOverlays[i];
-                if (overlay.Id == null || overlay.Id == "MapGraphics")
-                    continue;
-
-                mapView.GraphicsOverlays.RemoveAt(i--);
-            }
-        }
+            => mapView.GraphicsOverlays.RemoveAll(overlay => overlay.Id == null || overlay.Id == "MapGraphics");
 
         public static CalloutDefinition CreateCallout(Esri.ArcGISRuntime.Data.GeoElement elem)
         {
