@@ -1,6 +1,7 @@
 ﻿using AggieMove.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Esri.ArcGISRuntime.Geometry;
+using Esri.ArcGISRuntime.Mapping.Popups;
 using Esri.ArcGISRuntime.UI;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace AggieMove.ViewModels
         /// <summary>
         /// Metadata returned from the bus feed API.
         /// </summary>
-        public Mentor Mentor { get; }
+        public Mentor Mentor { get; private set; }
 
         /// <summary>
         /// A record of previous GPS data, used to compute speed
@@ -32,7 +33,10 @@ namespace AggieMove.ViewModels
         public Graphic Graphic { get; set; }
 
         [ObservableProperty]
-        private double _speed;
+        private double? _speed;
+
+        [ObservableProperty]
+        private string _description;
 
         public VehicleViewModel(Mentor mentor)
         {
@@ -40,10 +44,14 @@ namespace AggieMove.ViewModels
 
             GpsHistory = new();
             GpsHistory.AddFirst(mentor.GPS);
+
+            UpdateDescription();
         }
 
-        public void UpdateSpeed(GpsData newGpsData)
+        public void UpdateMentor(Mentor newMentor)
         {
+            var newGpsData = newMentor.GPS;
+
             // Ignore duplicate data entries
             if (newGpsData.Date == GpsHistory.First.Value.Date)
                 return;
@@ -61,7 +69,31 @@ namespace AggieMove.ViewModels
                 .AsParallel().Last();
 
             // Convert miles per tick to miles per hour
-            Speed = latSpeed * TimeSpan.TicksPerHour;
+            Speed = Math.Abs(latSpeed * TimeSpan.TicksPerHour);
+
+            // Update popup
+            Mentor = newMentor;
+            UpdateDescription();
+        }
+
+        private void UpdateDescription()
+        {
+            var apc = Mentor.APC;
+            var nextStop = Mentor.NextStops.FirstOrDefault();
+
+            const string newLine = "\r\n\r\n";
+            StringBuilder desc = new(Mentor.Name + newLine);
+
+            if (apc != null)
+                desc.Append($"**{(double)apc.TotalPassenger / apc.PassengerCapacity:P0}** full{newLine}");
+
+            if (nextStop != null)
+                desc.Append($"Next stop: **{nextStop.Name}** ({nextStop.StopCode}){newLine}");
+
+            if (Speed != null)
+                desc.Append($"Speed: {Speed:N0} mph{newLine}");
+
+            Description = desc.ToString();
         }
 
         private void InsertIntoHistory(GpsData newData)

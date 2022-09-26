@@ -89,7 +89,6 @@ namespace AggieMove.Views
             TimeTablePresenter.Content = TimeTableGrid;
 
             // Start watching for vehicle udpates
-            MainMapView.CreateVehiclesOverlay();
             ViewModel.StartWatchingVehicles(OnVehiclesUpdated);
 
             base.OnNavigatedTo(e);
@@ -177,7 +176,7 @@ namespace AggieMove.Views
 
                 case NotifyCollectionChangedAction.Reset:
                     {
-                        MainMapView.ClearVehiclesOverlay();
+                        MainMapView.ClearAllVehicleOverlays();
                     }
                     break;
             }

@@ -19,7 +19,7 @@ namespace AggieMove.Services
 
         public ObservableCollection<VehicleViewModel> Vehicles { get; }
 
-        public RouteVehiclesWatcher(string shortname, NotifyCollectionChangedEventHandler vehiclesChangedHandler = null, int interval = 10 * 10000)
+        public RouteVehiclesWatcher(string shortname, NotifyCollectionChangedEventHandler vehiclesChangedHandler = null, int interval = 10 * 1000)
         {
             _timer = new Timer(async _ => await OnTick(), null, 0, interval);
 
@@ -55,7 +55,7 @@ namespace AggieMove.Services
                 {
                     // This vehicle was already in service,
                     // update the previous entry
-                    vehicle.UpdateSpeed(newMentor.GPS);
+                    vehicle.UpdateMentor(newMentor);
 
                     updatedVehicles.Add(newMentor.Key);
                 }

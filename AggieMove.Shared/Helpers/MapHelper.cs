@@ -18,10 +18,11 @@ namespace AggieMove.Helpers
 {
     public static class MapHelper
     {
-        public static readonly string TILE_LAYER_TEMPLATE = TamuBusFeed.TamuArcGisApi.BaspMapUrl.TrimEnd('/') + 
+        public static readonly string TILE_LAYER_TEMPLATE = TamuBusFeed.TamuArcGisApi.BaseMapUrl.TrimEnd('/') +
             "/tile/{level}/{row}/{col}";
 
-        public const string VehiclesLayerId = "vehicles";
+        public const string RouteOverlayIdPrefix = "route_";
+        public const string VehicleOverlayIdPrefix = "vehicles_";
 
         public static async Task LoadMap(this MapView mapView)
         {
@@ -41,46 +42,25 @@ namespace AggieMove.Helpers
 
         public static async Task HandleGeoViewTapped(this MapView mapView, GeoViewInputEventArgs e)
         {
+            // Clear any previously selected items.
+            mapView.GraphicsOverlays.ForEach(go => go.ClearSelection());
+            mapView.DismissCallout();
+
             // Identify graphics using the screen tap.
-            var screenPoint = e.Position;
-            var resultGraphics = await mapView.IdentifyGraphicsOverlaysAsync(screenPoint, 10, false);
+            var resultGraphics = await mapView.IdentifyGraphicsOverlaysAsync(e.Position, 10, false);
 
             // Show details in a callout for the first graphic identified (if any).
             var result = resultGraphics.FirstOrDefault();
             if (result != null && result.Graphics.Count > 0)
             {
-                var poiPopup = result.Popups.FirstOrDefault();
-
-                if (poiPopup != null)
-                {
-                    result.GraphicsOverlay.PopupDefinition = poiPopup.PopupDefinition;
-                    result.GraphicsOverlay.IsPopupEnabled = true;
-                }
+                result.GraphicsOverlay.SelectGraphics(result.Graphics);
 
                 var poiGraphic = result.Graphics.First();
                 var callout = CreateCallout(poiGraphic);
 
-                var popup = new Popup(poiGraphic, poiGraphic.Attributes["Popup"] as PopupDefinition);
-                Esri.ArcGISRuntime.
-
                 MapPoint calloutAnchor = poiGraphic.Geometry.GetClosestPoint(e.Location);
                 mapView.ShowCalloutAt(calloutAnchor, callout);
             }
-            else
-            {
-                mapView.DismissCallout();
-            }
-        }
-
-        public static GraphicsOverlay CreateVehiclesOverlay(this MapView mapView)
-        {
-            var vehiclesLayer = new GraphicsOverlay
-            {
-                Id = VehiclesLayerId,
-            };
-
-            mapView.GraphicsOverlays.Add(vehiclesLayer);
-            return vehiclesLayer;
         }
 
         public static Graphic CreateRouteStop(double lat, double lon, Color fill)
@@ -132,7 +112,7 @@ namespace AggieMove.Helpers
 
             var routeOverlay = new GraphicsOverlay
             {
-                Id = "route_" + route.SelectedRoute.ShortName
+                Id = RouteOverlayIdPrefix + route.SelectedRoute.ShortName
             };
             routeOverlay.Graphics.Add(routePath);
 
@@ -187,13 +167,18 @@ namespace AggieMove.Helpers
             Graphic vehicleGraphic = CreateVehicle(vehicle.Mentor.GPS.Lat, vehicle.Mentor.GPS.Long, vehicle.Mentor.GPS.Dir);
             vehicleGraphic.Attributes.Add("VehicleId", vehicle.Mentor.Key);
             vehicleGraphic.Attributes.Add("Title", $"{route.RouteNumber} {route.Name}");
-            vehicleGraphic.Attributes.Add("Description", GetVehicleCalloutDescription(vehicle));
+            vehicleGraphic.Attributes.Add("Description", vehicle.Description);
 
             vehicle.PropertyChanged += Vehicle_PropertyChanged;
             vehicle.Graphic = vehicleGraphic;
 
-            var vehiclesOverlay = mapView.GraphicsOverlays[VehiclesLayerId];
-            vehiclesOverlay.Graphics.Add(vehicleGraphic);
+            var vehicleOverlay = new GraphicsOverlay
+            {
+                Id = VehicleOverlayIdPrefix + vehicle.Mentor.Key
+            };
+            vehicleOverlay.Graphics.Add(vehicleGraphic);
+
+            mapView.GraphicsOverlays.Add(vehicleOverlay);
 
             return vehicleGraphic;
         }
@@ -205,64 +190,36 @@ namespace AggieMove.Helpers
         }
 
         public static void ClearAllRouteOverlays(this MapView mapView)
-            => mapView.GraphicsOverlays.RemoveAll(overlay => overlay.Id != null && overlay.Id.StartsWith("route_"));
+            => mapView.GraphicsOverlays.RemoveAll(overlay => overlay.Id != null && overlay.Id.StartsWith(RouteOverlayIdPrefix));
 
-        public static void ClearVehiclesOverlay(this MapView mapView)
-        {
-            var vehiclesOverlay = mapView.GraphicsOverlays[VehiclesLayerId];
-            vehiclesOverlay.Graphics.Clear();
-        }
+        public static void ClearAllVehicleOverlays(this MapView mapView)
+            => mapView.GraphicsOverlays.RemoveAll(overlay => overlay.Id != null && overlay.Id.StartsWith(VehicleOverlayIdPrefix));
 
         public static void ClearAllExceptMain(this MapView mapView)
             => mapView.GraphicsOverlays.RemoveAll(overlay => overlay.Id == null || overlay.Id == "MapGraphics");
 
-        public static CalloutDefinition CreateCallout(Esri.ArcGISRuntime.Data.GeoElement elem)
+        public static Windows.UI.Xaml.UIElement CreateCallout(Esri.ArcGISRuntime.Data.GeoElement elem)
         {
-            CalloutDefinition callout = new CalloutDefinition(elem)
+            string title = elem.Attributes["Title"]?.ToString();
+            string desc = elem.Attributes["Description"]?.ToString();
+
+            var stack = new Windows.UI.Xaml.Controls.StackPanel
             {
-                Text = elem.Attributes["Title"]?.ToString(),
-                DetailText = elem.Attributes["Description"]?.ToString(),
+                Children =
+                {
+                    new Windows.UI.Xaml.Controls.TextBlock
+                    {
+                        Text = title,
+                        FontWeight = Windows.UI.Text.FontWeights.Bold
+                    },
+                    new Microsoft.Toolkit.Uwp.UI.Controls.MarkdownTextBlock
+                    {
+                        Text = desc,
+                    },
+                }
             };
 
-            return callout;
-        }
-
-        public static string GetVehicleCalloutDescription(VehicleViewModel vehicle)
-        {
-            var apc = vehicle.Mentor.APC;
-            var nextStop = vehicle.Mentor.NextStops.FirstOrDefault();
-
-            StringBuilder desc = new($"{apc.TotalPassenger} of {apc.PassengerCapacity} passengers");
-
-            if (nextStop != null)
-                desc.AppendLine($"Next stop: {nextStop.Name}");
-
-            if (vehicle.Speed > 0)
-                desc.AppendLine($"Speed: {vehicle.Speed}");
-
-            return desc.ToString();
-        }
-
-        public static PopupDefinition CreateVehiclePopup(VehicleViewModel vehicle)
-        {
-            var route = vehicle.Mentor.CurrentWork.Route;
-            var apc = vehicle.Mentor.APC;
-            var nextStop = vehicle.Mentor.NextStops.FirstOrDefault();
-
-            PopupDefinition popup = new PopupDefinition()
-            {
-                Title = "Bus",
-            };
-            popup.Elements.Add(new TextPopupElement($"**{route.RouteNumber} {route.Name}**"));
-            popup.Elements.Add(new TextPopupElement($"{apc.TotalPassenger} of {apc.PassengerCapacity} passengers"));
-
-            if (nextStop != null)
-                popup.Elements.Add(new TextPopupElement($"Next stop: {nextStop.Name}"));
-
-            if (vehicle.Speed > 0)
-                popup.Elements.Add(new TextPopupElement($"Speed: {vehicle.Speed}"));
-
-            return popup;
+            return stack;
         }
 
         public static MapPoint GetMedianPoint(this Geometry geo)
@@ -383,15 +340,26 @@ namespace AggieMove.Helpers
 
         private static void Vehicle_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != nameof(VehicleViewModel.Speed) || sender is not VehicleViewModel vehicle)
+            if (sender is not VehicleViewModel vehicle)
                 return;
 
-            vehicle.Graphic.Attributes["Description"] = GetVehicleCalloutDescription(vehicle);
+            switch (e.PropertyName)
+            {
+                case nameof(VehicleViewModel.Description):
+                    {
+                        vehicle.Graphic.Attributes["Description"] = vehicle.Description;
+                    }
+                    break;
 
-            var gps = vehicle.GpsHistory.First.Value;
-            vehicle.Graphic.Geometry = new MapPoint(gps.Long, gps.Lat);
-            if (vehicle.Graphic.Symbol is MarkerSymbol markerSymbol)
-                markerSymbol.Angle = gps.Dir;
+                case nameof(VehicleViewModel.Speed):
+                    {
+                        var gps = vehicle.GpsHistory.First.Value;
+                        vehicle.Graphic.Geometry = new MapPoint(gps.Long, gps.Lat);
+                        if (vehicle.Graphic.Symbol is MarkerSymbol markerSymbol)
+                            markerSymbol.Angle = gps.Dir;
+                    }
+                    break;
+            }
         }
     }
 }
