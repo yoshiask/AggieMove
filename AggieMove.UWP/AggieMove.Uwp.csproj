@@ -36,7 +36,7 @@
     </PackageReference>
     <PackageReference Include="Uno.Core" Version="4.0.1" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging">
-      <Version>4.4.13</Version>
+      <Version>4.5.12</Version>
     </PackageReference>
   </ItemGroup>
   <PropertyGroup>
