@@ -200,7 +200,9 @@ namespace AggieMove.Helpers
 
         public static void RemoveVehicle(this MapView mapView, string key)
         {
-            var vehiclesOverlay = mapView.GraphicsOverlays[VehiclesLayerId];
+            var vehiclesOverlay = mapView.GraphicsOverlays[VehicleOverlayIdPrefix];
+
+            // ArcGIS UWP can take a predicate directly, Android cannot
             vehiclesOverlay.Graphics.Remove(g => g.Attributes["VehicleId"]?.ToString() == key);
         }
 
