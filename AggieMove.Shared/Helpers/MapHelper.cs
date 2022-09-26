@@ -16,7 +16,7 @@ using Uno.Extensions;
 
 namespace AggieMove.Helpers
 {
-    public static class MapHelper
+    public static partial class MapHelper
     {
         public static readonly string TILE_LAYER_TEMPLATE = TamuBusFeed.TamuArcGisApi.BaseMapUrl.TrimEnd('/') +
             "/tile/{level}/{row}/{col}";
@@ -56,7 +56,7 @@ namespace AggieMove.Helpers
                 result.GraphicsOverlay.SelectGraphics(result.Graphics);
 
                 var poiGraphic = result.Graphics.First();
-                var callout = CreateCallout(poiGraphic);
+                var callout = CreateCallout(poiGraphic, mapView);
 
                 MapPoint calloutAnchor = poiGraphic.Geometry.GetClosestPoint(e.Location);
                 mapView.ShowCalloutAt(calloutAnchor, callout);
@@ -197,30 +197,6 @@ namespace AggieMove.Helpers
 
         public static void ClearAllExceptMain(this MapView mapView)
             => mapView.GraphicsOverlays.RemoveAll(overlay => overlay.Id == null || overlay.Id == "MapGraphics");
-
-        public static Windows.UI.Xaml.UIElement CreateCallout(Esri.ArcGISRuntime.Data.GeoElement elem)
-        {
-            string title = elem.Attributes["Title"]?.ToString();
-            string desc = elem.Attributes["Description"]?.ToString();
-
-            var stack = new Windows.UI.Xaml.Controls.StackPanel
-            {
-                Children =
-                {
-                    new Windows.UI.Xaml.Controls.TextBlock
-                    {
-                        Text = title,
-                        FontWeight = Windows.UI.Text.FontWeights.Bold
-                    },
-                    new Microsoft.Toolkit.Uwp.UI.Controls.MarkdownTextBlock
-                    {
-                        Text = desc,
-                    },
-                }
-            };
-
-            return stack;
-        }
 
         public static MapPoint GetMedianPoint(this Geometry geo)
         {
