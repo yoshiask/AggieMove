@@ -148,7 +148,7 @@ namespace AggieMove.Views
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, delegate
             {
-                UpdateVehicles(e.Action, e.NewItems.Cast<VehicleViewModel>());
+                UpdateVehicles(e.Action, e.NewItems?.Cast<VehicleViewModel>());
             });
         }
 
@@ -157,6 +157,7 @@ namespace AggieMove.Views
             switch (action)
             {
                 case NotifyCollectionChangedAction.Add:
+                    if (newItems != null)
                     {
                         foreach (var vehicle in newItems)
                         {
@@ -166,6 +167,7 @@ namespace AggieMove.Views
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
+                    if (newItems != null)
                     {
                         foreach (var vehicle in newItems)
                         {
