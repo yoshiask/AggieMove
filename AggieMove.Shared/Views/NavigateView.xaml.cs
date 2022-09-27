@@ -80,6 +80,7 @@ namespace AggieMove.Views
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             await MainMapView.LoadMap();
+            await ViewModel.InitializeCommand.ExecuteAsync(null);
         }
     }
 }

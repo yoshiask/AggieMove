@@ -22,12 +22,6 @@
         <wctconvert:BoolToVisibilityConverter x:Key="NotBoolToVisibleConverter"
                                               TrueValue="Collapsed" FalseValue="Visible"/>
     </Page.Resources>
-    
-    <interactivity:Interaction.Behaviors>
-        <core:EventTriggerBehavior EventName="Loading">
-            <core:InvokeCommandAction Command="{x:Bind ViewModel.InitializeCommand}"/>
-        </core:EventTriggerBehavior>
-    </interactivity:Interaction.Behaviors>
 
     <controls:DualPanelPage>
         <controls:DualPanelPage.PrimaryContent>
