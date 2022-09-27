@@ -1,17 +1,15 @@
 ﻿using AggieMove.ViewModels;
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
-using Esri.ArcGISRuntime.Mapping.Popups;
 using Esri.ArcGISRuntime.Symbology;
 using Esri.ArcGISRuntime.UI;
 using Esri.ArcGISRuntime.UI.Controls;
-using OwlCore;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using TamuBusFeed;
 using TamuBusFeed.Models;
 using Uno.Extensions;
 
@@ -38,7 +36,7 @@ namespace AggieMove.Helpers
 
             mapView.Map = new Map(basemap);
             await mapView.Map.LoadAsync();
-            mapView.SetViewpoint(new Viewpoint(TamuBusFeed.TamuArcGisApi.TamuCenter, 36000));
+            mapView.SetViewpoint(new Viewpoint(TamuArcGisApi.TamuCenter, 36000));
         }
 
         public static async Task HandleGeoViewTapped(this MapView mapView, GeoViewInputEventArgs e)
@@ -59,14 +57,14 @@ namespace AggieMove.Helpers
                 var poiGraphic = result.Graphics.First();
                 var callout = CreateCallout(poiGraphic, mapView);
 
-                MapPoint calloutAnchor = poiGraphic.Geometry.GetClosestPoint(e.Location);
+                MapPoint calloutAnchor = GeometryEngine.NearestCoordinate(poiGraphic.Geometry, e.Location).Coordinate;
                 mapView.ShowCalloutAt(calloutAnchor, callout);
             }
         }
 
         public static Graphic CreateRouteStop(double lat, double lon, Color fill)
         {
-            var mapPoint = new MapPoint(lon, lat, SpatialReferences.Wgs84);
+            var mapPoint = new MapPoint(lon, lat, TamuArcGisApi.TamuSpatialReference);
             return CreateRouteStop(mapPoint, fill);
         }
         public static Graphic CreateRouteStop(MapPoint mapPoint, Color fill)
@@ -100,7 +98,7 @@ namespace AggieMove.Helpers
                 Angle = heading,
                 AngleAlignment = SymbolAngleAlignment.Map,
             };
-            var mapPoint = new MapPoint(lon, lat);
+            var mapPoint = new MapPoint(lon, lat, TamuArcGisApi.TamuSpatialReference);
             return new Graphic(mapPoint, pointSymbol);
         }
 
@@ -245,25 +243,6 @@ namespace AggieMove.Helpers
             throw new NotImplementedException();
         }
 
-        public static MapPoint GetClosestPoint(this Geometry geo, MapPoint target)
-        {
-            if (geo is MapPoint pt)
-            {
-                return pt;
-            }
-            else if (geo is Polyline pl)
-            {
-                return pl.Parts.SelectMany(part => part.Points)
-                    .MinElement(pt => pt.Distance(target));
-            }
-            else if (geo is Polygon pg)
-            {
-                return pg.Extent.IsWithin(target) ? target : pg.Extent.GetCenter();
-            }
-
-            throw new NotImplementedException();
-        }
-
         public static MapPoint AveragePoint(params MapPoint[] points)
         {
             int numPts = points.Length;
@@ -321,7 +300,7 @@ namespace AggieMove.Helpers
 
             var gps = vehicle.GpsHistory.First.Value;
             var graphic = vehicle.Graphic;
-            graphic.Geometry = new MapPoint(gps.Long, gps.Lat);
+            graphic.Geometry = new MapPoint(gps.Long, gps.Lat, TamuArcGisApi.TamuSpatialReference);
             if (graphic.Symbol is MarkerSymbol markerSymbol)
                 markerSymbol.Angle = gps.Dir;
         }
