@@ -38,6 +38,8 @@ namespace AggieMove.ViewModels
         [ObservableProperty]
         private string _description;
 
+        public event Action<VehicleViewModel> MentorUpdated;
+
         public VehicleViewModel(Mentor mentor)
         {
             Mentor = mentor;
@@ -53,6 +55,8 @@ namespace AggieMove.ViewModels
             var newGpsData = newMentor.GPS;
 
             // Ignore duplicate data entries
+            System.Diagnostics.Debug.WriteLine($"New: {newGpsData.Date}");
+            System.Diagnostics.Debug.WriteLine($"Previous: {GpsHistory.First.Value.Date}");
             if (newGpsData.Date == GpsHistory.First.Value.Date)
                 return;
 
@@ -74,6 +78,8 @@ namespace AggieMove.ViewModels
             // Update popup
             Mentor = newMentor;
             UpdateDescription();
+
+            MentorUpdated?.Invoke(this);
         }
 
         private void UpdateDescription()

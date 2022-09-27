@@ -1,5 +1,6 @@
 ﻿using AggieMove.Helpers;
 using AggieMove.ViewModels;
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,6 +25,8 @@ namespace AggieMove.Services
             _timer = new Timer(async _ => await OnTick(), null, 0, interval);
 
             RouteShortName = shortname;
+            Guard.IsNotNullOrEmpty(shortname);
+
             Vehicles = new();
 
             if (vehiclesChangedHandler != null)

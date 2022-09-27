@@ -5,6 +5,7 @@ using Esri.ArcGISRuntime.Mapping.Popups;
 using Esri.ArcGISRuntime.Symbology;
 using Esri.ArcGISRuntime.UI;
 using Esri.ArcGISRuntime.UI.Controls;
+using OwlCore;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -169,7 +170,7 @@ namespace AggieMove.Helpers
             vehicleGraphic.Attributes.Add("Title", $"{route.RouteNumber} {route.Name}");
             vehicleGraphic.Attributes.Add("Description", vehicle.Description);
 
-            vehicle.PropertyChanged += Vehicle_PropertyChanged;
+            vehicle.MentorUpdated += Vehicle_MentorUpdated;
             vehicle.Graphic = vehicleGraphic;
 
             var vehicleOverlay = new GraphicsOverlay
@@ -314,28 +315,15 @@ namespace AggieMove.Helpers
             return minElem;
         }
 
-        private static void Vehicle_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private static void Vehicle_MentorUpdated(VehicleViewModel vehicle)
         {
-            if (sender is not VehicleViewModel vehicle)
-                return;
+            vehicle.Graphic.Attributes["Description"] = vehicle.Description;
 
-            switch (e.PropertyName)
-            {
-                case nameof(VehicleViewModel.Description):
-                    {
-                        vehicle.Graphic.Attributes["Description"] = vehicle.Description;
-                    }
-                    break;
-
-                case nameof(VehicleViewModel.Speed):
-                    {
-                        var gps = vehicle.GpsHistory.First.Value;
-                        vehicle.Graphic.Geometry = new MapPoint(gps.Long, gps.Lat);
-                        if (vehicle.Graphic.Symbol is MarkerSymbol markerSymbol)
-                            markerSymbol.Angle = gps.Dir;
-                    }
-                    break;
-            }
+            var gps = vehicle.GpsHistory.First.Value;
+            var graphic = vehicle.Graphic;
+            graphic.Geometry = new MapPoint(gps.Long, gps.Lat);
+            if (graphic.Symbol is MarkerSymbol markerSymbol)
+                markerSymbol.Angle = gps.Dir;
         }
     }
 }
