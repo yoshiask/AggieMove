@@ -8,7 +8,7 @@ namespace AggieMove.Helpers
 {
     partial class MapHelper
     {
-        public static Windows.UI.Xaml.UIElement CreateCallout(Esri.ArcGISRuntime.Data.GeoElement elem, GeoView view)
+        public static Windows.UI.Xaml.UIElement CreateCallout(Esri.ArcGISRuntime.Data.GeoElement elem, Esri.ArcGISRuntime.UI.Controls.GeoView view)
         {
             string title = elem.Attributes["Title"]?.ToString();
             string desc = elem.Attributes["Description"]?.ToString();
