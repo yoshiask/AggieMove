@@ -22,6 +22,11 @@ namespace AggieMove.ViewModels
         public Mentor Mentor { get; private set; }
 
         /// <summary>
+        /// The route this vehicle is servicing.
+        /// </summary>
+        public RouteViewModel Route { get; }
+
+        /// <summary>
         /// A record of previous GPS data, used to compute speed
         /// and estimate arrival times.
         /// </summary>
@@ -38,11 +43,15 @@ namespace AggieMove.ViewModels
         [ObservableProperty]
         private string _description;
 
+        [ObservableProperty]
+        private DateTimeOffset? _nextStopArrivalTime;
+
         public event Action<VehicleViewModel> MentorUpdated;
 
-        public VehicleViewModel(Mentor mentor)
+        public VehicleViewModel(Mentor mentor, RouteViewModel route)
         {
             Mentor = mentor;
+            Route = route;
 
             GpsHistory = new();
             GpsHistory.AddFirst(mentor.GPS);
@@ -64,8 +73,8 @@ namespace AggieMove.ViewModels
 
             // Compute average speed
             var ticks = GpsHistory.Select(d => d.Date.UtcTicks);
-
-            (long t_lat, double latSpeed) = GpsHistory.Select(d => new MapPoint(d.Long, d.Lat, TamuBusFeed.TamuArcGisApi.TamuSpatialReference))
+            var vehicleMapPoints = GpsHistory.Select(d => new MapPoint(d.Long, d.Lat, TamuBusFeed.TamuArcGisApi.TamuSpatialReference));
+            (long t_lat, double latSpeed) = vehicleMapPoints
                 .Zip(ticks, (l, t) => (t, l))
                 .BackwardFiniteDifference(
                     (left, right) => GeometryEngine.DistanceGeodetic(left, right, LinearUnits.Miles, null, GeodeticCurveType.Geodesic).Distance,
@@ -74,6 +83,36 @@ namespace AggieMove.ViewModels
 
             // Convert miles per tick to miles per hour
             Speed = Math.Abs(latSpeed * TimeSpan.TicksPerHour);
+
+            // Estimate time arrival to next stop
+            var nextMentorStop = newMentor.NextStops.FirstOrDefault();
+            if (nextMentorStop != null)
+            {
+                const double tol = 20;
+                var nextStop = Route.Stops.First(p => p.Stop.Key == nextMentorStop.Key);
+                MapPoint nextStopPoint = new(nextStop.Longitude, nextStop.Latitude, TamuBusFeed.TamuArcGisApi.TamuSpatialReference);
+
+                // Get location of vehicle and next stop along route
+                var routeLine = Route.Graphic.Geometry as Polyline;
+                double fracDst = GeometryEngine.FractionAlong(routeLine, nextStopPoint, tol);
+                double fracVeh = GeometryEngine.FractionAlong(routeLine, vehicleMapPoints.First(), tol * 5);
+
+                // Use fraction and route length to compute actual distance to stop
+                double routeLength = GeometryEngine.LengthGeodetic(routeLine, LinearUnits.Miles);
+                double distToDst = routeLength * Math.Min(fracDst - fracVeh, 1 - fracDst + fracVeh);
+
+                // Divide distance by speed to get time
+                double hrsToArrival = distToDst / Speed.Value;
+                try
+                {
+                    if (!double.IsInfinity(hrsToArrival) && !double.IsNaN(hrsToArrival))
+                        NextStopArrivalTime = DateTimeOffset.Now.AddHours(hrsToArrival);
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
 
             // Update popup
             Mentor = newMentor;
@@ -94,7 +133,10 @@ namespace AggieMove.ViewModels
                 desc.Append($"**{(double)apc.TotalPassenger / apc.PassengerCapacity:P0}** full{newLine}");
 
             if (nextStop != null)
-                desc.Append($"Next stop: **{nextStop.Name}** ({nextStop.StopCode}){newLine}");
+                desc.Append($"Next stop: **{nextStop.Name}** ({nextStop.StopCode})\r\n");
+
+            if (NextStopArrivalTime != null)
+                desc.Append($"Arriving at {NextStopArrivalTime:t}, {NextStopArrivalTime.Value - DateTimeOffset.Now:hh\\:mm}\r\n");
 
             if (Speed != null)
                 desc.Append($"Speed: {Speed:N0} mph{newLine}");

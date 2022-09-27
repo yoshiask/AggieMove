@@ -61,8 +61,8 @@ namespace AggieMove.Views
             bool hasRoutePoints = ViewModel.PatternElements.Count > 0;
             if (hasRoutePoints)
             {
-                var graphic = MainMapView.DrawRouteAndStops(ViewModel, DrawingColor);
-                _ = MainMapView.SetViewpointGeometryAsync(graphic.Geometry);
+                ViewModel.Graphic = MainMapView.DrawRouteAndStops(ViewModel, DrawingColor);
+                _ = MainMapView.SetViewpointGeometryAsync(ViewModel.Graphic.Geometry);
             }
 
             // Show time table

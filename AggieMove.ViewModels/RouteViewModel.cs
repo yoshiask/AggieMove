@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Esri.ArcGISRuntime.UI;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
@@ -46,6 +47,9 @@ namespace AggieMove.ViewModels
         [ObservableProperty]
         private RouteVehiclesWatcher _routeVehiclesWatcher;
 
+        [ObservableProperty]
+        private Graphic _graphic;
+
         /// <summary>
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for loading patterns for the selected route.
         /// </summary>
@@ -75,7 +79,7 @@ namespace AggieMove.ViewModels
 
         public void StartWatchingVehicles(NotifyCollectionChangedEventHandler vehiclesChangedHandler = null)
         {
-            RouteVehiclesWatcher = new(SelectedRoute.ShortName, vehiclesChangedHandler);
+            RouteVehiclesWatcher = new(this, vehiclesChangedHandler);
         }
     }
 }

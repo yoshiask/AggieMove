@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TamuBusFeed;
+using TamuBusFeed.Models;
 
 namespace AggieMove.Services
 {
@@ -16,17 +17,17 @@ namespace AggieMove.Services
     {
         readonly Timer _timer;
         
-        public string RouteShortName { get; }
+        public RouteViewModel Route { get; }
 
         public ObservableCollection<VehicleViewModel> Vehicles { get; }
 
-        public RouteVehiclesWatcher(string shortname, NotifyCollectionChangedEventHandler vehiclesChangedHandler = null, int interval = 10 * 1000)
+        public RouteVehiclesWatcher(RouteViewModel route, NotifyCollectionChangedEventHandler vehiclesChangedHandler = null, int interval = 10 * 1000)
         {
+            Guard.IsNotNull(route);
+
             _timer = new Timer(async _ => await OnTick(), null, 0, interval);
 
-            RouteShortName = shortname;
-            Guard.IsNotNullOrEmpty(shortname);
-
+            Route = route;
             Vehicles = new();
 
             if (vehiclesChangedHandler != null)
@@ -35,7 +36,7 @@ namespace AggieMove.Services
 
         private async Task OnTick()
         {
-            var newMentors = await TamuBusFeedApi.GetVehicles(RouteShortName);
+            var newMentors = await TamuBusFeedApi.GetVehicles(Route.SelectedRoute.ShortName);
 
             // Construct a hash table to keep track of vehicles that have been updated
             List<string> updatedVehicles = new(Vehicles.Count);
@@ -49,7 +50,7 @@ namespace AggieMove.Services
                 {
                     // This vehicle has just been added to the list,
                     // create a new view model for it
-                    vehicle = new(newMentor);
+                    vehicle = new(newMentor, Route);
                     Vehicles.Add(vehicle);
 
                     updatedVehicles.Add(newMentor.Key);
