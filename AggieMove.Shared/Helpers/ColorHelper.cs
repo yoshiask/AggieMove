@@ -75,7 +75,14 @@ namespace AggieMove.Helpers
             }
             else
             {
-                return System.Drawing.Color.Black;
+                try
+                {
+                    return System.Drawing.Color.FromName(cssString);
+                }
+                catch
+                {
+                    return System.Drawing.Color.Black;
+                }
             }
         }
 
