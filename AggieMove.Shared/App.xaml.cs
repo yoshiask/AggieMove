@@ -10,6 +10,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using TamuBusFeed;
 
 namespace AggieMove
 {
@@ -39,7 +40,7 @@ namespace AggieMove
         {
             //Uno.Material.Resources.Init(this, new ResourceDictionary() { Source = new Uri("ms-appx:///ColorPaletteOverride.xaml") });
             Esri.ArcGISRuntime.ArcGISRuntimeEnvironment.SetLicense("runtimelite,1000,rud5976483922,none,GB2PMD17J06HZF3RE159");
-            await TamuBusFeed.TamuArcGisApi.InitAsync(Secrets.ARCGIS_KEY);
+            await TamuArcGisApi.InitAsync("");// Secrets.ARCGIS_KEY);
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -80,7 +81,7 @@ namespace AggieMove
                 // Register services
                 Ioc.Default.ConfigureServices(new ServiceCollection()
                     .AddSingleton<INavigationService, NavigationService>()
-                    .AddSingleton(new SettingsService(new FolderData(Windows.Storage.ApplicationData.Current.RoamingFolder)))
+                    .AddSingleton(new TamuBusFeedApi())
                     .AddSingleton(new SettingsService(new OwlCore.Storage.Uwp.WindowsStorageFolder(Windows.Storage.ApplicationData.Current.RoamingFolder)))
                     .BuildServiceProvider());
             }

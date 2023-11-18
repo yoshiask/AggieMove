@@ -1,6 +1,7 @@
 ﻿using AggieMove.Helpers;
 using AggieMove.ViewModels;
 using CommunityToolkit.Diagnostics;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +16,8 @@ namespace AggieMove.Services
 {
     public class RouteVehiclesWatcher : IDisposable
     {
+        private readonly TamuBusFeedApi Api = Ioc.Default.GetRequiredService<TamuBusFeedApi>();
+
         readonly Timer _timer;
         
         public RouteViewModel Route { get; }
@@ -36,7 +39,7 @@ namespace AggieMove.Services
 
         private async Task OnTick()
         {
-            var newMentors = await TamuBusFeedApi.GetVehicles(Route.SelectedRoute.ShortName);
+            var newMentors = await Api.GetVehicles(Route.SelectedRoute.ShortName);
 
             // Construct a hash table to keep track of vehicles that have been updated
             List<string> updatedVehicles = new(Vehicles.Count);
