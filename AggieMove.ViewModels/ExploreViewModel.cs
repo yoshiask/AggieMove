@@ -23,6 +23,7 @@ namespace AggieMove.ViewModels
         /// </summary>
         private readonly INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
         private readonly SettingsService SettingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        private readonly TamuBusFeedApi Api = Ioc.Default.GetRequiredService<TamuBusFeedApi>();
 
         private Route _selectedRoute;
 
@@ -52,7 +53,7 @@ namespace AggieMove.ViewModels
         {
             var targetDate = SettingsService.TargetDate;
             Routes.Clear();
-            foreach (Route r in await TamuBusFeedApi.GetRoutes())
+            foreach (Route r in await Api.GetRoutes())
             {
                 // Some of the names have leading whitespace for no reason
                 r.Name = r.Name.Trim();

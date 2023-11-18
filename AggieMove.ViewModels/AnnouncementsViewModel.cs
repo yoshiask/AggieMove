@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using TamuBusFeed;
 using TamuBusFeed.Models;
@@ -21,6 +20,7 @@ namespace AggieMove.ViewModels
         /// The <see cref="INavigationService"/> instance currently in use.
         /// </summary>
         private readonly INavigationService NavigationService = Ioc.Default.GetRequiredService<INavigationService>();
+        private readonly TamuBusFeedApi Api = Ioc.Default.GetRequiredService<TamuBusFeedApi>();
 
         private AnnouncementFeed _Feed;
         public AnnouncementFeed Feed
@@ -48,7 +48,7 @@ namespace AggieMove.ViewModels
 
         public async Task LoadAnnouncementsAsync()
         {
-            Feed = await TamuBusFeedApi.GetAnnouncements();
+            Feed = await Api.GetAnnouncements();
         }
 
         public async Task OpenAnnouncementAsync()

@@ -14,6 +14,7 @@ namespace AggieMove.ViewModels
     public partial class RouteViewModel : ObservableObject
     {
         private readonly SettingsService SettingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        private readonly TamuBusFeedApi Api = Ioc.Default.GetRequiredService<TamuBusFeedApi>();
 
         public RouteViewModel()
         {
@@ -74,7 +75,7 @@ namespace AggieMove.ViewModels
 
         public async Task LoadTimeTableAsync()
         {
-            TimeTable = await TamuBusFeedApi.GetTimetable(SelectedRoute.ShortName, SettingsService.TargetDate);
+            TimeTable = await Api.GetTimetable(SelectedRoute.ShortName, SettingsService.TargetDate);
         }
 
         public void StartWatchingVehicles(NotifyCollectionChangedEventHandler vehiclesChangedHandler = null)
