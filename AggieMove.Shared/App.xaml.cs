@@ -78,10 +78,10 @@ namespace AggieMove
                 Window.Current.Content = rootFrame;
 
                 // Register services
-                Ioc.Default.ConfigureServices(
-                    new ServiceCollection()
+                Ioc.Default.ConfigureServices(new ServiceCollection()
                     .AddSingleton<INavigationService, NavigationService>()
                     .AddSingleton(new SettingsService(new FolderData(Windows.Storage.ApplicationData.Current.RoamingFolder)))
+                    .AddSingleton(new SettingsService(new OwlCore.Storage.Uwp.WindowsStorageFolder(Windows.Storage.ApplicationData.Current.RoamingFolder)))
                     .BuildServiceProvider());
             }
 

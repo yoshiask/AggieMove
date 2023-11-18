@@ -1,12 +1,12 @@
-﻿using OwlCore.AbstractStorage;
-using OwlCore.Services;
+﻿using OwlCore.Storage;
+using OwlCore.ComponentModel;
 using System;
 
 namespace AggieMove.Services
 {
     public class SettingsService : SettingsBase
     {
-        public SettingsService(IFolderData folder)
+        public SettingsService(IModifiableFolder folder)
             : base(folder, new NewtonsoftStreamSerializer())
         {
         }
