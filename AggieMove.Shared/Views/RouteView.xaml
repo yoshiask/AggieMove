@@ -17,12 +17,8 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <converters:CSSColorToWinUIColorConverter x:Name="CSSColorToWinUIColorConverter"/>
+        <converters:HexToWinUIColorConverter x:Name="HexToWinUIColorConverter"/>
     </Page.Resources>
-
-    <Page.DataContext>
-        <viewmodels:RouteViewModel x:Name="ViewModel"/>
-    </Page.DataContext>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -37,7 +33,7 @@
             </Grid.ColumnDefinitions>
             <Border Padding="10">
                 <Border.Background>
-                    <SolidColorBrush Color="{x:Bind ViewModel.SelectedRoute.Color, Converter={StaticResource CSSColorToWinUIColorConverter}, Mode=OneWay}"/>
+                    <SolidColorBrush Color="{x:Bind ViewModel.Pattern.Color, Converter={StaticResource HexToWinUIColorConverter}, Mode=OneWay}"/>
                 </Border.Background>
                 <TextBlock Text="{x:Bind ViewModel.SelectedRoute.ShortName, Mode=OneWay}" Foreground="White" FontSize="28" FontWeight="Bold"/>
             </Border>
@@ -58,9 +54,9 @@
             <controls:DualPanelPage.SecondaryContent>
                 <Pivot SelectionChanged="Pivot_SelectionChanged">
                     <PivotItem Header="Stops">
-                        <ListView ItemsSource="{x:Bind ViewModel.Stops, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SelectedPatternElement, Mode=TwoWay}">
+                        <ListView ItemsSource="{x:Bind ViewModel.Stops, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SelectedPatternPoint, Mode=TwoWay}">
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="models:PatternElement">
+                                <DataTemplate x:DataType="models:PatternPoint">
                                     <Grid Padding="10">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>

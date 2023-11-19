@@ -4,6 +4,32 @@ namespace AggieMove.Helpers
 {
     public static class ColorHelper
     {
+        public static System.Drawing.Color ParseHexColor(string hexString)
+        {
+            if (hexString == null)
+                return System.Drawing.Color.Black;
+
+            // Default to 100% opacity (this will get shifted more later)
+            int rgb = 0xFF;
+
+            // Read each hex digit and left shifts
+            for (int i = 0; i < hexString.Length; ++i)
+            {
+                var c = hexString[i];
+                if (c == '#')
+                    continue;
+
+                rgb <<= 4;
+
+                if (char.IsDigit(c))
+                    rgb |= c - '0';
+                else if (c >= 'A' && c <= 'F')
+                    rgb |= c - 'A' + 0xA;
+            }
+
+            return System.Drawing.Color.FromArgb(rgb);
+        }
+
         public static System.Drawing.Color ParseCSSColorAsDrawingColor(string cssString)
         {
             if (cssString.StartsWith("rgb("))

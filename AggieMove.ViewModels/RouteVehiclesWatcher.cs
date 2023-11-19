@@ -39,7 +39,7 @@ namespace AggieMove.Services
 
         private async Task OnTick()
         {
-            var newMentors = await Api.GetVehicles(Route.SelectedRoute.ShortName);
+            var newMentors = await Api.GetBusses(Route.SelectedRoute.Key);
 
             // Construct a hash table to keep track of vehicles that have been updated
             List<string> updatedVehicles = new(Vehicles.Count);

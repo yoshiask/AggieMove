@@ -31,6 +31,14 @@ namespace AggieMove.Views
         };
         private readonly Timer clock;
 
+        public RouteViewModel ViewModel
+        {
+            get => (RouteViewModel)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+        public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
+            nameof(ViewModel), typeof(RouteViewModel), typeof(RouteView), new PropertyMetadata(null));
+
         public System.Drawing.Color DrawingColor { get; private set; }
         public TextBlock CurrentTimeBlock { get; private set; }
         public Grid TimeTableGrid { get; private set; }
@@ -50,15 +58,15 @@ namespace AggieMove.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            ViewModel.SelectedRoute = e.Parameter as Route;
+            ViewModel = e.Parameter as RouteViewModel;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
             await MainMapView.LoadMap();
 
             await ViewModel.LoadPatternsAsync();
-            DrawingColor = ColorHelper.ParseCSSColorAsDrawingColor(ViewModel.SelectedRoute.Color);
+            DrawingColor = ColorHelper.ParseHexColor(ViewModel.Pattern.Color);
 
-            bool hasRoutePoints = ViewModel.PatternElements.Count > 0;
+            bool hasRoutePoints = (ViewModel.Pattern?.PatternPaths?.Count ?? 0) > 0;
             if (hasRoutePoints)
             {
                 ViewModel.Graphic = MainMapView.DrawRouteAndStops(ViewModel, DrawingColor);
@@ -96,10 +104,10 @@ namespace AggieMove.Views
 
         private async void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ViewModel.SelectedPatternElement) && ViewModel.SelectedPatternElement != null)
+            if (e.PropertyName == nameof(ViewModel.SelectedPatternPoint) && ViewModel.SelectedPatternPoint != null)
             {
-                PatternElement elem = ViewModel.SelectedPatternElement;
-                var point = new MapPoint(elem.Longitude, elem.Latitude, SpatialReferences.WebMercator);
+                var path = ViewModel.SelectedPatternPoint;
+                var point = new MapPoint(path.Longitude, path.Latitude, SpatialReferences.WebMercator);
                 await MainMapView.SetViewpointCenterAsync(point);
                 await MainMapView.SetViewpointScaleAsync(2000);
             }

@@ -89,7 +89,7 @@ namespace AggieMove.ViewModels
             if (nextMentorStop != null)
             {
                 const double tol = 20;
-                var nextStop = Route.Stops.First(p => p.Stop.Key == nextMentorStop.Key);
+                var nextStop = Route.Stops.First(p => p.Key == nextMentorStop.Key);
                 MapPoint nextStopPoint = new(nextStop.Longitude, nextStop.Latitude, TamuBusFeed.TamuArcGisApi.TamuSpatialReference);
 
                 // Get location of vehicle and next stop along route

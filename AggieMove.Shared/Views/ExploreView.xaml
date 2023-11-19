@@ -19,7 +19,7 @@
     Loaded="Page_Loaded">
 
     <Page.Resources>
-        <converters:CSSColorToWinUIColorConverter x:Name="CSSColorToWinUIColorConverter"/>
+        <converters:HexToWinUIColorConverter x:Name="HexToWinUIColorConverter"/>
     </Page.Resources>
 
     <interactivity:Interaction.Behaviors>
@@ -63,7 +63,7 @@
                               SelectedItem="{x:Bind ViewModel.SelectedRoute, Mode=TwoWay}"
                               SelectionChanged="OnRouteSelected" Grid.Row="2">
                         <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:Route">
+                            <DataTemplate x:DataType="viewmodels:RouteViewModel">
                                 <Grid Padding="10" ColumnSpacing="10" HorizontalAlignment="Stretch">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
@@ -75,14 +75,12 @@
                                     </Grid.ColumnDefinitions>
                                     <Border Padding="10" Grid.RowSpan="2">
                                         <Border.Background>
-                                            <SolidColorBrush Color="{x:Bind Color, Converter={StaticResource CSSColorToWinUIColorConverter}, Mode=OneWay}"/>
+                                            <SolidColorBrush Color="{x:Bind Color, Converter={StaticResource HexToWinUIColorConverter}, Mode=OneWay}"/>
                                         </Border.Background>
-                                        <TextBlock Text="{x:Bind ShortName}" Foreground="White" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{x:Bind SelectedRoute.ShortName}" Foreground="White" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
                                     </Border>
-                                    <TextBlock Text="{x:Bind Name}" FontSize="16" FontWeight="SemiBold" Grid.Column="1"
+                                    <TextBlock Text="{x:Bind SelectedRoute.Name}" FontSize="16" FontWeight="SemiBold" Grid.Column="1"
                                                HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                    <TextBlock Text="{x:Bind Group.Name}" Grid.Column="1" Grid.Row="2"
-                                                HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>

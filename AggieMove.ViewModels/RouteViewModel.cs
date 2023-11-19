@@ -3,8 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Esri.ArcGISRuntime.UI;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 using TamuBusFeed;
 using TamuBusFeed.Models;
@@ -13,34 +14,32 @@ namespace AggieMove.ViewModels
 {
     public partial class RouteViewModel : ObservableObject
     {
-        private readonly SettingsService SettingsService = Ioc.Default.GetRequiredService<SettingsService>();
         private readonly TamuBusFeedApi Api = Ioc.Default.GetRequiredService<TamuBusFeedApi>();
 
         public RouteViewModel()
         {
             LoadPatternsCommand = new AsyncRelayCommand(LoadPatternsAsync);
             LoadTimeTableCommand = new AsyncRelayCommand(LoadTimeTableAsync);
-
-            PatternElements = new ObservableCollection<PatternElement>();
-            Stops = new ObservableCollection<PatternElement>();
         }
 
-        public RouteViewModel(Route route) : base()
+        public RouteViewModel(RouteInfo route) : base()
         {
             SelectedRoute = route;
         }
 
-        [ObservableProperty]
-        private ObservableCollection<PatternElement> _patternElements;
+        private bool _patternsLoaded = false;
 
         [ObservableProperty]
-        private ObservableCollection<PatternElement> _stops;
+        private Pattern _pattern;
 
         [ObservableProperty]
-        private Route _selectedRoute;
+        private List<PatternPoint> _stops;
 
         [ObservableProperty]
-        private PatternElement _selectedPatternElement;
+        private RouteInfo _selectedRoute;
+
+        [ObservableProperty]
+        private PatternPoint _selectedPatternPoint;
 
         [ObservableProperty]
         private TimeTable _timeTable;
@@ -50,6 +49,9 @@ namespace AggieMove.ViewModels
 
         [ObservableProperty]
         private Graphic _graphic;
+
+        [ObservableProperty]
+        private string? _color;
 
         /// <summary>
         /// Gets the <see cref="IAsyncRelayCommand"/> instance responsible for loading patterns for the selected route.
@@ -68,14 +70,18 @@ namespace AggieMove.ViewModels
 
         public async Task LoadPatternsAsync()
         {
-            var patternElements = await SelectedRoute.GetDetailedPatternAsync(SettingsService.TargetDate);
-            PatternElements = new ObservableCollection<PatternElement>(patternElements);
-            Stops = new ObservableCollection<PatternElement>(SelectedRoute.Stops);
+            if (_patternsLoaded) return;
+
+            Pattern = await Api.GetPatternPaths(SelectedRoute.Key);
+            Color = Pattern.Color;
+
+            Stops = Pattern.StopPoints().ToList();
+            _patternsLoaded = true;
         }
 
         public async Task LoadTimeTableAsync()
         {
-            TimeTable = await Api.GetTimetable(SelectedRoute.ShortName, SettingsService.TargetDate);
+            TimeTable = await Api.GetTimetable(SelectedRoute.Key);
         }
 
         public void StartWatchingVehicles(NotifyCollectionChangedEventHandler vehiclesChangedHandler = null)

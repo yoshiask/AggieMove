@@ -10,14 +10,13 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using TamuBusFeed;
-using TamuBusFeed.Models;
 using Uno.Extensions;
 
 namespace AggieMove.Helpers
 {
     public static partial class MapHelper
     {
-        public static readonly string TILE_LAYER_TEMPLATE = TamuBusFeed.TamuArcGisApi.BaseMapUrl.TrimEnd('/') +
+        public static readonly string TILE_LAYER_TEMPLATE = TamuArcGisApi.BaseMapUrl.TrimEnd('/') +
             "/tile/{level}/{row}/{col}";
 
         public const string RouteOverlayIdPrefix = "route_";
@@ -82,7 +81,7 @@ namespace AggieMove.Helpers
 
         public static Graphic CreateRoutePath(IEnumerable<MapPoint> points, Color lineColor)
         {
-            var routePath = new PolylineBuilder(points, SpatialReferences.WebMercator).ToGeometry();
+            var routePath = new PolylineBuilder(points, SpatialReferences.Wgs84).ToGeometry();
             // Create a simple line symbol to display the polyline
             var routeLineSymbol = new SimpleLineSymbol(
                 SimpleLineSymbolStyle.Solid, lineColor, 4.0
@@ -104,29 +103,29 @@ namespace AggieMove.Helpers
 
         public static Graphic DrawRouteAndStops(this MapView mapView, RouteViewModel route, Color routeColor, bool showStops = true)
         {
-            var routePoints = route.PatternElements.Select(p => new MapPoint(p.Longitude, p.Latitude, SpatialReferences.WebMercator));
+            var routePoints = route.Pattern.Points().Select(p => new MapPoint(p.Longitude, p.Latitude, SpatialReferences.Wgs84));
             Graphic routePath = CreateRoutePath(routePoints, routeColor);
             routePath.Attributes.Add("Title", route.SelectedRoute.ShortName);
             routePath.Attributes.Add("Description", route.SelectedRoute.Name);
 
             var routeOverlay = new GraphicsOverlay
             {
-                Id = RouteOverlayIdPrefix + route.SelectedRoute.ShortName
+                Id = RouteOverlayIdPrefix + route.SelectedRoute.Key
             };
             routeOverlay.Graphics.Add(routePath);
 
             if (showStops)
-                foreach (PatternElement elem in route.Stops)
+                foreach (var patternPoint in route.Pattern.StopPoints())
                 {
-                    var point = new MapPoint(elem.Longitude, elem.Latitude, SpatialReferences.WebMercator);
+                    var point = new MapPoint(patternPoint.Longitude, patternPoint.Latitude, SpatialReferences.Wgs84);
                     var stop = CreateRouteStop(point, routeColor);
 
-                    string title = elem.Name;
-                    if (elem.Stop.IsTimePoint)
+                    string title = patternPoint.Name;
+                    if (patternPoint.IsTimePoint)
                         title = "⏱ " + title;
 
                     stop.Attributes.Add("Title", title);
-                    stop.Attributes.Add("Description", elem.Stop.StopCode);
+                    stop.Attributes.Add("Description", patternPoint.Stop.StopCode);
 
                     routeOverlay.Graphics.Add(stop);
                 }

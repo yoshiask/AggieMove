@@ -36,12 +36,13 @@ namespace AggieMove.Views
             {
                 foreach (var item in e.NewItems)
                 {
-                    Route route = item as Route;
-                    if (route == null)
+                    var rvm = item as RouteViewModel;
+                    if (rvm == null)
                         continue;
-                    var rvm = new RouteViewModel(route);
+                    
                     await rvm.LoadPatternsAsync();
-                    MainMapView.DrawRouteAndStops(rvm, ColorHelper.ParseCSSColorAsDrawingColor(route.Color), false);
+
+                    MainMapView.DrawRouteAndStops(rvm, ColorHelper.ParseHexColor(rvm.Pattern.Color), false);
                 }
             }
         }
@@ -56,7 +57,7 @@ namespace AggieMove.Views
 #if !NETFX_CORE
             // TODO: This is an ugly, pattern-breaking workaround because Uno fires the SelectionChanged event before
             // setting the selected item
-            ViewModel.SelectedRoute = e.AddedItems[0] as TamuBusFeed.Models.Route;
+            ViewModel.SelectedRoute = e.AddedItems[0] as TamuBusFeed.Models.RouteInfo;
 #endif
         }
 
