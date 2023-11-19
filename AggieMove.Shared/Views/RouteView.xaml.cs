@@ -6,8 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Timers;
-using TamuBusFeed.Models;
-using Windows.System;
+using TamuBusFeed;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -75,9 +74,9 @@ namespace AggieMove.Views
 
             // Show time table
             await ViewModel.LoadTimeTableAsync();
-            if (ViewModel.TimeTable != null)
+            if (ViewModel.TimeTables != null)
             {
-                TimeTableGrid = TimeTableUIFactory.CreateGridFromTimeTable(ViewModel.TimeTable);
+                TimeTableGrid = TimeTableUIFactory.CreateGridFromTimeTable(ViewModel.TimeTables[0]);
                 UpdateCurrentTimeBlock();
                 clock.Start();
             }
@@ -107,7 +106,7 @@ namespace AggieMove.Views
             if (e.PropertyName == nameof(ViewModel.SelectedPatternPoint) && ViewModel.SelectedPatternPoint != null)
             {
                 var path = ViewModel.SelectedPatternPoint;
-                var point = new MapPoint(path.Longitude, path.Latitude, SpatialReferences.WebMercator);
+                var point = new MapPoint(path.Longitude, path.Latitude, TamuArcGisApi.TamuSpatialReference);
                 await MainMapView.SetViewpointCenterAsync(point);
                 await MainMapView.SetViewpointScaleAsync(2000);
             }
